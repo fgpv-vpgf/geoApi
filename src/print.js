@@ -11,24 +11,8 @@
     root.printService = factory(root.PrintParameters);
   };
 
-}(this, function (printService) {
-    printTask = new PrintTask(RAMP.config.exportMapUrl);
-
-    printTask.on('complete', function (event) {
-        //console.log('PRINT RESULT: ' + event.result.url);
-        def.resolve({
-            event: event,
-            exportOptions: template.exportOptions,
-        });
-    });
-
-    printTask.on('error', function (event) {
-        //console.log('PRINT FAILED: ' + event.error.message);
-        def.reject(event);
-    });
-
-    mapDom = $('#mainMap_root')[0];
-
+}(this, function (exportURL) {
+    printTask = new PrintTask(exportURL);
     template = new PrintTemplate();
     template.exportOptions = {
         width: mapDom.clientWidth,
@@ -38,10 +22,9 @@
     template.format = 'PNG32';
     template.layout = 'MAP_ONLY';
     template.showAttribution = false;
-
     params = new PrintParameters();
-    params.map = mappy;
     params.template = template;
+
     console.log('submitting print job.  please wait');
     printTask.execute(params);
 
