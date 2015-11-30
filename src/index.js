@@ -31,7 +31,7 @@ function initAll(esriBundle) {
     return api;
 }
 
-module.exports = function(esriLoaderUrl, window) {
+module.exports = function (esriLoaderUrl, window) {
 
     // esriDeps is an array pairing ESRI JSAPI dependencies with their imported names
     // in esriBundle
