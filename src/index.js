@@ -1,5 +1,6 @@
 'use strict';
 const layer = require('./layer.js');
+const esri = require('./esri.js');
 
 function grayMapFactory(esriBundle) {
     return function (element) {
@@ -13,6 +14,7 @@ function initAll(esriBundle) {
     return {
         grayMap: grayMapFactory(esriBundle),
         layer: layer(esriBundle),
+        esri: esri(esriBundle),
         debug: function () {
             if (arguments.length === 1) {
                 debug = arguments[0] === true;
