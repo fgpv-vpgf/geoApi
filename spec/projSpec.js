@@ -57,10 +57,7 @@ describe("test for esri projection conversion function", () => {
     let esri;
     let x;
 
-    // mock / spy
-    // fake esriextent, projparam, geosvc. stub for proj, spy for geosvc. real call to geosvc 2slow
-    // tests expecting arguments in a certain order (so it won't break)
-
+    // make fake esri extent as input
     function makeFakeEsriExtent(o) {
         return {
             "xmin":o.x0,"ymin":o.y0,"xmax":o.x1,"ymax":o.y1,
@@ -74,7 +71,7 @@ describe("test for esri projection conversion function", () => {
     });
 
     it("should export functions", () => {
-        // find original sr from config/params or whatever then != new sr
+        // make sure functions are exported properly
         esri = projBuilder(sampleData);
         expect(esri).not.toBe(null);
     });

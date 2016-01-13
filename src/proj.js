@@ -87,12 +87,15 @@ function esriService(esriBundle, geometries, sr) {
     return new Promise(
         (resolve, reject) => {
             let params = new esriBundle.ProjectParameters();
+
+            // connect to esri server
             let gsvc = new esriBundle.GeometryService('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/' +
              'arcgis/rest/services/Utilities/Geometry/GeometryServer');
 
             params.geometries = geometries;
             params.outSR = sr;
 
+            // call project function from esri server to do conversion
             gsvc.project(params,
                 projectedExtents => {
                     resolve(projectedExtents);
