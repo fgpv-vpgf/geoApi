@@ -1,9 +1,9 @@
 /* globals*/
 module.exports = function (esriBundle) {
-    return function (PrintParameters, PrintTemplate, PrintTask) {
-        const printTask = new PrintTask('random URL');
-        const template = new PrintTemplate();
-        const params = new PrintParameters();
+    return function () {
+        const printTask = new esriBundle.PrintTask('random URL');
+        const template = new esriBundle.PrintTemplate();
+        const params = new esriBundle.PrintParameters();
         const mapDom = $('#mainMap_root')[0];
         let def;
 
@@ -35,6 +35,5 @@ module.exports = function (esriBundle) {
         console.log('submitting print job.  please wait');
         printTask.execute(params);
 
-        });
     };
 };

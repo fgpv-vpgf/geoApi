@@ -1,11 +1,15 @@
 'use strict';
 const layer = require('./layer.js');
-const esri = require('./esri.js');
+const proj = require('./proj.js');
+const basemap = require('./basemap.js');
+const mapManager = require('./mapManager.js');
+const attribute = require('./attribute.js');
+const printjs = require('./print.js');
 
 function grayMapFactory(esriBundle) {
     return function (element) {
         console.info('made a map');
-        return esriBundle.Map(element, { basemap: 'gray', zoom: 6, center: [-100, 50] });
+        return esriBundle.Map(element, { basemap: 'topo', zoom: 6, center: [-100, 50] });
     };
 }
 
@@ -14,7 +18,11 @@ function initAll(esriBundle) {
     return {
         grayMap: grayMapFactory(esriBundle),
         layer: layer(esriBundle),
-        esri: esri(esriBundle),
+        proj: proj(esriBundle),
+        basemap: basemap(esriBundle),
+        mapManager: mapManager(esriBundle),
+        attribs: attribute(esriBundle),
+        print: printjs(esriBundle),
         debug: function () {
             if (arguments.length === 1) {
                 debug = arguments[0] === true;
@@ -34,12 +42,25 @@ module.exports = function (esriLoaderUrl, window) {
     // esriDeps is an array pairing ESRI JSAPI dependencies with their imported names
     // in esriBundle
     const esriDeps = [
-        ['esri/map', 'Map'],
+        ['dojo/Deferred', 'Deferred'],
+        ['esri/SpatialReference', 'SpatialReference'],
+        ['esri/dijit/Basemap', 'Basemap'],
+        ['esri/dijit/BasemapGallery', 'BasemapGallery'],
+        ['esri/dijit/BasemapLayer', 'BasemapLayer'],
+        ['esri/dijit/Scalebar', 'Scalebar'],
+        ['esri/geometry/Point', 'Point'],
+        ['esri/layers/ArcGISDynamicMapServiceLayer', 'ArcGISDynamicMapServiceLayer'],
+        ['esri/layers/ArcGISTiledMapServiceLayer', 'ArcGISTiledMapServiceLayer'],
         ['esri/layers/FeatureLayer', 'FeatureLayer'],
         ['esri/layers/GraphicsLayer', 'GraphicsLayer'],
         ['esri/layers/WMSLayer', 'WmsLayer'],
         ['esri/tasks/GeometryService', 'GeometryService'],
-        ['esri/tasks/GeometryService', 'ProjectParameters']
+        ['esri/tasks/ProjectParameters', 'ProjectParameters'],
+        ['esri/tasks/PrintParameters', 'PrintParameters'],
+        ['esri/tasks/PrintTemplate', 'PrintTemplate'],
+        ['esri/tasks/PrintTask', 'PrintTask'],
+        ['esri/map', 'Map'],
+        ['esri/request', 'esriRequest']
     ];
 
     function makeDojoRequests() {
