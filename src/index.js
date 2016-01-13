@@ -4,6 +4,7 @@ const proj = require('./proj.js');
 const basemap = require('./basemap.js');
 const mapManager = require('./mapManager.js');
 const attribute = require('./attribute.js');
+const printjs = require('./print.js');
 
 function initAll(esriBundle) {
     let debug = false;
@@ -13,6 +14,7 @@ function initAll(esriBundle) {
         basemap: basemap(esriBundle),
         mapManager: mapManager(esriBundle),
         attribs: attribute(esriBundle),
+        print: printjs(esriBundle),
         debug: function () {
             if (arguments.length === 1) {
                 debug = arguments[0] === true;
@@ -33,16 +35,23 @@ module.exports = function (esriLoaderUrl, window) {
     // in esriBundle
     const esriDeps = [
         ['dojo/Deferred', 'Deferred'],
+        ['esri/SpatialReference', 'SpatialReference'],
         ['esri/dijit/Basemap', 'Basemap'],
         ['esri/dijit/BasemapGallery', 'BasemapGallery'],
         ['esri/dijit/BasemapLayer', 'BasemapLayer'],
         ['esri/dijit/Scalebar', 'Scalebar'],
+        ['esri/geometry/Point', 'Point'],
         ['esri/layers/ArcGISDynamicMapServiceLayer', 'ArcGISDynamicMapServiceLayer'],
         ['esri/layers/ArcGISImageServiceLayer', 'ArcGISImageServiceLayer'],
         ['esri/layers/ArcGISTiledMapServiceLayer', 'ArcGISTiledMapServiceLayer'],
         ['esri/layers/FeatureLayer', 'FeatureLayer'],
         ['esri/layers/GraphicsLayer', 'GraphicsLayer'],
         ['esri/layers/WMSLayer', 'WmsLayer'],
+        ['esri/tasks/GeometryService', 'GeometryService'],
+        ['esri/tasks/ProjectParameters', 'ProjectParameters'],
+        ['esri/tasks/PrintParameters', 'PrintParameters'],
+        ['esri/tasks/PrintTemplate', 'PrintTemplate'],
+        ['esri/tasks/PrintTask', 'PrintTask'],
         ['esri/map', 'Map'],
         ['esri/request', 'esriRequest']
     ];
