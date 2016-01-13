@@ -6,17 +6,9 @@ const mapManager = require('./mapManager.js');
 const attribute = require('./attribute.js');
 const printjs = require('./print.js');
 
-function grayMapFactory(esriBundle) {
-    return function (element) {
-        console.info('made a map');
-        return esriBundle.Map(element, { basemap: 'topo', zoom: 6, center: [-100, 50] });
-    };
-}
-
 function initAll(esriBundle) {
     let debug = false;
     return {
-        grayMap: grayMapFactory(esriBundle),
         layer: layer(esriBundle),
         proj: proj(esriBundle),
         basemap: basemap(esriBundle),
@@ -50,6 +42,7 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/dijit/Scalebar', 'Scalebar'],
         ['esri/geometry/Point', 'Point'],
         ['esri/layers/ArcGISDynamicMapServiceLayer', 'ArcGISDynamicMapServiceLayer'],
+        ['esri/layers/ArcGISImageServiceLayer', 'ArcGISImageServiceLayer'],
         ['esri/layers/ArcGISTiledMapServiceLayer', 'ArcGISTiledMapServiceLayer'],
         ['esri/layers/FeatureLayer', 'FeatureLayer'],
         ['esri/layers/GraphicsLayer', 'GraphicsLayer'],
