@@ -36,25 +36,26 @@ describe('events wrapping', () => {
             console.log('Hi');
         }});
         expect(sampleLayer.on.calls.mostRecent().args[0]).toEqual('update-end');
-        sampleLayer.on.calls.reset();
     });
 
-    it('should trigger a layer event', () => {
+    it('should trigger a layer event', (done) => {
         const myevent = events();
-        spyOn(sampleLayer, 'on');
+        spyOn(sampleLayer, 'on').and.callThrough();
         myevent.wrapEvents(sampleLayer, {updateEnd: (x) => {
             expect(x.target).toEqual(x.layer);
+            done();
             }
         });
         sampleLayer.on.calls.mostRecent().args[1](makeFakeEvent(sampleData));
     });
 
-    it('should trigger a non-layer event', () => {
+    it('should trigger a non-layer event', (done) => {
         const myevent = events();
-        spyOn(sampleLayer, 'on');
+        spyOn(sampleLayer, 'on').and.callThrough();
         myevent.wrapEvents(sampleLayer, {click: (x) => {
             console.log('yeezy');
             expect(sampleLayer.on).toHaveBeenCalled();
+            done();
             }
         });
         sampleLayer.on.calls.mostRecent().args[1](makeFakeEvent(sampleData));
