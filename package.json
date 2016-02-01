@@ -3,9 +3,7 @@
   "version": "0.4.0",
   "description": "",
   "main": "dist/geoapi.js",
-  "dependencies": {
-    "event-stream": "^3.3.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "babelify": "~6.3.0",
     "brfs": "~1.4.3",
