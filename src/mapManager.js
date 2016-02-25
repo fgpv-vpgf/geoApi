@@ -12,6 +12,7 @@ const basemap = require('./basemap.js');
   * - `OverviewMap` {type} of esri/dijit/OverviewMap
   * - `Scalebar` {type} of esri/dijit/Scalebar
   * - `getExtentFromSetting {function} create an ESRI Extent object from extent setting JSON object.
+  * - `getOverviewMap {function} create a new overview map control
   * - `setupMap` {function} interates over config settings and apply logic for any items present.
   * - `setProxy` {function} Set proxy service URL to avoid same origin issues
   */
@@ -27,6 +28,7 @@ module.exports = function (esriBundle) {
         OverviewMap: esriBundle.OverviewMap,
         Scalebar: esriBundle.Scalebar,
         getExtentFromJson,
+        getOverviewMap,
         setupMap,
         setProxy
     };
@@ -61,7 +63,7 @@ module.exports = function (esriBundle) {
         let overviewMapCtrl;
 
         // check to see if property exists in settings
-        if ('basemaps' in settings) {
+        if ('baseMaps' in settings) {
 
             // need to pass esriBundle to basemap module in order to use it
             // the alternative is to pass geoApi reference after creation, and then use the geoApi to
@@ -70,18 +72,23 @@ module.exports = function (esriBundle) {
             const lbasemap = basemap(esriBundle);
 
             // basemapCtrl is a basemap gallery object, should store this value for application use
-            basemapCtrl = lbasemap.makeBasemaps(settings.basemaps, map);
+            basemapCtrl = lbasemap.makeBasemaps(settings.baseMaps, map);
         } else {
-            console.warn('warning: basemaps setting does not exist');
+            console.warn('warning: baseMaps setting does not exist');
         }
 
         // TODO: add code to setup scalebar
-        if ('scalebar' in settings) {
+        if ('scaleBar' in settings.map.components) {
+
+            settings.map.components.scaleBar = {
+                attachTo: 'bottom-left',
+                scalebarUnit: 'dual'
+            };
 
             scalebarCtrl = new mapManager.Scalebar({
                 map: map,
-                attachTo: settings.scalebar.attachTo,
-                scalebarUnit: settings.scalebar.scalebarUnit
+                attachTo: settings.map.components.scaleBar.attachTo,
+                scalebarUnit: settings.map.components.scaleBar.scalebarUnit
             });
 
             scalebarCtrl.show();
@@ -93,19 +100,8 @@ module.exports = function (esriBundle) {
         // TODO: add code to setup north arrow
 
         // Setup overview map
-        if ('overviewMap' in settings && 'enabled' in settings.overviewMap &&
-            settings.overviewMap.enabled === true) {
-
-            overviewMapCtrl = mapManager.OverviewMap({
-                map: map,
-                visible: settings.overviewMap.enabled
-            });
-
-            overviewMapCtrl.startup();
-        } else {
-            console.warn('overviewMap setting does not exist, or it\'s visible' +
-                ' setting is set to false.');
-        }
+        overviewMapCtrl = getOverviewMap(map, settings);
+        overviewMapCtrl.startup();
 
         // TODO: add code to setup mouse co-ordinates
 
@@ -141,8 +137,39 @@ module.exports = function (esriBundle) {
      */
     function getExtentFromJson(extentJson) {
 
-        return esriBundle.Extent(extentJson.xmin, extentJson.ymin, extentJson.xmax,
-            extentJson.ymax, extentJson.spatialReference);
+        return esriBundle.Extent({ xmin: extentJson.xmin, ymin: extentJson.ymin,
+            xmax: extentJson.xmax, ymax: extentJson.ymax,
+            spatialReference: { wkid: extentJson.spatialReference.wkid }
+        });
+    }
+
+    /**
+    * @ngdoc method
+    * @name getOverviewMap
+    * @description Create an overview map control
+    * @param {object} map esri map control
+    * @param {object} settings in json format
+    * @return {object} overviewMap control
+    */
+    function getOverviewMap(map, settings) {
+        let overviewMapCtrl = null;
+
+        if ('overviewMap' in settings.map.components &&
+            'enabled' in settings.map.components.overviewMap &&
+            settings.map.components.overviewMap.enabled === true) {
+
+            overviewMapCtrl = mapManager.OverviewMap({
+                map: map,
+                visible: settings.map.components.overviewMap.enabled
+            });
+
+            // overviewMapCtrl.startup();
+        } else {
+            console.warn('overviewMap setting does not exist, or it\'s visible' +
+                ' setting is set to false.');
+        }
+
+        return overviewMapCtrl;
     }
 
     return mapManager;
