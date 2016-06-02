@@ -2,6 +2,7 @@
 const attribute = require('./attribute.js');
 const basemap = require('./basemap.js');
 const events = require('./events.js');
+const hilight = require('./hilight.js');
 const layer = require('./layer.js');
 const mapManager = require('./mapManager.js');
 const proj = require('./proj.js');
@@ -18,6 +19,7 @@ function initAll(esriBundle) {
     api.mapManager = mapManager(esriBundle);
     api.attribs = attribute(esriBundle);
     api.symbology = symbology();
+    api.hilight = hilight(esriBundle);
     api.events = events();
     api.shared = shared(esriBundle);
     api.debug = function () {
