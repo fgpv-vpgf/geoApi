@@ -46,6 +46,30 @@ function localProjectPoint(srcProj, destProj, point) {
 }
 
 /**
+ * Project a single point.
+ * @param {Object|Integer|String} destProj the spatial reference of the result (as ESRI SpatialReference, integer WKID or an EPSG string)
+ * @param {Object} geometry an object conforming to ESRI Geometry object standards containing the coordinates to Reproject
+ * @return {Object} an object conforming to ESRI Geomtery object standards containing the input geometry in the destination projection
+ */
+function localProjectGeometry(destProj, geometry) {
+    // TODO also accept raw esrijson geometery? see if we need that.
+
+    const grGeoJ = terraformer.ArcGIS.toGeoJSON(geometry, geometry.spatialReference);
+    console.log('PROJECTERTRON - geometry to geoJSON ', grGeoJ);
+    projectGeojson(grGeoJ, makeEpsgString(destProj), makeEpsgString(geometry.spatialReference));
+    console.log('PROJECTERTRON - geoJSON projected', grGeoJ);
+    const grEsri = terraformer.ArcGIS.fromGeoJSON(grGeoJ, destProj);
+
+    // FIXME this only works if destProj is ESRI SR object. dies if other params.
+    // doing this because .fromGeoJSON is not applying a spatial reference, thus grEsri is given lat/long SR.
+    // might need a function that does EpsgToEsriSpatialReference :'(
+    grEsri.spatialReference = destProj;
+    console.log('PROJECTERTRON - geoJSON to geometry ', grEsri);
+
+    return grEsri;
+}
+
+/**
  * Reproject an EsriExtent object on the client.  Does not require network
  * traffic, but may not handle conversion between projection types as well.
  * Internally it tests 8 points along each edge and takes the max extent
@@ -198,6 +222,7 @@ module.exports = function (esriBundle) {
         isSpatialRefEqual,
         localProjectExtent,
         localProjectPoint,
+        localProjectGeometry,
         projectGeojson,
         Point: esriBundle.Point,
         projectEsriExtent: projectEsriExtentBuilder(esriBundle),
