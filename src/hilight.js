@@ -5,6 +5,39 @@
 // TODO: this module is currently split from layer.js because layer.js is already huge and doesn't need
 // more functions we can't find.  When (if ever) we refactor this can probably merge with some other code.
 
+function cloneBuilder(esriBundle) {
+    /**
+    * Clone a graphic from a map-bound layer.
+    * @method cloneLayerGraphic
+    * @param {Graphic} graphic an ESRI graphic that resides in a map layer.
+    * @return {Object} an unbound copy of the graphic
+    */
+    return graphic => {
+        const clone = new esriBundle.Graphic({
+                geometry: graphic.geometry
+            });
+        clone.symbol = graphic.getLayer().renderer.getSymbol(graphic);
+        return clone;
+    };
+}
+
+function graphicBuilder(esriBundle) {
+    /**
+    * Generating a hilight graphic layer.
+    * @method geomToGraphic
+    * @param {Object} geometry feature geometry conforming to ESRI Geometry standard
+    * @param {Object} symbol arrrrrrrr  might need to enhance something that calculates svg set to also pull the symbol object
+    * @return {Object} an ESRI GraphicsLayer
+    */
+    return (geometry, symbol) => {
+        const graphic = new esriBundle.Graphic({
+                geometry
+            });
+        graphic.symbol = symbol;
+        return graphic;
+    };
+}
+
 function hilightBuilder(esriBundle) {
     /**
     * Generating a hilight graphic layer.
@@ -86,6 +119,9 @@ function hilightBuilder(esriBundle) {
 
             // add new hilight graphic
             // TODO possibly boost clone.symbol.color.a to max opacity?
+            // FIXME make clone graphic a separate thing. will need to be called prior to this function
+            //       in particular, our graphic may not have .getLayer(), as it was grabbed raw from the server.
+            //       in that case, we need to get renderer from source.
             const clone = new esriBundle.Graphic({
                 geometry: graphic.geometry,
                 attributes: {} // if we want tooltips, will need to copy these from source graphic
