@@ -17,7 +17,7 @@ function initAll(esriBundle) {
     api.proj = proj(esriBundle);
     api.basemap = basemap(esriBundle);
     api.mapManager = mapManager(esriBundle);
-    api.attribs = attribute(esriBundle);
+    api.attribs = attribute(esriBundle, api);
     api.symbology = symbology();
     api.hilight = hilight(esriBundle);
     api.events = events();
