@@ -26,14 +26,14 @@ function graphicBuilder(esriBundle) {
     * Generating a hilight graphic layer.
     * @method geomToGraphic
     * @param {Object} geometry feature geometry conforming to ESRI Geometry standard
-    * @param {Object} symbol arrrrrrrr  might need to enhance something that calculates svg set to also pull the symbol object
+    * @param {Object} symbol json symbol definition
     * @return {Object} an ESRI GraphicsLayer
     */
     return (geometry, symbol) => {
         const graphic = new esriBundle.Graphic({
                 geometry
             });
-        graphic.symbol = symbol;
+        graphic.symbol = esriBundle.symbolJsonUtils.fromJson(symbol);
         return graphic;
     };
 }
@@ -148,5 +148,7 @@ function hilightBuilder(esriBundle) {
 }
 
 module.exports = (esriBundle) => ({
-    makeHilightLayer: hilightBuilder(esriBundle)
+    makeHilightLayer: hilightBuilder(esriBundle),
+    geomToGraphic: graphicBuilder(esriBundle),
+    cloneLayerGraphic: cloneBuilder(esriBundle)
 });

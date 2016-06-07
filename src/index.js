@@ -65,6 +65,7 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/map', 'Map'],
         ['esri/request', 'esriRequest'],
         ['esri/SpatialReference', 'SpatialReference'],
+        ['esri/symbols/jsonUtils', 'symbolJsonUtils'],
         ['esri/tasks/GeometryService', 'GeometryService'],
         ['esri/tasks/IdentifyParameters', 'IdentifyParameters'],
         ['esri/tasks/IdentifyTask', 'IdentifyTask'],
