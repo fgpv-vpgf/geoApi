@@ -26,7 +26,7 @@ function graphicBuilder(esriBundle) {
     * Generating a hilight graphic layer.
     * @method geomToGraphic
     * @param {Object} geometry feature geometry conforming to ESRI Geometry standard
-    * @param {Object} symbol json symbol definition
+    * @param {Object} symbol esri symbol in server format
     * @return {Object} an ESRI GraphicsLayer
     */
     return (geometry, symbol) => {
@@ -89,11 +89,9 @@ function hilightBuilder(esriBundle) {
         /**
         * Add a graphic to the highlight layer. Remove any previous graphic.
         * @method addHilight
-        * @param {Graphic} graphic an ESRI graphic
+        * @param {Graphic} graphic an ESRI graphic. Should be in map spatialReference, and not bound to a layer
         */
         hgl.addHilight = graphic => {
-
-            // TODO test if graphic reprojection is required? or force caller to reproject?
 
             if (hgl._hilightGraphic) {
                 // if active hilight graphic, remove it
@@ -118,18 +116,10 @@ function hilightBuilder(esriBundle) {
             }
 
             // add new hilight graphic
-            // TODO possibly boost clone.symbol.color.a to max opacity?
-            // FIXME make clone graphic a separate thing. will need to be called prior to this function
-            //       in particular, our graphic may not have .getLayer(), as it was grabbed raw from the server.
-            //       in that case, we need to get renderer from source.
-            const clone = new esriBundle.Graphic({
-                geometry: graphic.geometry,
-                attributes: {} // if we want tooltips, will need to copy these from source graphic
-            });
-            clone.symbol = graphic.getLayer().renderer.getSymbol(graphic);
-            hgl._hilightGraphic = clone;
-            hgl.add(clone);
-            clone.getShape().moveToFront();
+            // TODO possibly boost graphic.symbol.color.a to max opacity?
+            hgl._hilightGraphic = graphic;
+            hgl.add(graphic);
+            graphic.getShape().moveToFront();
             moveHilightToTop();
         };
 
