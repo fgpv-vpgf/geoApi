@@ -18,7 +18,7 @@
     </style>
 </head>
 <body>
-    <script src="dist/geoapi.min.js"></script>
+    <script src="../dist/geoapi.min.js"></script>
     <script>
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             
@@ -35,7 +35,7 @@
             
                 // var mahLayer = new api.layer.FeatureLayer('http://section917.cloudapp.net/arcgis/rest/services/TestData/ClassBreaks/MapServer/0/');
                 // map.addLayer(mahLayer);
-                // console.log('TEMP seaparks', mahLayer);
+                console.log('mah layer', mahLayer);
 
                 mahLayer.on('load', function () {
                     var lambertPolyGeom = {
@@ -63,15 +63,13 @@
                             "latestWkid": 3978
                         }
                     };
-                                
+
+                    console.log('loads done ');
                     var projGeometry = api.proj.localProjectGeometry(map.spatialReference, lambertPolyGeom);
-                    
+                     console.log('mah proj geom ', projGeometry);
                     // projGeometry.type = "polygon";
                     
-                    var projGraphic = new api.proj.Graphic({
-                        geometry: projGeometry
-                    });
-                    projGraphic.symbol = mahLayer.renderer.symbol;
+                    var projGraphic = api.hilight.geomToGraphic(projGeometry, mahLayer.renderer.symbol.toJson());
                     
                     console.log('mah new graphic ', projGraphic);
                     mahGrafix.addHilight(projGraphic);

@@ -55,16 +55,13 @@ function localProjectGeometry(destProj, geometry) {
     // TODO also accept raw esrijson geometery? see if we need that.
 
     const grGeoJ = terraformer.ArcGIS.toGeoJSON(geometry, geometry.spatialReference);
-    console.log('PROJECTERTRON - geometry to geoJSON ', grGeoJ);
     projectGeojson(grGeoJ, makeEpsgString(destProj), makeEpsgString(geometry.spatialReference));
-    console.log('PROJECTERTRON - geoJSON projected', grGeoJ);
     const grEsri = terraformer.ArcGIS.fromGeoJSON(grGeoJ, destProj);
 
     // FIXME this only works if destProj is ESRI SR object. dies if other params.
     // doing this because .fromGeoJSON is not applying a spatial reference, thus grEsri is given lat/long SR.
     // might need a function that does EpsgToEsriSpatialReference :'(
     grEsri.spatialReference = destProj;
-    console.log('PROJECTERTRON - geoJSON to geometry ', grEsri);
 
     return grEsri;
 }
