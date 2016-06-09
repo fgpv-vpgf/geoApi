@@ -52,15 +52,24 @@ function localProjectPoint(srcProj, destProj, point) {
  * @return {Object} an object conforming to ESRI Geomtery object standards containing the input geometry in the destination projection
  */
 function localProjectGeometry(destProj, geometry) {
-    // TODO also accept raw esrijson geometery? see if we need that.
+    // FIXME we seem to be really dependant on wkid. ideally enhance to handle all SR types
 
-    const grGeoJ = terraformer.ArcGIS.toGeoJSON(geometry, geometry.spatialReference);
-    projectGeojson(grGeoJ, makeEpsgString(destProj), makeEpsgString(geometry.spatialReference));
-    const grEsri = terraformer.ArcGIS.fromGeoJSON(grGeoJ, destProj);
+    // HACK >:'(
+    // terraformer has this undesired behavior where, if your input geometry is in WKID 102100, it will magically
+    // project all your co-ordinates to lat/long when converting between ESRI and GeoJSON formats.
+    // to stop it from ruining us, we temporarily set the spatial reference to nonsense so it will leave it alone
+    const realWKID = geometry.spatialReference.wkid;
+    geometry.spatialReference.wkid = 8888; // nonsense!
+    const grGeoJ = terraformer.ArcGIS.parse(geometry, { sr: 8888 });
+    geometry.spatialReference.wkid = realWKID;
 
-    // FIXME this only works if destProj is ESRI SR object. dies if other params.
+    // project json
+    projectGeojson(grGeoJ, makeEpsgString(destProj), makeEpsgString(realWKID));
+
+    // back to esri format
+    const grEsri = terraformer.ArcGIS.convert(grGeoJ);
+
     // doing this because .fromGeoJSON is not applying a spatial reference, thus grEsri is given lat/long SR.
-    // might need a function that does EpsgToEsriSpatialReference :'(
     grEsri.spatialReference = destProj;
 
     return grEsri;
