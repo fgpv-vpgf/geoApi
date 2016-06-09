@@ -42,10 +42,46 @@ function hilightBuilder(esriBundle) {
     /**
     * Generating a hilight graphic layer.
     * @method makeHilightLayer
+    * @param {Object} options optional settings for the hilight layer
+    *                         layerId - id to use for the hilight layer. defaults to rv_hilight
+    *                         pinSymbol - esri symbol in server json format to symbolize the click marker. defaults to a red pin
+    *                         hazeOpacity -  how opaque the haze sheet behind the hilight is. 0 to 255, 0 being transparent. defaults to 110
     * @return {Object} an ESRI GraphicsLayer
     */
-    return () => {
-        const hgl = new esriBundle.GraphicsLayer({ id: 'r2_hilight', visible: true });
+    return options => {
+        // set options
+        let id = 'rv_hilight';
+        let hazeOpac = 110;
+        let pinSymbol = {
+            color: [230, 0, 0, 153],
+            size: 12,
+            yoffset: 6,
+            type: 'esriSMS',
+            style: 'esriSMSPath',
+            outline: {
+                color: [0, 0, 0, 255],
+                width: 1,
+                type: 'esriSLS',
+                style: 'esriSLSSolid'
+            },
+            /* jscs:disable maximumLineLength */
+            path: 'M16,3.5c-4.142,0-7.5,3.358-7.5,7.5c0,4.143,7.5,18.121,7.5,18.121S23.5,15.143,23.5,11C23.5,6.858,20.143,3.5,16,3.5z M16,14.584c-1.979,0-3.584-1.604-3.584-3.584S14.021,7.416,16,7.416S19.584,9.021,19.584,11S17.979,14.584,16,14.584z'
+            /* jscs:enable maximumLineLength */
+        };
+
+        if (options) {
+            if (options.layerId) {
+                id = options.layerId;
+            }
+            if (options.pinSymbol) {
+                pinSymbol = options.pinSymbol;
+            }
+            if (options.hazeOpacity) {
+                hazeOpac = options.hazeOpacity;
+            }
+        }
+
+        const hgl = new esriBundle.GraphicsLayer({ id, visible: true });
 
         // ensure highlight is top-most graphic layer
         function moveHilightToTop() {
@@ -58,28 +94,9 @@ function hilightBuilder(esriBundle) {
         * @param {Point} point an ESRI point object to use as the graphic location
         */
         hgl.addPin = point => {
-            const pinJson = {
-                symbol: {
-                    color: [230, 0, 0, 153],
-                    size: 12,
-                    yoffset: 6,
-                    type: 'esriSMS',
-                    style: 'esriSMSPath',
-                    outline: {
-                        color: [0, 0, 0, 255],
-                        width: 1,
-                        type: 'esriSLS',
-                        style: 'esriSLSSolid'
-                    }
-                }
-            };
 
-            const pin = new esriBundle.Graphic(pinJson);
+            const pin = new esriBundle.Graphic({ symbol: pinSymbol });
             pin.setGeometry(point);
-
-            /* jscs:disable maximumLineLength */
-            pin.symbol.setPath('M16,3.5c-4.142,0-7.5,3.358-7.5,7.5c0,4.143,7.5,18.121,7.5,18.121S23.5,15.143,23.5,11C23.5,6.858,20.143,3.5,16,3.5z M16,14.584c-1.979,0-3.584-1.604-3.584-3.584S14.021,7.416,16,7.416S19.584,9.021,19.584,11S17.979,14.584,16,14.584z');
-            /* jscs:enable maximumLineLength */
 
             hgl.add(pin);
             moveHilightToTop();
@@ -99,7 +116,7 @@ function hilightBuilder(esriBundle) {
                 // first application of hilight. add haze background
                 const hazeJson = {
                     symbol: {
-                        color: [255, 255, 255, 107],
+                        color: [255, 255, 255, hazeOpac],
                         type: 'esriSFS',
                         style: 'esriSFSSolid',
                         outline: {

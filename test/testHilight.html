@@ -29,7 +29,23 @@
             var mahLayer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0', {mode: api.layer.FeatureLayer.MODE_SNAPSHOT});
            
             // add highlight layer
-            var mahGrafix = api.hilight.makeHilightLayer();
+            var mahGrafix = api.hilight.makeHilightLayer({
+                hazeOpacity: 200,
+                pinSymbol: {
+                    "type": "esriSMS",
+                    "style": "esriSMSSquare",
+                    "color": [76,115,0,255],
+                    "size": 8,
+                    "angle": 0,
+                    "xoffset": 0,
+                    "yoffset": 0,
+                    "outline": 
+                    {
+                    "color": [152,230,0,255],
+                    "width": 1
+                    }
+                    }
+            });
             map.addLayer(mahGrafix);
 
             console.log("glayer", mahGrafix);            
