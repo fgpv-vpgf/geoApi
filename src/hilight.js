@@ -82,7 +82,6 @@ function hilightBuilder(esriBundle) {
             /* jscs:enable maximumLineLength */
 
             hgl.add(pin);
-            pin.getShape().moveToFront();
             moveHilightToTop();
         };
 
@@ -111,15 +110,14 @@ function hilightBuilder(esriBundle) {
                 };
                 const haze = new esriBundle.Graphic(hazeJson);
                 haze.setGeometry(hgl._map.extent.expand(1.5)); // expand to avoid edges on quick pan
+                haze.haze = true;  // notifies layer to put this in the background
                 hgl.add(haze);
-                haze.getShape().moveToBack();
             }
 
             // add new hilight graphic
             // TODO possibly boost graphic.symbol.color.a to max opacity?
             hgl._hilightGraphic = graphic;
             hgl.add(graphic);
-            graphic.getShape().moveToFront();
             moveHilightToTop();
         };
 
@@ -132,6 +130,19 @@ function hilightBuilder(esriBundle) {
             hgl._hilightGraphic = null;
             hgl.clear();
         };
+
+        hgl.on('graphic-node-add', e => {
+            // figure out if graphic needs to be at top or bottom of hilight layer
+            const g = e.graphic;
+            const dojoShape = g.getShape();
+            if (dojoShape) {
+                if (g.haze) {
+                    dojoShape.moveToBack();
+                } else {
+                    dojoShape.moveToFront();
+                }
+            }
+        });
 
         return hgl;
     };
