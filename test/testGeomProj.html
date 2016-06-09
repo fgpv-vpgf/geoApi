@@ -86,7 +86,25 @@
                             
             });
             
-           
+            // point fun
+            var mercatorPointGeom = {
+                "x": -12900439.4801,
+                "y": 7736534.5242,
+                "spatialReference": {
+                    "wkid": 3978
+                }
+            };
+
+            var lambSR = new api.proj.SpatialReference(3978);
+
+            var lambertPoint = api.proj.localProjectGeometry(lambSR, mercatorPointGeom);
+
+            console.log('MY LAMBERT POINT', lambertPoint);
+
+            var lambertPoint2 = api.proj.localProjectPoint(mercatorPointGeom.spatialReference, lambSR, [-12900439.4801, 7736534.5242]);
+
+            console.log('MY OTHER LAMBERT POINT', lambertPoint2);
+
         });
 </script>
 <div>
