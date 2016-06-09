@@ -18,7 +18,7 @@
     </style>
 </head>
 <body>
-    <script src="dist/geoapi.min.js"></script>
+    <script src="../dist/geoapi.min.js"></script>
     <script>
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             
@@ -49,7 +49,7 @@
                          dumb = g;
                     }
                 });
-                return api.hilight.cloneGraphic(dumb);
+                return api.hilight.cloneLayerGraphic(dumb);
             }
             
             mahLayer.on('update-end', function(evt) {           
