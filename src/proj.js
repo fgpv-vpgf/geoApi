@@ -128,13 +128,10 @@ function checkProj(spatialReference) {
             throw new Error('No WKT or WKID specified on extent.spatialReference');
         }
 
-        // find the destination extent
-        let destProj = makeEpsgString(sr);
-
         if (!proj4.defs(srcProj)) {
             throw new Error('Source projection not recognized by proj4 library');
         }
-    } catch {
+    } catch (err) {
         return false;
     }
 
