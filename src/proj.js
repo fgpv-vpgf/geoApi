@@ -143,6 +143,9 @@ function checkProj(spatialReference, epsgLookup) {
         };
     }
 
+    console.log(spatialReference);
+    console.log(proj4.defs(srcProj));
+
     if (spatialReference.wkid && !proj4.defs(srcProj)) {
         if (epsgLookup) {
             return {
