@@ -109,9 +109,11 @@ function newLayerBundle(layerId) {
 function newLayerPackage(featureIdx, esriBundle) {
     // only reason this is in a function is to tack on the lazy-load
     // attribute function. all object properties are added elsewhere
+    // promiseStatus is true when promise is successful, false when rejected.
     const layerPackage = {
         featureIdx,
-        getAttribs
+        getAttribs,
+        promiseStatus: true
     };
 
     /**
@@ -120,8 +122,8 @@ function newLayerPackage(featureIdx, esriBundle) {
     * @return {Promise} promise of attribute data object
     */
     function getAttribs() {
-        let rejectp = false;
-        if (layerPackage._attribData && rejectp === false) {
+        console.log('9999999999999999999999', layerPackage.promiseStatus);
+        if (layerPackage._attribData && layerPackage.promiseStatus) {
 
             // attributes have already been downloaded.
             return layerPackage._attribData;
@@ -144,14 +146,15 @@ function newLayerPackage(featureIdx, esriBundle) {
 
                 // after all data has been loaded
                 defFinished.promise.then(features => {
-                    rejectp = false;
+                    layerPackage.promiseStatus = true;
                     delete layerData.load; // no longer need this info
 
                     // resolve the promise with the attribute set
                     resolve(createAttribSet(layerData.oidField, features));
                 }, error => {
+                    layerPackage.promiseStatus = false;
+
                     console.warn('error getting attribute data for ' + layerData.load.layerUrl);
-                    rejectp = true;
 
                     // return the error as part of the promise
                     reject(error);
