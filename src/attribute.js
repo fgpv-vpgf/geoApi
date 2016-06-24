@@ -113,7 +113,6 @@ function newLayerPackage(featureIdx, esriBundle) {
     const layerPackage = {
         featureIdx,
         getAttribs,
-        promiseStatus: true
     };
 
     /**
@@ -144,17 +143,13 @@ function newLayerPackage(featureIdx, esriBundle) {
 
                 // after all data has been loaded
                 defFinished.promise.then(features => {
-                    layerPackage.promiseStatus = true;
                     delete layerData.load; // no longer need this info
 
                     // resolve the promise with the attribute set
                     resolve(createAttribSet(layerData.oidField, features));
                 }, error => {
-                    layerPackage.promiseStatus = false;
-
                     console.warn('error getting attribute data for ' + layerData.load.layerUrl);
-
-                    // return the error as part of the promise
+                    delete layerPackage._attribData;
                     reject(error);
                 });
             });
