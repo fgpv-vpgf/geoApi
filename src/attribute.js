@@ -301,9 +301,10 @@ function loadFeatureAttribs(layerUrl, featureIdx, attribs, esriBundle, geoApi) {
                 layerData.geometryType = serviceResult.geometryType;
                 layerData.minScale = serviceResult.minScale;
                 layerData.maxScale = serviceResult.maxScale;
+                layerData.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
 
                 if (serviceResult.type === 'Feature Layer') {
-
+                    layerData.supportsFeatures = true;
                     layerData.fields = serviceResult.fields;
 
                     // find object id field
