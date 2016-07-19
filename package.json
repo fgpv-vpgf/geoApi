@@ -1,6 +1,6 @@
 {
   "name": "geoApi",
-  "version": "JAMES_TEMP1",
+  "version": "0.0.0-JAMESTEMP1",
   "description": "",
   "main": "dist/geoapi.js",
   "dependencies": {},
