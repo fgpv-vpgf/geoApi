@@ -421,7 +421,17 @@ function predictLayerUrlBuilder(esriBundle) {
                                 resolve(infoEsri);
                             } else {
                                 // it was a esri service. rejoice.
-                                resolve(infoEsri);
+
+                                // shortlived rejoice because grouped layers lul
+                                if (infoEsri.serviceType === serviceType.GroupLayer) {
+                                    const lastSlash = url.lastIndexOf('/');
+                                    url = url.substring(0, lastSlash);
+                                    pokeEsriService(url, esriBundle).then(infoDynamic => {
+                                        resolve(infoDynamic);
+                                    });
+                                } else {
+                                    resolve(infoEsri);
+                                }
                             }
                         });
                     } else {
