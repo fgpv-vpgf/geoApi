@@ -297,6 +297,7 @@ function loadDataBatch(opts, callerDef) {
 function loadFeatureAttribs(layerUrl, featureIdx, attribs, esriBundle, geoApi) {
 
     const layerPackage = newLayerPackage(getLayerIndex(layerUrl), esriBundle);
+    console.log('BEGINNING SERVICE INSPECTION', layerUrl, featureIdx);
 
     // get information about this layer, asynch
     layerPackage.layerData = new Promise((resolve, reject) => {
@@ -309,8 +310,10 @@ function loadFeatureAttribs(layerUrl, featureIdx, attribs, esriBundle, geoApi) {
             callbackParamName: 'callback',
             handleAs: 'json',
         });
+        console.log('THIS IS WHAT IS REQUESTING THE DATA', defService);
 
         defService.then(serviceResult => {
+            console.log('SOMETHING ACTUALLY RETURNED', serviceResult);
             if (serviceResult && (typeof serviceResult.error === 'undefined')) {
 
                 // properties for all endpoints
