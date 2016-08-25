@@ -868,7 +868,7 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
                     id: layerId
                 });
 
-            // ＼(｀O´)／ manually setting SR because it will come out as 4326
+            // manually setting SR because it will come out as 4326
             layer.spatialReference = new esriBundle.SpatialReference({ wkid: targetWkid });
 
             if (opts.colour) {
