@@ -855,7 +855,11 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
             console.log('ISSUES - verifying id of geoJson first item',
                 geoJson.features[0].id, geoJson.features[0].properties);
             geoApi.proj.projectGeojson(geoJson, destProj, srcProj);
+            console.log('ISSUES - verifying id of geoJson first item after projection',
+                geoJson.features[0].id, geoJson.features[0].properties);
             const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
+            console.log('ISSUES - verifying id of esriJson first item',
+                esriJson[0].attributes.OBJECTID, esriJson[0]);
 
             const fs = {
                 features: esriJson,
