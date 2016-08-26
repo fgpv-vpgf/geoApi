@@ -852,6 +852,8 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
 
             // project data and convert to esri json format
             // console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
+            console.log('ISSUES - verifying id of geoJson first item',
+                geoJson.features[0].id, geoJson.features[0].properties);
             geoApi.proj.projectGeojson(geoJson, destProj, srcProj);
             const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
 
@@ -867,6 +869,8 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
                     mode: esriBundle.FeatureLayer.MODE_SNAPSHOT,
                     id: layerId
                 });
+            console.log('ISSUES - verifying oid of layer first item',
+                layer.graphics[0].attributes.OBJECTID, layer.graphics[0].attributes);
 
             // manually setting SR because it will come out as 4326
             layer.spatialReference = new esriBundle.SpatialReference({ wkid: targetWkid });
