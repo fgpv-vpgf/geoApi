@@ -309,6 +309,7 @@ function loadFeatureAttribs(layerUrl, featureIdx, attribs, esriBundle, geoApi) {
             callbackParamName: 'callback',
             handleAs: 'json',
         });
+        console.log('MAH REQUEST', defService);
 
         defService.then(serviceResult => {
             if (serviceResult && (typeof serviceResult.error === 'undefined')) {
