@@ -44,7 +44,75 @@ function generateUUID() {
     });
 }
 
+/**
+* Convert an image to a canvas element
+*
+* @param {String} url image url to convert (result from the esri print task)
+* @param {Object} canvas [optional = null] canvas to draw the image upon; if not supplied, a new canvas will be made
+* @param {Boolean} crossOrigin [optional = true] when set, tries to fetch an image with crossOrigin = anonymous
+* @return {Promise} conversion promise resolving into a canvas of the image
+*/
+function convertImageToCanvas(url, canvas = null, crossOrigin = true) {
+    canvas = canvas || document.createElement('canvas');
+
+    const image = document.createElement('img'); // create image node
+
+    if (crossOrigin) {
+        image.crossOrigin = 'Anonymous'; // configure the CORS request
+    }
+
+    const conversionPromise = new Promise((resolve, reject) => {
+        image.addEventListener('load', () => {
+
+            canvas.width = image.width; // changing canvas size will clear all previous content
+            canvas.height = image.height;
+            canvas.getContext('2d').drawImage(image, 0, 0); // draw image onto a canvas
+
+            // return canvas
+            resolve(canvas);
+        });
+        image.addEventListener('error', error =>
+            reject(error));
+    });
+
+    // set image source to the one generated from the print task
+    image.src = url;
+
+    return conversionPromise;
+}
+
+/**
+ * Loads an image (as crossing) and converts it to dataURL. If a supplied imageUri is already a dataURL, just return it.
+ * If an image fails to load with the crossing attribute, return the original imageUri
+ *
+ * @function convertImagetoDataURL
+ * @param {String} imageUri url of the image to load and convert
+ * @param {String} imageType [optional = 'image/png'] format of the image representation
+ * @return {Promise} promise resolving with the dataURL of the image
+ */
+function convertImagetoDataURL(imageUri, imageType = 'image/png') {
+    // this is already a dataUrl, just return
+    if (imageUri.startsWith('data')) {
+        console.log('ImageUri is already a data url');
+        return Promise.resolve(imageUri);
+    }
+
+    const loadingPromise = convertImageToCanvas(imageUri)
+        .then(canvas => {
+            console.log('Converting image to dataURL');
+            return canvas.toDataURL(imageType);
+        })
+        .catch(error => {
+            console.error('Failed to load crossorigin image', imageUri, error);
+            return imageUri;
+        });
+
+    return loadingPromise;
+}
+
 module.exports = esriBundle => ({
     getLayerType: getLayerTypeBuilder(esriBundle),
-    generateUUID
+    generateUUID,
+    convertImageToCanvas,
+    convertImagetoDataURL
 });
