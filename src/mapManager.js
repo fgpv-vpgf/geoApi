@@ -2,18 +2,14 @@
 const basemap = require('./basemap.js');
 
 /**
-  * @ngdoc module
-  * @name mapManager
-  * @description
-  *
   * The `MapManager` module exports an object with the following properties:
-  * - `Extent` {type} of esri/geometry
-  * - `Map` {type} of esri/map
-  * - `OverviewMap` {type} of esri/dijit/OverviewMap
-  * - `Scalebar` {type} of esri/dijit/Scalebar
-  * - `getExtentFromSetting {function} create an ESRI Extent object from extent setting JSON object.
-  * - `setupMap` {function} interates over config settings and apply logic for any items present.
-  * - `setProxy` {function} Set proxy service URL to avoid same origin issues
+  * - `Extent` esri/geometry type
+  * - `Map` esri/map type
+  * - `OverviewMap` esri/dijit/OverviewMap type
+  * - `Scalebar` sri/dijit/Scalebar type
+  * - `getExtentFromSetting function to create an ESRI Extent object from extent setting JSON object.
+  * - `setupMap` function that interates over config settings and apply logic for any items present.
+  * - `setProxy` function to set proxy service URL to avoid same origin issues
   */
 
 // mapManager module, provides function to setup a map
@@ -32,7 +28,9 @@ module.exports = function (esriBundle, geoApi) {
         mapDefault,
         findClosestLOD,
         getNorthArrowAngle,
-        getScaleRatio
+        getScaleRatio,
+        enforceBoundary,
+        clipExtentCoords // only exposed so unit tests can access it
     };
 
     let basemapCtrl;
@@ -40,21 +38,11 @@ module.exports = function (esriBundle, geoApi) {
     let overviewMapCtrl;
 
     /**
-     * @ngdoc method
-     * @name setupMap
-     * @memberof mapManager
-     * @description
-     * Setup map features with info provided by configuration
-     * <div>
-     * -- Demo: The follwoing is from description section of ngDoc --
+     * Setup map features with info provided by configuration.
      *
-     * <h4>TODO</h4>
-     * <p>Rename BasemapControl and ScalebarControl</p>
-     * -- End of description section --
-     * </div>
-     *
-     * @param {esriMap} map ESRI map object
-     * @param {Object} settings JSON object of map configurations
+     * @function setupMap
+     * @param {esriMap} map      ESRI map object
+     * @param {Object} settings  JSON object of map configurations
      * @return {Object} with following properties:
      * <ul>
      *    <li>BasemapControl - an object with setBasemap function and a BasemapGallery object</li>
@@ -139,12 +127,9 @@ module.exports = function (esriBundle, geoApi) {
     }
 
     /**
-     * @ngdoc method
-     * @name setProxy
-     * @memberof mapManager
-     * @description
-     * Set proxy service URL to avoid same origin issues
+     * Set proxy service URL to avoid same origin issues.
      *
+     * @function setProxy
      * @param {string} proxyUrl should point to a proxy with an interface compatible with ESRI's resource proxy
      */
     function setProxy(proxyUrl) {
@@ -152,14 +137,11 @@ module.exports = function (esriBundle, geoApi) {
     }
 
     /**
-     * @ngdoc method
-     * @name mapDefault
-     * @memberof mapManager
-     * @description
      * Sets or gets map default config values.
      *
-     * @param {String} key name of the default property
-     * @param {Any} value value to set for the specified default property
+     * @function mapDefault
+     * @param {String} key  name of the default property
+     * @param {Any} value   value to set for the specified default property
      */
     function mapDefault(key, value) {
         if (typeof value === 'undefined') {
@@ -170,13 +152,11 @@ module.exports = function (esriBundle, geoApi) {
     }
 
     /**
-     * @ngdoc method
-     * @name getExtentFromJson
-     * @memberof mapManager
-     * @description
-     * create an ESRI Extent object from extent setting JSON object.
+     * Create an ESRI Extent object from extent setting JSON object.
      *
-     * @param {object} extentJson that follows config spec
+     * @function getExtentFromJson
+     * @param {Object} extentJson that follows config spec
+     * @return {Object} an ESRI Extent object
      */
     function getExtentFromJson(extentJson) {
 
@@ -186,14 +166,12 @@ module.exports = function (esriBundle, geoApi) {
     }
 
     /**
-     * @ngdoc method
-     * @name findClosestLOD
-     * @memberof mapManager
      * Finds the level of detail closest to the provided scale.
      *
+     * @function findClosestLOD
      * @param  {Array} lods     list of levels of detail objects
      * @param  {Number} scale   scale value to search for in the levels of detail
-     * @return {Object} the level of detail object closest to the scale
+     * @return {Object}         the level of detail object closest to the scale
      */
     function findClosestLOD(lods, scale) {
         const diffs = lods.map(lod => Math.abs(lod.scale - scale));
@@ -272,6 +250,64 @@ module.exports = function (esriBundle, geoApi) {
         const ratio = distance / width;
 
         return { distance, ratio, units };
+    }
+
+    /**
+     * Compares to sets of co-ordinates for extents (valid for both x and y). If center of input co-ordinates falls outside
+     * map co-ordiantes, function will adjust them so the center is inside the map co-ordinates.
+     *
+     * @function clipExtentCoords
+     * @private
+     * @param {Numeric} mid      middle of the the range to test
+     * @param {Numeric} max      maximum value of the range to test
+     * @param {Numeric} min      minimum value of the range to test
+     * @param {Numeric} mapMax   maximum value of the map range
+     * @param {Numeric} mapMin   minimum value of the map range
+     * @param {Numeric} len      length of the adjusted range, if adjusted
+     * @return {Array}           two element array of Numeric, containing result max and min values
+     */
+    function clipExtentCoords(mid, max, min, mapMax, mapMin, len) {
+
+        if (mid > mapMax) {
+            [max, min] = [mapMax, mapMax - len];
+        } else if (mid < mapMin) {
+            [max, min] = [mapMin + len, mapMin];
+        }
+        return [max, min];
+    }
+
+    /**
+     * Checks if the center of the given extent is outside of the maximum extent. If it is,
+     * will determine an adjusted extent with a center inside the maximum extent.  Returns both
+     * an indicator flag if an adjustment happened, and the adjusted extent.
+     *
+     * @function enforceBoundary
+     * @param {Object} extent      an ESRI extent to test
+     * @param {Object} maxExtent   an ESRI extent indicating the boundary of the map
+     * @return {Object}            an object with two properties. adjusted - boolean, true if extent was adjusted. newExtent - object, adjusted ESRI extent
+     */
+    function enforceBoundary(extent, maxExtent) {
+        // clone extent
+        const newExtent = esriBundle.Extent(extent.toJson());
+
+        // determine dimensions of adjusted extent.
+        // same as input, unless input is so large it consumes max.
+        // in that case, we shrink to the max. This avoids the "washing machine"
+        // bug where we over-correct past the valid range,
+        // and achieve infinite oscillating pans
+        const height = Math.min(extent.getHeight(), maxExtent.getHeight());
+        const width = Math.min(extent.getWidth(), maxExtent.getWidth());
+        const center = extent.getCenter();
+
+        [newExtent.xmax, newExtent.xmin] =
+            clipExtentCoords(center.x, newExtent.xmax, newExtent.xmin, maxExtent.xmax, maxExtent.xmin, width);
+        [newExtent.ymax, newExtent.ymin] =
+            clipExtentCoords(center.y, newExtent.ymax, newExtent.ymin, maxExtent.ymax, maxExtent.ymin, height);
+
+        return {
+            newExtent,
+            adjusted: !extent.contains(newExtent) // true if we adjusted the extent
+        };
     }
 
     return mapManager;
