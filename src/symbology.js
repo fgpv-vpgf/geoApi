@@ -147,7 +147,11 @@ function searchRenderer(attributes, renderer) {
             // attempt to find the range our gVal belongs in
             const cbi = renderer.classBreakInfos.find((cbi, index) => gVal > minSplits[index] &&
                 gVal <= cbi.classMaxValue);
-            if (!cbi) { break; } // outside of range on the high end
+
+            // outside of range on the high end
+            if (!cbi) {
+                break;
+            }
             svgcode = cbi.svgcode;
             symbol = cbi.symbol;
 
@@ -158,6 +162,13 @@ function searchRenderer(attributes, renderer) {
             // TODO set svgcode to blank image?
             console.warn(`Unknown renderer type encountered - ${renderer.type}`);
 
+    }
+
+    if (typeof svgcode === 'undefined') {
+        // need to set empty svg to avoid undefined inside the filters
+        // jscs:disable maximumLineLength, requirePaddingNewLinesBeforeLineComments
+        svgcode = '<svg id="SvgjsSvg1041" width="32" height="32" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 32 32"></svg>';
+        // jscs:enable maximumLineLength, requirePaddingNewLinesBeforeLineComments
     }
 
     return { svgcode, symbol };
