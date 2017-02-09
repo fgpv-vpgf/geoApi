@@ -567,6 +567,7 @@ function loadLayerAttribsBuilder(esriBundle, geoApi) {
 // TODO consider re-writing all the asynch stuff with the ECMA-7 style of asynch keywords
 module.exports = (esriBundle, geoApi) => {
     return {
-        loadLayerAttribs: loadLayerAttribsBuilder(esriBundle, geoApi)
+        loadLayerAttribs: loadLayerAttribsBuilder(esriBundle, geoApi),
+        getLayerIndex
     };
 };

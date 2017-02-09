@@ -10,6 +10,7 @@ const Terraformer = require('terraformer');
 const shp = require('shpjs');
 const ogc = require('./layer/ogc.js');
 const bbox = require('./layer/bbox.js');
+const layerRecord = require('./layer/layerRecord.js');
 const defaultRenderers = require('./defaultRenderers.json');
 Terraformer.ArcGIS = require('terraformer-arcgis-parser');
 
@@ -1076,6 +1077,74 @@ function getFeatureInfoBuilder(esriBundle) {
     };
 }
 
+function createImageRecordBuilder(esriBundle, geoApi, classBundle) {
+    /**
+    * Creates an Image Layer Record class
+    * @param {Object} config         layer config values
+    * @param {Object} esriLayer      an optional pre-constructed layer
+    * @param {Function} epsgLookup   an optional lookup function for EPSG codes (see geoService for signature)
+    * @returns {Object}              instantited ImageRecord class
+    */
+    return (config, esriLayer, epsgLookup) => {
+        return new classBundle.ImageRecord(esriBundle.ArcGISImageServiceLayer, geoApi, config, esriLayer, epsgLookup);
+    };
+}
+
+function createFeatureRecordBuilder(esriBundle, geoApi, classBundle) {
+    /**
+    * Creates an Feature Layer Record class
+    * @param {Object} config         layer config values
+    * @param {Object} esriLayer      an optional pre-constructed layer
+    * @param {Function} epsgLookup   an optional lookup function for EPSG codes (see geoService for signature)
+    * @returns {Object}              instantited FeatureRecord class
+    */
+    return (config, esriLayer, epsgLookup) => {
+        return new classBundle.FeatureRecord(esriBundle.FeatureLayer, esriBundle.esriRequest,
+            geoApi, config, esriLayer, epsgLookup);
+    };
+}
+
+function createDynamicRecordBuilder(esriBundle, geoApi, classBundle) {
+    /**
+    * Creates an Dynamic Layer Record class
+    * @param {Object} config         layer config values
+    * @param {Object} esriLayer      an optional pre-constructed layer
+    * @param {Function} epsgLookup   an optional lookup function for EPSG codes (see geoService for signature)
+    * @returns {Object}              instantited DynamicRecord class
+    */
+    return (config, esriLayer, epsgLookup) => {
+        return new classBundle.DynamicRecord(esriBundle.ArcGISDynamicMapServiceLayer, esriBundle.esriRequest,
+            geoApi, config, esriLayer, epsgLookup);
+    };
+}
+
+function createTileRecordBuilder(esriBundle, geoApi, classBundle) {
+    /**
+    * Creates an Tile Layer Record class
+    * @param {Object} config         layer config values
+    * @param {Object} esriLayer      an optional pre-constructed layer
+    * @param {Function} epsgLookup   an optional lookup function for EPSG codes (see geoService for signature)
+    * @returns {Object}              instantited TileRecord class
+    */
+    return (config, esriLayer, epsgLookup) => {
+        return new classBundle.TileRecord(esriBundle.ArcGISTiledMapServiceLayer, geoApi, config,
+            esriLayer, epsgLookup);
+    };
+}
+
+function createWmsRecordBuilder(esriBundle, geoApi, classBundle) {
+    /**
+    * Creates an WMS Layer Record class
+    * @param {Object} config         layer config values
+    * @param {Object} esriLayer      an optional pre-constructed layer
+    * @param {Function} epsgLookup   an optional lookup function for EPSG codes (see geoService for signature)
+    * @returns {Object}              instantited WmsRecord class
+    */
+    return (config, esriLayer, epsgLookup) => {
+        return new classBundle.WmsRecord(esriBundle.WmsLayer, geoApi, config, esriLayer, epsgLookup);
+    };
+}
+
 /**
 * Given 2D array in column x row format, check if all entries in the two given columns are numeric.
 *
@@ -1095,6 +1164,8 @@ function validateLatLong(arr, ind1, ind2) {
 // along with other modules. it lets us access other modules without re-instantiating them in here.
 module.exports = function (esriBundle, geoApi) {
 
+    const layerClassBundle = layerRecord(esriBundle, geoApi);
+
     return {
         ArcGISDynamicMapServiceLayer: esriBundle.ArcGISDynamicMapServiceLayer,
         ArcGISImageServiceLayer: esriBundle.ArcGISImageServiceLayer,
@@ -1105,6 +1176,11 @@ module.exports = function (esriBundle, geoApi) {
         TileLayer: esriBundle.ArcGISTiledMapServiceLayer,
         ogc: ogc(esriBundle),
         bbox: bbox(esriBundle, geoApi),
+        createImageRecord: createImageRecordBuilder(esriBundle, geoApi, layerClassBundle),
+        createWmsRecord: createWmsRecordBuilder(esriBundle, geoApi, layerClassBundle),
+        createTileRecord: createTileRecordBuilder(esriBundle, geoApi, layerClassBundle),
+        createDynamicRecord: createDynamicRecordBuilder(esriBundle, geoApi, layerClassBundle),
+        createFeatureRecord: createFeatureRecordBuilder(esriBundle, geoApi, layerClassBundle),
         LayerDrawingOptions: esriBundle.LayerDrawingOptions,
         getFeatureInfo: getFeatureInfoBuilder(esriBundle),
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
