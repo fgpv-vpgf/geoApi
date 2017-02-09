@@ -5,6 +5,24 @@
 
 // Classes for handling different types of layers
 
+/* Class heirarchy overview:
+We have FC and Record classes
+FC represents a logical layer.  Think of a feature class (gis term, not programming term)
+or a raster source. It is one atomic layer.
+Record represents a physical layer.  Think of a layer in the ESRI map stack. Think of
+something represented by an ESRI API layer object.
+FC classes are contained within *Record classes.
+If a property or function applies to a logical layer (e.g. min and max scale levels),
+it should reside in an FC class. If it applies to a physical layer (e.g. loading
+state), it should reside in a Record.
+
+E.g.
+A feature layer is implemented with one Record and one FC, because by nature,
+a feature layer can only contain data from one feature class.
+A dynamic layer is implemented with one Record, and a FC for every
+leaf child layer.
+*/
+
 const states = { // these are used as css classes; hence the `rv` prefix
     NEW: 'rv-new',
     REFRESH: 'rv-refresh',
