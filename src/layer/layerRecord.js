@@ -11,7 +11,7 @@ FC represents a logical layer.  Think of a feature class (gis term, not programm
 or a raster source. It is one atomic layer.
 Record represents a physical layer.  Think of a layer in the ESRI map stack. Think of
 something represented by an ESRI API layer object.
-FC classes are contained within *Record classes.
+FC classes are contained within Record classes.
 If a property or function applies to a logical layer (e.g. min and max scale levels),
 it should reside in an FC class. If it applies to a physical layer (e.g. loading
 state), it should reside in a Record.
@@ -351,6 +351,10 @@ class LayerRecord {
     get layerId () { return this.config.id; }
     get _layerPassthroughBindings () { return ['setOpacity', 'setVisibility']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
     get _layerPassthroughProperties () { return ['visibleAtMapScale', 'visible', 'spatialReference']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
+    get userLayer () { return this._user; } // indicates if file is added by a user
+    set userLayer (value) { this._user = value; }
+    get layerName () { return this._name; } // the top level layer name
+    set layerName (value) { this._name = value; }
 
     /**
      * Generate a bounding box for the layer on the given map.
@@ -524,6 +528,19 @@ class LayerRecord {
             opacity: this.config.options.opacity.value,
             visible: this.config.options.visibility.value
         };
+    }
+
+    /**
+    * Indicates if the bounding box is visible
+    *
+    * @returns {Boolean} indicates if the bounding box is visible
+    */
+    isBBoxVisible () {
+        if (this._bbox) {
+            return this._bbox.visible;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -714,6 +731,7 @@ class LayerRecord {
         this.initialConfig = config;
         this._stateListeners = [];
         this._hoverListeners = [];
+        this._user = false;
         this._epsgLookup = epsgLookup;
         this._layerPassthroughBindings.forEach(bindingName =>
             this[bindingName] = (...args) => this._layer[bindingName](...args));
@@ -1065,6 +1083,14 @@ class DynamicRecord extends AttrRecord {
         };
     }
 
+    // TODO docs
+    getChildName (index) {
+        // TODO revisit logic. is this the best way to do this? what are the needs of the consuming code?
+        // TODO restructure so WMS can use this too?
+        // will not use FC classes, as we also need group names
+        return this._layer.layerInfos[index].name;
+    }
+
 }
 
 /**
@@ -1215,6 +1241,11 @@ class FeatureRecord extends AttrRecord {
         // TODO revisit.  is it robust enough?
         return this._layer && this._layer.url === '';
     }
+
+    // TODO determine who is setting this. if we have an internal
+    //      snapshot process, it might become a read-only property
+    get isSnapshot () { return this._snapshot; }
+    set isSnapshot (value) { this._snapshot = value; }
 
     onMouseOver (e) {
         if (this._hoverListeners.length > 0) {
