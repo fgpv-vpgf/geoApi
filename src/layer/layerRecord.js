@@ -2,6 +2,7 @@
 
 // TODO bump version.
 // TODO look at ripping out esriBundle, and passing specific classes as needed
+// TODO consider splitting out into one-file-per-class.  Remember the class must be available at compile time
 
 // Classes for handling different types of layers
 
@@ -41,6 +42,184 @@ const states = { // these are used as css classes; hence the `rv` prefix
 
 // TODO full review of use of object id, specificly the type -- is it string or integer
 
+// Controls Interface classes are used to provide something to the UI that it can bind to.
+// It helps the UI keep in line with the layer state
+
+class BaseInterface {
+
+    /**
+     * @param {Array} availableControls [optional=[]] an array or controls names that are displayed inside the legendEntry
+     * @param {Array} disabledControls [optional=[]] an array or controls names that are disabled and cannot be interacted wiht by a user
+     */
+
+    constructor (availableControls = [], disabledControls = []) {
+        this._availableControls = availableControls;
+        this._disabledConrols = disabledControls;
+    }
+
+    _iAmError () {
+        throw new Error('Call not supported.');
+    }
+
+    get visibility () { this._iAmError(); }
+    get opacity () { this._iAmError(); }
+    get boundingBox () { this._iAmError(); }
+    get query () { this._iAmError(); }
+    get snapshot () { this._iAmError(); }
+    get formattedAttributes () { this._iAmError(); }
+
+    setVisibility () { this._iAmError(); }
+    setOpacity () { this._iAmError(); }
+    setBoundingBox () { this._iAmError(); }
+    setQuery () { this._iAmError(); }
+    setSnapshot () { this._iAmError(); }
+}
+
+// TODO shorter class names?
+class StandardLayerRecordInterface extends BaseInterface {
+    // used for non-fancy classes with basic properties
+
+    constructor (sourceRecord, availableControls = [], disabledControls = []) {
+        super(availableControls, disabledControls);
+        this._sourceRecord = sourceRecord;
+    }
+
+    get visibility () {
+        // TODO should we make interface on _sourceRecord for this and other properties?
+        //      e.g. _sourceRecord.getVisiblility() ?
+        //      or too much overkill on fancy abstractions?
+        return this._sourceRecord._layer.visibile;
+    }
+
+    get opacity () {
+        return this._sourceRecord._layer.opacity;
+    }
+
+    // TODO implement these
+    /*
+    get boundingBox() { this._iAmError(); }
+    get query() { this._iAmError(); }
+    get formattedAttributes() { this._iAmError(); }
+    */
+
+    setVisibility (value) {
+        this._sourceRecord._layer.visibile = value;
+    }
+
+    setOpacity (value) {
+        this._sourceRecord._layer.opacity = value;
+    }
+
+    // TODO implement these
+    /*
+    setBoundingBox() { this._iAmError(); }
+    setQuery() { this._iAmError(); }
+    */
+
+}
+
+class FeatureLayerRecordInterface extends StandardLayerRecordInterface {
+    get snapshot () {
+        return this._sourceRecord.isSnapshot;
+    }
+
+    setSnapshot () {
+        // TODO trigger the snapshot process.  need the big picture on how this orchestrates.
+        //      it involves a layer reload so possible this function is irrelevant, as the record
+        //      might get nuked
+        console.log('MOCKING THE SNAPSHOT PROCESS');
+    }
+}
+
+class LeafFCInterface extends BaseInterface {
+    // used for leaf nodes of a dynamic layer
+
+    constructor (sourceFC, availableControls = [], disabledControls = []) {
+        super(availableControls, disabledControls);
+        this._sourceFC = sourceFC;
+    }
+
+    get visibility () {
+        return this._sourceFC.visibile;
+    }
+
+    get opacity () {
+        // TODO figure out how to handle layers that don't support this.
+        //      possibly crosscheck against disabled settings
+        //      might not be an issue if, since there will be no control, nothing will call this
+        // TODO ensure .opacity is implemented.
+        return this._sourceFC.opacity;
+    }
+
+    // TODO implement these
+    /*
+    get query() { this._iAmError(); }
+    get formattedAttributes() { this._iAmError(); }
+    */
+
+    setVisibility (value) {
+        this._sourceFC.visibile = value;
+
+        // TODO call something in this._sourceFC._parent that will update this._parent._layer.visibleLayers
+        // TODO see if we need to trigger any refresh of parents.
+        //      it may be that the bindings automatically work.
+    }
+
+    setOpacity (value) {
+        this._sourceFC.opacity = value;
+
+        // TODO call something in this._parent that will update
+        //      this._sourceFC._parent._layer.layerDrawingOptions[this._sourceFC.idx].transparency
+        //      being careful to remember that transparency is opacity * -1 (good job!)
+    }
+
+    // TODO implement these
+    /*
+    setQuery() { this._iAmError(); }
+    */
+
+}
+
+class GroupFCInterface extends BaseInterface {
+    // used for group nodes of a dynamic layer
+
+    constructor (sourceRecord, groupId, availableControls = [], disabledControls = []) {
+        super(availableControls, disabledControls);
+        this._sourceRecord = sourceRecord;
+        this._groupId = groupId;
+
+        // TODO construct a fast-access tree of all leaf indexes?
+    }
+
+    get visibility () {
+        // TODO check visibility of all children.
+        // possibly use the tree proposed in the constructor
+
+        // TODO only return false if all children are invisible
+        return true;
+    }
+
+    get opacity () {
+        // TODO validate if we really need this?
+        //      currently changing opacity on a group will do nothing.
+        //      see AAFC AGRI Environmental Indicators layer in index-one sample
+        return 1;
+    }
+
+    setVisibility (value) {
+        // TODO call set visiblility on every child leaf.
+        // TODO be aware of cycles of updates. may need a force / dont broadcast flag.
+
+        console.log('enhance', value);
+    }
+
+    setOpacity (value) {
+        // TODO see comments on setter
+        console.log('enhance', value);
+    }
+
+}
+
 // The FC classes are meant to be internal to this module. They help manage differences between single-type layers
 // like feature layers, image layers, and composite layers like dynamic layers.
 
@@ -50,12 +229,19 @@ const states = { // these are used as css classes; hence the `rv` prefix
 class BasicFC {
     // base class for feature class object. deals with stuff specific to a feature class (or raster equivalent)
 
+    // TODO determine who is setting this.
+    get isQueryable () { return this._queryable; }
+    set isQueryable (value) { this._queryable = value; }
+
+    // TODO geometry (or lack of) property?
+
     constructor (parent, idx) {
         this._parent = parent;
         this._idx = idx;
     }
 
     // returns a promise of an object with minScale and maxScale values for the feature class
+    // TODO we may be able to make scale stuff non-asynch. scales are stored in dynamiclayer.layerInfos[idx]
     getScaleSet () {
         // basic case - we get it from the esri layer
         const l = this._parent._layer;
@@ -89,6 +275,13 @@ class BasicFC {
             return result;
         });
     }
+
+    // TODO docs
+    // TODO do we need a getter?
+    setVisibility (val) {
+        // basic case - set layer visibility
+        this._parent._layer.visible = val;
+    }
 }
 
 /**
@@ -98,7 +291,7 @@ class AttribFC extends BasicFC {
     // attribute-specific variant for feature class object.
     // deals with stuff specific to a feature class that has attributes
 
-   // TODO add attribute and layer info promises
+    // TODO add attribute and layer info promises
 
     /**
      * Create an attribute specific feature class object
@@ -302,6 +495,21 @@ class DynamicFC extends AttribFC {
                 maxScale: lData.maxScale
             };
         });
+    }
+
+    setVisibility (val) {
+        // fancy case - need to push visibility up and down the tree
+        const lInfos = this._parent._layer.layerInfos;
+        const startInfo = lInfos[this._idx];
+        console.log(startInfo, val);
+
+        // force value down tree
+
+        // re-evaluate up tree
+        // or maybe not. if we just have a function that evaluates on the fly, it will auto-update
+        // more problems: user can attempt to change visibility on a group
+        // do we need GroupFC?  or DynamicFC.isGroup?
+        // need to know what the client needs from this.
     }
 
 }
@@ -715,6 +923,12 @@ class LayerRecord {
         return cBuff.centerAt(point);
     }
 
+    // TODO do we need a setter for queryable?
+    // TODO docs
+    isQueryable () {
+        return this._featClasses[this._defaultFC].isQueryable();
+    }
+
     /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
      * should be fully merged with all layer options defined (i.e. this constructor
@@ -950,6 +1164,10 @@ class DynamicRecord extends AttrRecord {
 
     isOffScale (childIdx, mapScale) {
         return this._featClasses[childIdx].isOffScale(mapScale);
+    }
+
+    isQueryable (childIdx) {
+        return this._featClasses[childIdx].isQueryable();
     }
 
     /**
