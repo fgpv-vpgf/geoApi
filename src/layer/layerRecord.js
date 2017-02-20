@@ -38,7 +38,8 @@ const states = { // these are used as css classes; hence the `rv` prefix
 //      change our state to loaded until both the layer is loaded AND the .layerInfo
 //      is loaded.  Then we store the result in a not-promise var, and everything else
 //      can access it synchronously.
-//      Risks: need to make sure we never need to use .layerInfo prior to the layer loading.
+//      Risk: need to make sure we never need to use .layerInfo prior to the layer loading.
+//      Risk: layer needs to wait until it has pulled additional info prior to being active (negligible?)
 
 // TODO full review of use of object id, specificly the type -- is it string or integer
 
@@ -140,7 +141,7 @@ class LeafFCInterface extends BaseInterface {
     }
 
     get visibility () {
-        return this._sourceFC.visibile;
+        return this._sourceFC.getVisibility();
     }
 
     get opacity () {
@@ -158,7 +159,7 @@ class LeafFCInterface extends BaseInterface {
     */
 
     setVisibility (value) {
-        this._sourceFC.visibile = value;
+        this._sourceFC.setVisibility(value);
 
         // TODO call something in this._sourceFC._parent that will update this._parent._layer.visibleLayers
         // TODO see if we need to trigger any refresh of parents.
@@ -223,6 +224,23 @@ class GroupFCInterface extends BaseInterface {
 // The FC classes are meant to be internal to this module. They help manage differences between single-type layers
 // like feature layers, image layers, and composite layers like dynamic layers.
 
+class PlaceholderFC {
+    // contains dummy stuff to stop placeholder states from freaking out
+    // prior to a layer being loaded.
+
+    // TODO probably need more stuff
+
+    getVisibility () {
+        // TODO enhance to have some default value, assigned in constructor?
+        // TODO can a user toggle placeholders? does state need to be updated?
+        return true;
+    }
+
+    // TODO same questions as visibility
+    get opacity () { return 1; }
+
+}
+
 /**
  * @class BasicFC
  */
@@ -277,7 +295,11 @@ class BasicFC {
     }
 
     // TODO docs
-    // TODO do we need a getter?
+    getVisibility () {
+        return this._parent._layer.visible;
+    }
+
+    // TODO docs
     setVisibility (val) {
         // basic case - set layer visibility
         this._parent._layer.visible = val;
@@ -482,7 +504,12 @@ class DynamicFC extends AttribFC {
     constructor (parent, idx, layerPackage) {
         super(parent, idx, layerPackage);
 
-        // TODO moar?  if not, erase and use attribfc constructor
+        // store pointer to the layerinfo for this FC
+        // TODO re-check that this is useful
+        this._layerInfo = parent._layer.layerInfos[idx];
+
+        this._visible = true; // TODO should be config value or some type of default if auto-gen
+
     }
 
     // returns an object with minScale and maxScale values for the feature class
@@ -498,18 +525,22 @@ class DynamicFC extends AttribFC {
     }
 
     setVisibility (val) {
-        // fancy case - need to push visibility up and down the tree
-        const lInfos = this._parent._layer.layerInfos;
-        const startInfo = lInfos[this._idx];
-        console.log(startInfo, val);
+        // update visible layers array
+        const vLayers = this._parent.visibleLayers;
+        const intIdx = parseInt(this._idx);
+        const vIdx = vLayers.indexOf(intIdx);
+        if (val && vIdx === -1) {
+            // was invisible, now visible
+            vLayers.push(intIdx);
+        } else if (!val && vIdx > -1) {
+            // was visible, now invisible
+            vLayers.splice(vIdx, 1);
+        }
+    }
 
-        // force value down tree
-
-        // re-evaluate up tree
-        // or maybe not. if we just have a function that evaluates on the fly, it will auto-update
-        // more problems: user can attempt to change visibility on a group
-        // do we need GroupFC?  or DynamicFC.isGroup?
-        // need to know what the client needs from this.
+    // TODO extend this function to other FC's?  do they need it?
+    getVisibility () {
+        return this._parent.visibleLayers.indexOf(parseInt(this._idx)) > -1;
     }
 
 }
@@ -1130,9 +1161,59 @@ class DynamicRecord extends AttrRecord {
     }
     get layerClass () { return this.ArcGISDynamicMapServiceLayer; }
 
+    /**
+     * Create a layer record with the appropriate geoApi layer type.  Layer config
+     * should be fully merged with all layer options defined (i.e. this constructor
+     * will not apply any defaults).
+     * @param {Object} layerClass    the ESRI api object for dynamic layers
+     * @param {Object} esriRequest   the ESRI api object for making web requests with proxy support
+     * @param {Object} apiRef        object pointing to the geoApi. allows us to call other geoApi functions
+     * @param {Object} config        layer config values
+     * @param {Object} esriLayer     an optional pre-constructed layer
+     * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
+     */
     constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
         super(esriRequest, apiRef, config, esriLayer, epsgLookup);
         this.ArcGISDynamicMapServiceLayer = layerClass;
+
+        // TODO what is the case where we don't have an esriLayer passed in????
+
+        // figure out controls on config
+        // TODO worry about placeholders. WORRY. how does that even work here?
+        // TODO worry about structured legend.  how is that defined in a config?
+
+        // this will do auto-gen dynamic childs
+        const ctrl = {};
+
+        const processLayerInfo = layerInfo => {
+            if (layerInfo.subLayerIds && layerInfo.subLayerIds.length > 0) {
+                // group
+                // TODO probably need some placeholder magic going on here too
+                // TODO figure out control lists, whats available, whats disabled.
+                //      supply on second and third parameters
+                ctrl[layerInfo.id.toString()] = new GroupFCInterface(this);
+
+                // process the kids in the group
+                layerInfo.subLayerIds.forEach(slid => {
+                    processLayerInfo(esriLayer.layerInfos[slid]);
+                });
+
+            } else {
+                // leaf
+                // TODO figure out control lists, whats available, whats disabled.
+                //      supply on second and third parameters
+                ctrl[layerInfo.id.toString()] = new LeafFCInterface(new PlaceholderFC());
+            }
+        };
+
+        if (config.layerEntries && esriLayer) {
+            config.layerEntries.forEach(le => {
+                processLayerInfo(esriLayer.layerInfos[le.index]);
+            });
+        }
+
+        this._controls = ctrl;
+
     }
 
     getFeatureCount (featureIdx) {
@@ -1146,6 +1227,11 @@ class DynamicRecord extends AttrRecord {
         super.onLoad();
 
         // trigger attribute load and set up children bundles.
+        // TODO do we need an options object, with .skip set for sub-layers we are not dealing with?
+        //      would need to inspect all leafs in this._layer.layerInfos,
+        //      then cross reference against incoming config.  extra code probably
+        //      needed to derive auto-gen childs that are not explicitly in config.
+        //      Alternate: figure all this out on constructor, as we might need placeholders????
         const attributeBundle = this._apiRef.attribs.loadLayerAttribs(this._layer);
 
         attributeBundle.indexes.forEach(idx => {
