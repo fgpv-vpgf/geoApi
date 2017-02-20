@@ -1584,6 +1584,9 @@ class FeatureRecord extends AttrRecord {
 }
 
 module.exports = () => ({
+    FeatureLayerRecordInterface, // TODO temp export to shut up the compiler.  remove.
+    LeafFCInterface, // TODO temp export to shut up the compiler.  remove.
+    GroupFCInterface, // TODO temp export to shut up the compiler.  remove.
     DynamicRecord,
     FeatureRecord,
     ImageRecord,
