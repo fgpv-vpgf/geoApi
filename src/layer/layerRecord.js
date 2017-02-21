@@ -7,7 +7,9 @@
 
 // Classes for handling different types of layers
 
-/* Class heirarchy overview:
+/*
+Class heirarchy overview:
+
 We have FC, Record, and Interface classes
 
 FC represents a logical layer.  Think of a feature class (gis term, not programming term)
@@ -72,6 +74,7 @@ class BaseInterface {
         this._disabledConrols = disabledControls;
     }
 
+    // shortcut function for throwing errors on unimplemented functions.
     _iAmError () {
         throw new Error('Call not supported.');
     }
@@ -274,6 +277,10 @@ class BasicFC {
 
     // TODO geometry (or lack of) property?
 
+    /**
+     * @param {Object} parent        the Record object that this Feature Class belongs to
+     * @param {String} idx           the service index of this Feature Class. an integer in string format. use '0' for non-indexed sources.
+     */
     constructor (parent, idx) {
         this._parent = parent;
         this._idx = idx;
@@ -338,8 +345,8 @@ class AttribFC extends BasicFC {
 
     /**
      * Create an attribute specific feature class object
-     * @param {Object} parent        record object this FC belongs to.
-     * @param {String} idx           feature index of the feature class
+     * @param {Object} parent        the Record object that this Feature Class belongs to
+     * @param {String} idx           the service index of this Feature Class. an integer in string format. use '0' for non-indexed sources.
      * @param {Object} layerPackage  a layer package object from the attribute module for this feature class
      */
     constructor (parent, idx, layerPackage) {
@@ -350,10 +357,22 @@ class AttribFC extends BasicFC {
         // moar?
     }
 
+    /**
+    * Returns attribute data for this FC.
+    *
+    * @function getAttribs
+    * @returns {Promise}         resolves with a layer attribute data object
+    */
     getAttribs () {
         return this._layerPackage.getAttribs();
     }
 
+    /**
+    * Returns layer-specific data for this FC.
+    *
+    * @function getLayerData
+    * @returns {Promise}         resolves with a layer data object
+    */
     getLayerData () {
         return this._layerPackage.layerData;
     }
@@ -522,6 +541,12 @@ class DynamicFC extends AttribFC {
     // dynamic child variant for feature class object.
     // deals with stuff specific to dynamic children (i.e. virtual layer on client)
 
+    /**
+     * Create an feature class object for a feature class that is a child of a dynamic layer
+     * @param {Object} parent        the Record object that this Feature Class belongs to
+     * @param {String} idx           the service index of this Feature Class. an integer in string format. use '0' for non-indexed sources.
+     * @param {Object} layerPackage  a layer package object from the attribute module for this feature class
+     */
     constructor (parent, idx, layerPackage) {
         super(parent, idx, layerPackage);
 
@@ -529,8 +554,8 @@ class DynamicFC extends AttribFC {
         // TODO re-check that this is useful
         this._layerInfo = parent._layer.layerInfos[idx];
 
+        // TODO this may be obsolete now.
         this._visible = true; // TODO should be config value or some type of default if auto-gen
-
     }
 
     // returns an object with minScale and maxScale values for the feature class
@@ -717,8 +742,10 @@ class LayerRecord {
     }
 
     /**
-     * Handles when the layer finishes loading
-     */
+    * Triggers when the layer loads.
+    *
+    * @function onLoad
+    */
     onLoad () {
         if (this.legendEntry && this.legendEntry.removed) { return; }
         console.info(`Layer loaded: ${this._layer.id}`);
@@ -1036,10 +1063,21 @@ class LayerRecord {
  * @class AttrRecord
  */
 class AttrRecord extends LayerRecord {
+    // this class has functions common to layers that have attributes
 
     // FIXME clickTolerance is not specific to AttrRecord but rather Feature and Dynamic
     get clickTolerance () { return this.config.tolerance; }
 
+    /**
+     * Create a layer record with the appropriate geoApi layer type.  Layer config
+     * should be fully merged with all layer options defined (i.e. this constructor
+     * will not apply any defaults).
+     * @param {Object} esriRequest   the ESRI api object for making web requests with proxy support
+     * @param {Object} apiRef        object pointing to the geoApi. allows us to call other geoApi functions.
+     * @param {Object} config        layer config values
+     * @param {Object} esriLayer     an optional pre-constructed layer
+     * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
+     */
     constructor (esriRequest, apiRef, config, esriLayer, epsgLookup) {
         super(apiRef, config, esriLayer, epsgLookup);
 
@@ -1068,10 +1106,22 @@ class AttrRecord extends LayerRecord {
         return this._featClasses[this._defaultFC].checkDateType(attribName);
     }
 
+    /**
+    * Returns attribute data for this layer.
+    *
+    * @function getAttribs
+    * @returns {Promise}         resolves with a layer attribute data object
+    */
     getAttribs () {
         return this._featClasses[this._defaultFC].getAttribs();
     }
 
+    /**
+    * Returns layer-specific data for this Record
+    *
+    * @function getLayerData
+    * @returns {Promise}         resolves with a layer data object
+    */
     getLayerData () {
         return this._featClasses[this._defaultFC].getLayerData();
     }
@@ -1168,11 +1218,26 @@ class ImageRecord extends LayerRecord {
     //       (and do a lot of testing!)
     get layerClass () { return this.ArcGISImageServiceLayer; }
 
+    /**
+     * Create a layer record with the appropriate geoApi layer type.  Layer config
+     * should be fully merged with all layer options defined (i.e. this constructor
+     * will not apply any defaults).
+     * @param {Object} layerClass    the ESRI api object for image server layers
+     * @param {Object} apiRef        object pointing to the geoApi. allows us to call other geoApi functions.
+     * @param {Object} config        layer config values
+     * @param {Object} esriLayer     an optional pre-constructed layer
+     * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
+     */
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
         super(apiRef, config, esriLayer, epsgLookup);
         this.ArcGISImageServiceLayer = layerClass;
     }
 
+    /**
+    * Triggers when the layer loads.
+    *
+    * @function onLoad
+    */
     onLoad () {
         super.onLoad();
 
@@ -1283,6 +1348,11 @@ class DynamicRecord extends AttrRecord {
         return super.getFeatureCount(this._layer.url + '/' + featureIdx);
     }
 
+    /**
+    * Triggers when the layer loads.
+    *
+    * @function onLoad
+    */
     onLoad () {
 
         super.onLoad();
@@ -1359,10 +1429,24 @@ class DynamicRecord extends AttrRecord {
         return this._featClasses[childIndex].checkDateType(attribName);
     }
 
+    /**
+    * Returns attribute data for a child layer.
+    *
+    * @function getAttribs
+    * @param {String} childIndex  the index of the child layer
+    * @returns {Promise}          resolves with a layer attribute data object
+    */
     getAttribs (childIndex) {
         return this._featClasses[childIndex].getAttribs();
     }
 
+    /**
+    * Returns layer-specific data for a child layer
+    *
+    * @function getLayerData
+    * @param {String} childIndex  the index of the child layer
+    * @returns {Promise}          resolves with a layer data object
+    */
     getLayerData (childIndex) {
         return this._featClasses[childIndex].getLayerData();
     }
@@ -1475,11 +1559,26 @@ class DynamicRecord extends AttrRecord {
 class TileRecord extends LayerRecord {
     get layerClass () { return this.ArcGISTiledMapServiceLayer; }
 
+    /**
+     * Create a layer record with the appropriate geoApi layer type.  Layer config
+     * should be fully merged with all layer options defined (i.e. this constructor
+     * will not apply any defaults).
+     * @param {Object} layerClass    the ESRI api object for tile layers
+     * @param {Object} apiRef        object pointing to the geoApi. allows us to call other geoApi functions.
+     * @param {Object} config        layer config values
+     * @param {Object} esriLayer     an optional pre-constructed layer
+     * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
+     */
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
         super(apiRef, config, esriLayer, epsgLookup);
         this.ArcGISTiledMapServiceLayer = layerClass;
     }
 
+    /**
+    * Triggers when the layer loads.
+    *
+    * @function onLoad
+    */
     onLoad () {
         super.onLoad();
 
@@ -1496,6 +1595,16 @@ class TileRecord extends LayerRecord {
 class WmsRecord extends LayerRecord {
     get layerClass () { return this.WmsLayer; }
 
+    /**
+     * Create a layer record with the appropriate geoApi layer type.  Layer config
+     * should be fully merged with all layer options defined (i.e. this constructor
+     * will not apply any defaults).
+     * @param {Object} layerClass    the ESRI api object for wms layers
+     * @param {Object} apiRef        object pointing to the geoApi. allows us to call other geoApi functions.
+     * @param {Object} config        layer config values
+     * @param {Object} esriLayer     an optional pre-constructed layer
+     * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
+     */
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
         super(apiRef, config, esriLayer, epsgLookup);
         this.WmsLayer = layerClass;
@@ -1507,6 +1616,11 @@ class WmsRecord extends LayerRecord {
         return cfg;
     }
 
+    /**
+    * Triggers when the layer loads.
+    *
+    * @function onLoad
+    */
     onLoad () {
         super.onLoad();
 
@@ -1576,6 +1690,17 @@ class FeatureRecord extends AttrRecord {
 
     // TODO add flags for file based layers?
 
+    /**
+     * Create a layer record with the appropriate geoApi layer type.  Layer config
+     * should be fully merged with all layer options defined (i.e. this constructor
+     * will not apply any defaults).
+     * @param {Object} layerClass    the ESRI api object for feature layers
+     * @param {Object} esriRequest   the ESRI api object for making web requests with proxy support
+     * @param {Object} apiRef        object pointing to the geoApi. allows us to call other geoApi functions.
+     * @param {Object} config        layer config values
+     * @param {Object} esriLayer     an optional pre-constructed layer
+     * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
+     */
     constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
         super(esriRequest, apiRef, config, esriLayer, epsgLookup);
         this.FeatureLayer = layerClass;
@@ -1604,6 +1729,11 @@ class FeatureRecord extends AttrRecord {
         return this._rootControl;
     }
 
+    /**
+    * Triggers when the layer loads.
+    *
+    * @function onLoad
+    */
     onLoad () {
 
         super.onLoad();
@@ -1754,9 +1884,6 @@ class FeatureRecord extends AttrRecord {
 }
 
 module.exports = () => ({
-    FeatureLayerRecordInterface, // TODO temp export to shut up the compiler.  remove.
-    LeafFCInterface, // TODO temp export to shut up the compiler.  remove.
-    GroupFCInterface, // TODO temp export to shut up the compiler.  remove.
     DynamicRecord,
     FeatureRecord,
     ImageRecord,
