@@ -56,6 +56,7 @@ const states = { // these are used as css classes; hence the `rv` prefix
 //      Risk: layer needs to wait until it has pulled additional info prior to being active (negligible?)
 
 // TODO full review of use of object id, specificly the type -- is it string or integer
+// TODO ditto for featureIdx.
 
 // Controls Interface classes are used to provide something to the UI that it can bind to.
 // It helps the UI keep in line with the layer state
@@ -66,7 +67,6 @@ class BaseInterface {
      * @param {Array} availableControls [optional=[]] an array or controls names that are displayed inside the legendEntry
      * @param {Array} disabledControls [optional=[]] an array or controls names that are disabled and cannot be interacted wiht by a user
      */
-
     constructor (availableControls = [], disabledControls = []) {
         this._availableControls = availableControls;
         this._disabledConrols = disabledControls;
@@ -175,7 +175,6 @@ class LeafFCInterface extends BaseInterface {
     setVisibility (value) {
         this._sourceFC.setVisibility(value);
 
-        // TODO call something in this._sourceFC._parent that will update this._parent._layer.visibleLayers
         // TODO see if we need to trigger any refresh of parents.
         //      it may be that the bindings automatically work.
     }
@@ -213,14 +212,13 @@ class GroupFCInterface extends BaseInterface {
         this._groupId = groupId;
 
         // TODO construct a fast-access tree of all leaf indexes?
+        this._childLeafs = [];
     }
 
     get visibility () {
-        // TODO check visibility of all children.
-        // possibly use the tree proposed in the constructor
-
-        // TODO only return false if all children are invisible
-        return true;
+        // check visibility of all children.
+        // only return false if all children are invisible
+        return this._childLeafs.some(leaf => { return leaf.visibility; });
     }
 
     get opacity () {
@@ -231,10 +229,10 @@ class GroupFCInterface extends BaseInterface {
     }
 
     setVisibility (value) {
-        // TODO call set visiblility on every child leaf.
         // TODO be aware of cycles of updates. may need a force / dont broadcast flag.
-
-        console.log('enhance', value);
+        this._childLeafs.forEach(leaf => {
+            leaf.setVisibility(value);
+        });
     }
 
     setOpacity (value) {
@@ -986,10 +984,11 @@ class LayerRecord {
     // returns the controls object for the root of the layer (i.e. main entry in legend, not nested child things)
     // TODO docs
     getControl () {
-        // TODO figure out control name arrays from config
+        // TODO figure out control name arrays from config (specifically, disabled list)
+        //      updated config schema uses term "enabled" but have a feeling it really means available
         // TODO figure out how placeholders work with all this
         if (!this._rootControl) {
-            this._rootControl = new StandardLayerRecordInterface(this);
+            this._rootControl = new StandardLayerRecordInterface(this, this.initialConfig.controls);
         }
         return this._rootControl;
     }
@@ -1219,24 +1218,36 @@ class DynamicRecord extends AttrRecord {
         // this will do auto-gen dynamic childs
         const ctrl = {};
 
+        // this subfunction will recursively crawl a dynamic layerInfo structure.
+        // it will generate control objects for all groups and leafs under the
+        // input layerInfo.
+        // it also collects and returns an array of leaf nodes so each group
+        // can store it and have fast access to all leaves under it.
         const processLayerInfo = layerInfo => {
             if (layerInfo.subLayerIds && layerInfo.subLayerIds.length > 0) {
                 // group
                 // TODO probably need some placeholder magic going on here too
                 // TODO figure out control lists, whats available, whats disabled.
                 //      supply on second and third parameters
-                ctrl[layerInfo.id.toString()] = new GroupFCInterface(this);
+                const group = new GroupFCInterface(this);
+                ctrl[layerInfo.id.toString()] = group;
 
-                // process the kids in the group
+                // process the kids in the group.
+                // store the child leaves in the internal variable
                 layerInfo.subLayerIds.forEach(slid => {
-                    processLayerInfo(esriLayer.layerInfos[slid]);
+                    group._childLeafs = group._childLeafs.concat(processLayerInfo(esriLayer.layerInfos[slid]));
                 });
 
+                return group._childLeafs;
             } else {
                 // leaf
                 // TODO figure out control lists, whats available, whats disabled.
-                //      supply on second and third parameters
-                ctrl[layerInfo.id.toString()] = new LeafFCInterface(new PlaceholderFC());
+                //      supply on second and third parameters.
+                //      might need to steal from parent, since auto-gen may not have explicit
+                //      config settings.
+                const leaf = new LeafFCInterface(new PlaceholderFC());
+                ctrl[layerInfo.id.toString()] = leaf;
+                return [leaf];
             }
         };
 
@@ -1282,6 +1293,11 @@ class DynamicRecord extends AttrRecord {
         //      then cross reference against incoming config.  extra code probably
         //      needed to derive auto-gen childs that are not explicitly in config.
         //      Alternate: figure all this out on constructor, as we might need placeholders????
+        //                 update: we are doing this, but it gives us a list of things to keep,
+        //                         not to skip.
+        //      Alternate: add new option that is opposite of .skip.  Will be more of a
+        //                 .only, and we won't have to derive a "skip" set from our inclusive
+        //                 list that was created in the ._controls
         const attributeBundle = this._apiRef.attribs.loadLayerAttribs(this._layer);
 
         // idx is a string
@@ -1579,10 +1595,11 @@ class FeatureRecord extends AttrRecord {
     // returns the controls object for the root of the layer (i.e. main entry in legend, not nested child things)
     // TODO docs
     getControl () {
-        // TODO figure out control name arrays from config
+        // TODO figure out control name arrays from config (specifically disabled stuff)
+        //      updated config schema uses term "enabled" but have a feeling it really means available
         // TODO figure out how placeholders work with all this
         if (!this._rootControl) {
-            this._rootControl = new FeatureLayerRecordInterface(this);
+            this._rootControl = new FeatureLayerRecordInterface(this, this.initialConfig.controls);
         }
         return this._rootControl;
     }
