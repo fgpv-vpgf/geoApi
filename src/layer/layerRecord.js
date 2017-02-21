@@ -3,15 +3,23 @@
 // TODO bump version.
 // TODO look at ripping out esriBundle, and passing specific classes as needed
 // TODO consider splitting out into one-file-per-class.  Remember the class must be available at compile time
+//      edit: for real, this file is getting silly-big
 
 // Classes for handling different types of layers
 
 /* Class heirarchy overview:
-We have FC and Record classes
+We have FC, Record, and Interface classes
+
 FC represents a logical layer.  Think of a feature class (gis term, not programming term)
 or a raster source. It is one atomic layer.
+
 Record represents a physical layer.  Think of a layer in the ESRI map stack. Think of
 something represented by an ESRI API layer object.
+
+Interfaces are classes that present information to the UI and facilitates bindings.
+They also expose calls to perform actions on the layer (e.g. the action a UI button
+would execute).
+
 FC classes are contained within Record classes.
 If a property or function applies to a logical layer (e.g. min and max scale levels),
 it should reside in an FC class. If it applies to a physical layer (e.g. loading
@@ -22,6 +30,12 @@ A feature layer is implemented with one Record and one FC, because by nature,
 a feature layer can only contain data from one feature class.
 A dynamic layer is implemented with one Record, and a FC for every
 leaf child layer.
+
+An interface object should exist for every layer-bound entry in the legend.
+Most Records will have one interface, as they just have one legend entry.
+Dynamic Records will also have interfaces for children. This can include
+group items, which don't have FC objects. Tricky, eh!
+
 */
 
 const states = { // these are used as css classes; hence the `rv` prefix
@@ -172,6 +186,15 @@ class LeafFCInterface extends BaseInterface {
         // TODO call something in this._parent that will update
         //      this._sourceFC._parent._layer.layerDrawingOptions[this._sourceFC.idx].transparency
         //      being careful to remember that transparency is opacity * -1 (good job!)
+    }
+
+    // updates what this interface is pointing to, in terms of layer data source.
+    // often, the interface starts with a placeholder to avoid errors and return
+    // defaults. This update happens after a layer has loaded, and new now want
+    // the interface reading off the real FC.
+    // TODO docs
+    updateSource (sourceFC) {
+        this._sourceFC = sourceFC;
     }
 
     // TODO implement these
@@ -960,6 +983,17 @@ class LayerRecord {
         return this._featClasses[this._defaultFC].isQueryable();
     }
 
+    // returns the controls object for the root of the layer (i.e. main entry in legend, not nested child things)
+    // TODO docs
+    getControl () {
+        // TODO figure out control name arrays from config
+        // TODO figure out how placeholders work with all this
+        if (!this._rootControl) {
+            this._rootControl = new StandardLayerRecordInterface(this);
+        }
+        return this._rootControl;
+    }
+
     /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
      * should be fully merged with all layer options defined (i.e. this constructor
@@ -1216,6 +1250,22 @@ class DynamicRecord extends AttrRecord {
 
     }
 
+    /**
+     * Return a controls interface for a child layer
+     *
+     * @param {Integer} featureIdx    index of child entry (leaf or group)
+     * @return {Object}               control interface for given child
+     */
+    getChildControl (featureIdx) {
+        // TODO verify we have integer coming in and not a string
+        // in this case, featureIdx can also be a group index
+        if (this._controls[featureIdx.toString]) {
+            return this._controls[featureIdx.toString];
+        } else {
+            throw new Error(`attempt to get non-existing child control. Index ${featureIdx}`);
+        }
+    }
+
     getFeatureCount (featureIdx) {
         // point url to sub-index we want
         // TODO might change how we manage index and url
@@ -1234,8 +1284,14 @@ class DynamicRecord extends AttrRecord {
         //      Alternate: figure all this out on constructor, as we might need placeholders????
         const attributeBundle = this._apiRef.attribs.loadLayerAttribs(this._layer);
 
+        // idx is a string
         attributeBundle.indexes.forEach(idx => {
             this._featClasses[idx] = new DynamicFC(this, idx, attributeBundle[idx]);
+
+            // if we have a control watching this leaf, replace its placeholder with the real data
+            if (this._controls[idx]) {
+                this._controls[idx].updateSource(this._featClasses[idx]);
+            }
         });
 
     }
@@ -1518,6 +1574,17 @@ class FeatureRecord extends AttrRecord {
                                                         : this.layerClass.MODE_ONDEMAND;
         this.config.options.snapshot.enabled = !this.config.options.snapshot.value;
         return cfg;
+    }
+
+    // returns the controls object for the root of the layer (i.e. main entry in legend, not nested child things)
+    // TODO docs
+    getControl () {
+        // TODO figure out control name arrays from config
+        // TODO figure out how placeholders work with all this
+        if (!this._rootControl) {
+            this._rootControl = new FeatureLayerRecordInterface(this);
+        }
+        return this._rootControl;
     }
 
     onLoad () {
