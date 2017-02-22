@@ -69,7 +69,7 @@ const states = { // these are used as css classes; hence the `rv` prefix
 // methods and properties as error throwing stubs. Then we replace those functions
 // with real ones once we know the flavour of interface we want.
 
-class BaseInterface {
+class LayerInterface {
 
     /**
      * @param {Object} source                          object that provides info to the interface. usually a LayerRecord or FeatureClass
@@ -125,165 +125,192 @@ class BaseInterface {
     // defaults. This update happens after a layer has loaded, and new now want
     // the interface reading off the real FC.
     // TODO docs
+    // TODO may be made obsolete by the converTo* functions below
     updateSource (newSource) {
         this._source = newSource;
     }
-}
 
-// TODO shorter class names?
-class StandardLayerRecordInterface extends BaseInterface {
-    // used for non-fancy classes with basic properties
+    convertToSingleLayer (layerRecord) {
+        this._source = layerRecord;
 
-    constructor (sourceRecord, availableControls = [], disabledControls = []) {
-        super(availableControls, disabledControls);
-        this._sourceRecord = sourceRecord;
+        newProp(this, 'visibility', standardGetVisibility);
+        newProp(this, 'opacity', standardGetOpacity);
+
+        this.setVisibility = standardSetVisibility;
+        this.setOpacity = standardSetOpacity;
     }
 
-    get visibility () {
-        // TODO should we make interface on _sourceRecord for this and other properties?
-        //      e.g. _sourceRecord.getVisiblility() ?
-        //      or too much overkill on fancy abstractions?
-        return this._sourceRecord._layer.visibile;
+    convertToFeatureLayer (layerRecord) {
+        this.convertToSingleLayer(layerRecord);
+
+        newProp(this, 'snapshot', featureGetSnapshot);
+
+        this.setSnapshot = featureSetSnapshot;
     }
 
-    get opacity () {
-        return this._sourceRecord._layer.opacity;
+    convertToDynamicLeaf (dynamicFC) {
+        this._source = dynamicFC;
+
+        newProp(this, 'visibility', dynamicLeafGetVisibility);
+        newProp(this, 'opacity', dynamicLeafGetOpacity);
+
+        this.setVisibility = dynamicLeafSetVisibility;
+        this.setOpacity = dynamicLeafSetOpacity;
     }
 
-    // TODO implement these
-    /*
-    get boundingBox() { this._iAmError(); }
-    get query() { this._iAmError(); }
-    get formattedAttributes() { this._iAmError(); }
-    */
-
-    setVisibility (value) {
-        this._sourceRecord._layer.visibile = value;
-    }
-
-    setOpacity (value) {
-        this._sourceRecord._layer.opacity = value;
-    }
-
-    // TODO implement these
-    /*
-    setBoundingBox() { this._iAmError(); }
-    setQuery() { this._iAmError(); }
-    */
-
-}
-
-class FeatureLayerRecordInterface extends StandardLayerRecordInterface {
-    get snapshot () {
-        return this._sourceRecord.isSnapshot;
-    }
-
-    setSnapshot () {
-        // TODO trigger the snapshot process.  need the big picture on how this orchestrates.
-        //      it involves a layer reload so possible this function is irrelevant, as the record
-        //      might get nuked
-        console.log('MOCKING THE SNAPSHOT PROCESS');
-    }
-}
-
-class LeafFCInterface extends BaseInterface {
-    // used for leaf nodes of a dynamic layer
-
-    constructor (sourceFC, availableControls = [], disabledControls = []) {
-        super(availableControls, disabledControls);
-        this._sourceFC = sourceFC;
-    }
-
-    get visibility () {
-        return this._sourceFC.getVisibility();
-    }
-
-    get opacity () {
-        // TODO figure out how to handle layers that don't support this.
-        //      possibly crosscheck against disabled settings
-        //      might not be an issue if, since there will be no control, nothing will call this
-        // TODO ensure .opacity is implemented.
-        return this._sourceFC.opacity;
-    }
-
-    // TODO implement these
-    /*
-    get query() { this._iAmError(); }
-    get formattedAttributes() { this._iAmError(); }
-    */
-
-    setVisibility (value) {
-        this._sourceFC.setVisibility(value);
-
-        // TODO see if we need to trigger any refresh of parents.
-        //      it may be that the bindings automatically work.
-    }
-
-    setOpacity (value) {
-        this._sourceFC.opacity = value;
-
-        // TODO call something in this._parent that will update
-        //      this._sourceFC._parent._layer.layerDrawingOptions[this._sourceFC.idx].transparency
-        //      being careful to remember that transparency is opacity * -1 (good job!)
-    }
-
-    // updates what this interface is pointing to, in terms of layer data source.
-    // often, the interface starts with a placeholder to avoid errors and return
-    // defaults. This update happens after a layer has loaded, and new now want
-    // the interface reading off the real FC.
-    // TODO docs
-    updateSource (sourceFC) {
-        this._sourceFC = sourceFC;
-    }
-
-    // TODO implement these
-    /*
-    setQuery() { this._iAmError(); }
-    */
-
-}
-
-class GroupFCInterface extends BaseInterface {
-    // used for group nodes of a dynamic layer
-
-    constructor (sourceRecord, groupId, availableControls = [], disabledControls = []) {
-        super(availableControls, disabledControls);
-        this._sourceRecord = sourceRecord;
+    convertToDynamicGroup (layerRecord, groupId) {
+        this._source = layerRecord;
         this._groupId = groupId;
 
-        // TODO construct a fast-access tree of all leaf indexes?
+        // contains a list of all child leaves for fast access
         this._childLeafs = [];
-    }
 
-    get visibility () {
-        // check visibility of all children.
-        // only return false if all children are invisible
-        return this._childLeafs.some(leaf => { return leaf.visibility; });
-    }
+        newProp(this, 'visibility', dynamicGroupGetVisibility);
+        newProp(this, 'opacity', dynamicGroupGetOpacity);
 
-    get opacity () {
-        // TODO validate if we really need this?
-        //      currently changing opacity on a group will do nothing.
-        //      see AAFC AGRI Environmental Indicators layer in index-one sample
-        return 1;
-    }
-
-    setVisibility (value) {
-        // TODO be aware of cycles of updates. may need a force / dont broadcast flag.
-        this._childLeafs.forEach(leaf => {
-            leaf.setVisibility(value);
-        });
-    }
-
-    setOpacity (value) {
-        // TODO see comments on setter
-        console.log('enhance', value);
+        this.setVisibility = dynamicGroupSetVisibility;
+        this.setOpacity = dynamicGroupSetOpacity;
     }
 
 }
+
+/**
+ * Worker function to add or override a get property on an object
+ *
+ * @function newProp
+ * @private
+ * @param {Object} target     the object that will receive the new property
+ * @param {String} propName   name of the get property
+ * @param {Function} getter   the function defining the guts of the get property.
+ */
+function newProp(target, propName, getter) {
+    Object.defineProperty(target, propName, {
+        get: getter
+    });
+}
+
+// these functions are upgrades to the duds above.
+// we don't use arrow notation, as we want the `this` to point at the object
+// that these functions get smashed into.
+
+function standardGetVisibility() {
+    /* jshint validthis: true */
+
+    // TODO should we make interface on _source (a layer record) for this and other properties?
+    //      e.g. _source.getVisiblility() ?
+    //      or too much overkill on fancy abstractions?
+    return this._source._layer.visibile;
+}
+
+function dynamicLeafGetVisibility() {
+    /* jshint validthis: true */
+    return this._source.getVisibility();
+}
+
+function dynamicGroupGetVisibility() {
+    /* jshint validthis: true */
+
+    // check visibility of all children.
+    // only return false if all children are invisible
+    return this._childLeafs.some(leaf => { return leaf.visibility; });
+}
+
+function standardGetOpacity() {
+    /* jshint validthis: true */
+    return this._source._layer.opacity;
+}
+
+function dynamicLeafGetOpacity() {
+    /* jshint validthis: true */
+
+    // TODO figure out how to handle layers that don't support this.
+    //      possibly crosscheck against disabled settings
+    //      might not be an issue if, since there will be no control, nothing will call this
+    //      Alternative: convertToDynamicLeaf() will check and make decisions then?
+    // TODO ensure .opacity is implemented.
+    return this._sourceFC.opacity;
+}
+
+function dynamicGroupGetOpacity() {
+    // TODO validate if we really need this?
+    //      currently changing opacity on a group will do nothing.
+    //      see AAFC AGRI Environmental Indicators layer in index-one sample.
+    //      could be we should not show opacity for groups?
+    return 1;
+}
+
+// TODO implement these, but as standardGetX functions
+/*
+get boundingBox() { this._iAmError(); }
+get query() { this._iAmError(); }
+get formattedAttributes() { this._iAmError(); }
+*/
+
+function standardSetVisibility(value) {
+    /* jshint validthis: true */
+    this._source._layer.visibile = value;
+}
+
+function dynamicLeafSetVisibility(value) {
+    /* jshint validthis: true */
+    this._source.setVisibility(value);
+
+    // TODO see if we need to trigger any refresh of parents.
+    //      it may be that the bindings automatically work.
+}
+
+function dynamicGroupSetVisibility(value) {
+    /* jshint validthis: true */
+
+    // TODO be aware of cycles of updates. may need a force / dont broadcast flag.
+    //      since we are only hitting leaves and skipping child-groups, should be ok.
+    this._childLeafs.forEach(leaf => {
+        leaf.setVisibility(value);
+    });
+}
+
+function standardSetOpacity(value) {
+    /* jshint validthis: true */
+    this._source._layer.opacity = value;
+}
+
+function dynamicLeafSetOpacity(value) {
+    /* jshint validthis: true */
+    this._source.opacity = value;
+
+    // TODO call something in this._parent that will update
+    //      this._source._parent._layer.layerDrawingOptions[this._source.idx].transparency
+    //      being careful to remember that transparency is opacity * -1 (good job!)
+}
+
+function dynamicGroupSetOpacity(value) {
+    // TODO see comments on dynamicGroupSetVisibility
+    console.log('enhance group opacity', value);
+}
+
+// TODO implement these, but as standardSetX functions
+/*
+setBoundingBox() { this._iAmError(); }
+setQuery() { this._iAmError(); }
+*/
+
+function featureGetSnapshot() {
+    /* jshint validthis: true */
+    return this._source.isSnapshot;
+}
+
+function featureSetSnapshot() {
+    // TODO trigger the snapshot process.  need the big picture on how this orchestrates.
+    //      it involves a layer reload so possible this function is irrelevant, as the record
+    //      might get nuked
+    console.log('MOCKING THE SNAPSHOT PROCESS');
+}
+
+/* jshint validthis: false */
 
 // The FC classes are meant to be internal to this module. They help manage differences between single-type layers
 // like feature layers, image layers, and composite layers like dynamic layers.
+// Can toy with alternate approaches. E.g. have a convertToPlaceholder function in the interface.
 
 class PlaceholderFC {
     // contains dummy stuff to stop placeholder states from freaking out
@@ -1051,8 +1078,10 @@ class LayerRecord {
         // TODO figure out control name arrays from config (specifically, disabled list)
         //      updated config schema uses term "enabled" but have a feeling it really means available
         // TODO figure out how placeholders work with all this
+        // TODO does this even make sense in the baseclass anymore? Everything *should* be overriding this.
         if (!this._rootControl) {
-            this._rootControl = new StandardLayerRecordInterface(this, this.initialConfig.controls);
+            this._rootControl = new LayerInterface(this, this.initialConfig.controls);
+            this._rootControl.convertToSingleLayer(this);
         }
         return this._rootControl;
     }
@@ -1331,7 +1360,9 @@ class DynamicRecord extends AttrRecord {
                 // TODO probably need some placeholder magic going on here too
                 // TODO figure out control lists, whats available, whats disabled.
                 //      supply on second and third parameters
-                const group = new GroupFCInterface(this);
+                const group = new LayerInterface();
+                group.convertToDynamicGroup(this, layerInfo.id.toString());
+
                 ctrl[layerInfo.id.toString()] = group;
 
                 // process the kids in the group.
@@ -1347,7 +1378,8 @@ class DynamicRecord extends AttrRecord {
                 //      supply on second and third parameters.
                 //      might need to steal from parent, since auto-gen may not have explicit
                 //      config settings.
-                const leaf = new LeafFCInterface(new PlaceholderFC());
+                const leaf = new LayerInterface();
+                leaf.convertToDynamicLeaf(new PlaceholderFC());
                 ctrl[layerInfo.id.toString()] = leaf;
                 return [leaf];
             }
@@ -1761,7 +1793,8 @@ class FeatureRecord extends AttrRecord {
         //      updated config schema uses term "enabled" but have a feeling it really means available
         // TODO figure out how placeholders work with all this
         if (!this._rootControl) {
-            this._rootControl = new FeatureLayerRecordInterface(this, this.initialConfig.controls);
+            this._rootControl = new LayerInterface(this, this.initialConfig.controls);
+            this._rootControl.convertToFeatureLayer(this);
         }
         return this._rootControl;
     }
