@@ -60,16 +60,24 @@ const states = { // these are used as css classes; hence the `rv` prefix
 // TODO full review of use of object id, specificly the type -- is it string or integer
 // TODO ditto for featureIdx.
 
-// Controls Interface classes are used to provide something to the UI that it can bind to.
-// It helps the UI keep in line with the layer state
+// Controls Interface class is used to provide something to the UI that it can bind to.
+// It helps the UI keep in line with the layer state.
+// Due to bindings, we cannot destroy & recreate an interface when a legend item
+// goes from 'Unknown Placeholder' to 'Specific Layer Type'. This means we cannot
+// do object heirarchies, as to go from PlaceholderInterface to FeatureLayerInterface
+// would require a new object. Instead, we have a class that exposes all possible
+// methods and properties as error throwing stubs. Then we replace those functions
+// with real ones once we know the flavour of interface we want.
 
 class BaseInterface {
 
     /**
-     * @param {Array} availableControls [optional=[]] an array or controls names that are displayed inside the legendEntry
-     * @param {Array} disabledControls [optional=[]] an array or controls names that are disabled and cannot be interacted wiht by a user
+     * @param {Object} source                          object that provides info to the interface. usually a LayerRecord or FeatureClass
+     * @param {Array} availableControls [optional=[]]  an array or controls names that are displayed inside the legendEntry
+     * @param {Array} disabledControls [optional=[]]   an array or controls names that are disabled and cannot be interacted wiht by a user
      */
-    constructor (availableControls = [], disabledControls = []) {
+    constructor (source, availableControls = [], disabledControls = []) {
+        this._source = source;
         this._availableControls = availableControls;
         this._disabledConrols = disabledControls;
     }
@@ -79,18 +87,47 @@ class BaseInterface {
         throw new Error('Call not supported.');
     }
 
+    // these expose ui controls available on the interface and indicate which ones are disabled
+    get availableControls () { return this._availableControls; }
+    get disabledControls () { return this._disabledControls; }
+
+    // can be group or node name
+    get name () { this._iAmError(); }
+
+    // these are needed for the type flag
+    get layerType () { this._iAmError(); }
+    get geometryType () { this._iAmError(); }
+    get featureCount () { this._iAmError(); }
+
+    // these return the current values of the corresponding controls
     get visibility () { this._iAmError(); }
     get opacity () { this._iAmError(); }
     get boundingBox () { this._iAmError(); }
     get query () { this._iAmError(); }
     get snapshot () { this._iAmError(); }
+
+    // fetches attributes for use in the datatable
     get formattedAttributes () { this._iAmError(); }
 
+    // content for static legend entires (non-layer/non-group)
+    get infoType () { this._iAmError(); }
+    get infoContent () { this._iAmError(); }
+
+    // these set values to the corresponding controls
     setVisibility () { this._iAmError(); }
     setOpacity () { this._iAmError(); }
     setBoundingBox () { this._iAmError(); }
     setQuery () { this._iAmError(); }
     setSnapshot () { this._iAmError(); }
+
+    // updates what this interface is pointing to, in terms of layer data source.
+    // often, the interface starts with a placeholder to avoid errors and return
+    // defaults. This update happens after a layer has loaded, and new now want
+    // the interface reading off the real FC.
+    // TODO docs
+    updateSource (newSource) {
+        this._source = newSource;
+    }
 }
 
 // TODO shorter class names?
