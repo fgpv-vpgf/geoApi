@@ -130,7 +130,6 @@ class LayerInterface {
     // defaults. This update happens after a layer has loaded, and new now want
     // the interface reading off the real FC.
     // TODO docs
-    // TODO may be made obsolete by the converTo* functions below
     updateSource (newSource) {
         this._source = newSource;
     }
@@ -1371,58 +1370,14 @@ class DynamicRecord extends AttrRecord {
         super(esriRequest, apiRef, config, esriLayer, epsgLookup);
         this.ArcGISDynamicMapServiceLayer = layerClass;
 
-        // TODO what is the case where we don't have an esriLayer passed in????
+        // TODO what is the case where we have dynamic layer already prepared
+        //      and passed in? Generally this only applies to file layers (which
+        //      are feature layers).
 
         // figure out controls on config
         // TODO worry about placeholders. WORRY. how does that even work here?
-        // TODO worry about structured legend.  how is that defined in a config?
 
-        // this will do auto-gen dynamic childs
-        const ctrl = {};
-
-        // this subfunction will recursively crawl a dynamic layerInfo structure.
-        // it will generate control objects for all groups and leafs under the
-        // input layerInfo.
-        // it also collects and returns an array of leaf nodes so each group
-        // can store it and have fast access to all leaves under it.
-        const processLayerInfo = layerInfo => {
-            if (layerInfo.subLayerIds && layerInfo.subLayerIds.length > 0) {
-                // group
-                // TODO probably need some placeholder magic going on here too
-                // TODO figure out control lists, whats available, whats disabled.
-                //      supply on second and third parameters
-                const group = new LayerInterface();
-                group.convertToDynamicGroup(this, layerInfo.id.toString());
-
-                ctrl[layerInfo.id.toString()] = group;
-
-                // process the kids in the group.
-                // store the child leaves in the internal variable
-                layerInfo.subLayerIds.forEach(slid => {
-                    group._childLeafs = group._childLeafs.concat(processLayerInfo(esriLayer.layerInfos[slid]));
-                });
-
-                return group._childLeafs;
-            } else {
-                // leaf
-                // TODO figure out control lists, whats available, whats disabled.
-                //      supply on second and third parameters.
-                //      might need to steal from parent, since auto-gen may not have explicit
-                //      config settings.
-                const leaf = new LayerInterface();
-                leaf.convertToDynamicLeaf(new PlaceholderFC());
-                ctrl[layerInfo.id.toString()] = leaf;
-                return [leaf];
-            }
-        };
-
-        if (config.layerEntries && esriLayer) {
-            config.layerEntries.forEach(le => {
-                processLayerInfo(esriLayer.layerInfos[le.index]);
-            });
-        }
-
-        this._controls = ctrl;
+        this._controls = {};
 
     }
 
@@ -1456,6 +1411,53 @@ class DynamicRecord extends AttrRecord {
     onLoad () {
 
         super.onLoad();
+
+        // TODO worry about structured legend.  how is that defined in a config?
+        //      this code here is doing auto-fill. we might need to not do this
+        //      for structured legend.
+
+        // this subfunction will recursively crawl a dynamic layerInfo structure.
+        // it will generate control objects for all groups and leafs under the
+        // input layerInfo.
+        // it also collects and returns an array of leaf nodes so each group
+        // can store it and have fast access to all leaves under it.
+        const processLayerInfo = (layerInfo, layerControls) => {
+            if (layerInfo.subLayerIds && layerInfo.subLayerIds.length > 0) {
+                // group
+                // TODO probably need some placeholder magic going on here too
+                // TODO figure out control lists, whats available, whats disabled.
+                //      supply on second and third parameters
+                const group = new LayerInterface();
+                group.convertToDynamicGroup(this, layerInfo.id.toString());
+
+                layerControls[layerInfo.id.toString()] = group;
+
+                // process the kids in the group.
+                // store the child leaves in the internal variable
+                layerInfo.subLayerIds.forEach(slid => {
+                    group._childLeafs = group._childLeafs.concat(
+                        processLayerInfo(this._layer.layerInfos[slid], layerControls));
+                });
+
+                return group._childLeafs;
+            } else {
+                // leaf
+                // TODO figure out control lists, whats available, whats disabled.
+                //      supply on second and third parameters.
+                //      might need to steal from parent, since auto-gen may not have explicit
+                //      config settings.
+                const leaf = new LayerInterface();
+                leaf.convertToDynamicLeaf(new PlaceholderFC());
+                layerControls[layerInfo.id.toString()] = leaf;
+                return [leaf];
+            }
+        };
+
+        if (this.config.layerEntries) {
+            this.config.layerEntries.forEach(le => {
+                processLayerInfo(this._layer.layerInfos[le.index], this._controls);
+            });
+        }
 
         // trigger attribute load and set up children bundles.
         // TODO do we need an options object, with .skip set for sub-layers we are not dealing with?
