@@ -40,6 +40,7 @@ group items, which don't have FC objects. Tricky, eh!
 
 */
 
+// TODO revisit if we still need rv- in these constants.
 const states = { // these are used as css classes; hence the `rv` prefix
     NEW: 'rv-new',
     REFRESH: 'rv-refresh',
@@ -99,6 +100,10 @@ class LayerInterface {
     get geometryType () { this._iAmError(); }
     get featureCount () { this._iAmError(); }
 
+    // layer states
+    get layerState () { this._iAmError(); }
+    get isRefreshing () { this._iAmError(); }
+
     // these return the current values of the corresponding controls
     get visibility () { this._iAmError(); }
     get opacity () { this._iAmError(); }
@@ -132,6 +137,9 @@ class LayerInterface {
 
     convertToSingleLayer (layerRecord) {
         this._source = layerRecord;
+
+        newProp(this, 'layerState', standardGetLayerState);
+        newProp(this, 'isRefreshing', standardGetIsRefreshing);
 
         newProp(this, 'visibility', standardGetVisibility);
         newProp(this, 'opacity', standardGetOpacity);
@@ -192,6 +200,29 @@ function newProp(target, propName, getter) {
 // these functions are upgrades to the duds above.
 // we don't use arrow notation, as we want the `this` to point at the object
 // that these functions get smashed into.
+
+function standardGetLayerState() {
+    /* jshint validthis: true */
+
+    // returns one of Loading, Loaded, Error
+    // TODO verify what DEFAULT actually is
+    switch (this._source.state) {
+        case states.NEW:
+        case states.LOADING:
+            return states.LOADING;
+        case states.LOADED:
+        case states.REFRESH:
+        case states.DEFAULT:
+            return states.LOADED;
+        case states.ERROR:
+            return states.ERROR;
+    }
+}
+
+function standardGetIsRefreshing() {
+    /* jshint validthis: true */
+    return this._source.state === states.REFRESH;
+}
 
 function standardGetVisibility() {
     /* jshint validthis: true */
@@ -1117,10 +1148,10 @@ class LayerRecord {
             this.constructLayer = () => { throw new Error('Cannot construct pre-made layers'); };
             this._layer = esriLayer;
             this.bindEvents(this._layer);
-            this.state = states.LOADED;
+            this._state = states.LOADED;
         } else {
             this.constructLayer(config);
-            this.state = states.LOADING;
+            this._state = states.LOADING;
         }
     }
 }
