@@ -148,6 +148,7 @@ class LayerInterface {
         newProp(this, 'query', standardGetQuery);
 
         newProp(this, 'geometryType', standardGetGeometryType);
+        newProp(this, 'featureCount', standardGetFeatureCount);
 
         this.setVisibility = standardSetVisibility;
         this.setOpacity = standardSetOpacity;
@@ -172,6 +173,7 @@ class LayerInterface {
         newProp(this, 'query', dynamicLeafGetQuery);
         newProp(this, 'formattedAttributes', dynamicLeafGetFormattedAttributes);
         newProp(this, 'geometryType', dynamicLeafGetGeometryType);
+        newProp(this, 'featureCount', dynamicLeafGetFeatureCount);
 
         this.setVisibility = dynamicLeafSetVisibility;
         this.setOpacity = dynamicLeafSetOpacity;
@@ -331,6 +333,16 @@ function standardGetGeometryType() {
 function dynamicLeafGetGeometryType() {
     /* jshint validthis: true */
     return this._source.geomType;
+}
+
+function standardGetFeatureCount() {
+    /* jshint validthis: true */
+    return this._source.getFeatureCount();
+}
+
+function dynamicLeafGetFeatureCount() {
+    /* jshint validthis: true */
+    return this._source._parent.getFeatureCount(this._source._idx);
 }
 
 function standardSetVisibility(value) {
