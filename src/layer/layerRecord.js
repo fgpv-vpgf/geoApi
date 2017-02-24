@@ -18,8 +18,8 @@ or a raster source. It is one atomic layer.
 Record represents a physical layer.  Think of a layer in the ESRI map stack. Think of
 something represented by an ESRI API layer object.
 
-Interfaces are classes that present information to the UI and facilitates bindings.
-They also expose calls to perform actions on the layer (e.g. the action a UI button
+Interfac is a classs that presents information to the UI and facilitates bindings.
+It also exposes calls to perform actions on the layer (e.g. the action a UI button
 would execute).
 
 FC classes are contained within Record classes.
@@ -70,6 +70,7 @@ const states = { // these are used as css classes; hence the `rv` prefix
 // methods and properties as error throwing stubs. Then we replace those functions
 // with real ones once we know the flavour of interface we want.
 
+// TODO rename this? A legend entry that is just text will use this to bind content. So the word Layer might be wrong
 class LayerInterface {
 
     /**
@@ -142,9 +143,13 @@ class LayerInterface {
 
         newProp(this, 'visibility', standardGetVisibility);
         newProp(this, 'opacity', standardGetOpacity);
+        newProp(this, 'boundingBox', standardGetBoundingBox);
+        newProp(this, 'query', standardGetQuery);
 
         this.setVisibility = standardSetVisibility;
         this.setOpacity = standardSetOpacity;
+        this.setBoundingBox = standardSetBoundingBox;
+        this.setQuery = standardSetQuery;
     }
 
     convertToFeatureLayer (layerRecord) {
@@ -160,9 +165,11 @@ class LayerInterface {
 
         newProp(this, 'visibility', dynamicLeafGetVisibility);
         newProp(this, 'opacity', dynamicLeafGetOpacity);
+        newProp(this, 'query', dynamicLeafGetQuery);
 
         this.setVisibility = dynamicLeafSetVisibility;
         this.setOpacity = dynamicLeafSetOpacity;
+        this.setQuery = dynamicLeafSetQuery;
     }
 
     convertToDynamicGroup (layerRecord, groupId) {
@@ -269,10 +276,30 @@ function dynamicGroupGetOpacity() {
     return 1;
 }
 
+function standardGetBoundingBox() {
+    /* jshint validthis: true */
+
+    // dont be fooled by function/prop name, we are returning bbox visibility,
+    // not the box itself
+    return this._source.isBBoxVisible();
+}
+
+function standardGetQuery() {
+    /* jshint validthis: true */
+
+    return this._source.isQueryable();
+}
+
+// TODO do we have group-level queryable settings?
+//      e.g. click a control on dynamic root, all childs get setting?
+function dynamicLeafGetQuery() {
+    /* jshint validthis: true */
+
+    return this._source.queryable();
+}
+
 // TODO implement these, but as standardGetX functions
 /*
-get boundingBox() { this._iAmError(); }
-get query() { this._iAmError(); }
 get formattedAttributes() { this._iAmError(); }
 */
 
@@ -318,11 +345,24 @@ function dynamicGroupSetOpacity(value) {
     console.log('enhance group opacity', value);
 }
 
-// TODO implement these, but as standardSetX functions
-/*
-setBoundingBox() { this._iAmError(); }
-setQuery() { this._iAmError(); }
-*/
+function standardSetBoundingBox(value) {
+    /* jshint validthis: true */
+
+    // TODO test if object exists? Is it possible to have control without bbox layer?
+    this._source.bbox.visible = value;
+}
+
+function standardSetQuery(value) {
+    /* jshint validthis: true */
+
+    this._source.setQueryable(value);
+}
+
+function dynamicLeafSetQuery(value) {
+    /* jshint validthis: true */
+
+    this._source.queryable = value;
+}
 
 function featureGetSnapshot() {
     /* jshint validthis: true */
@@ -365,9 +405,9 @@ class PlaceholderFC {
 class BasicFC {
     // base class for feature class object. deals with stuff specific to a feature class (or raster equivalent)
 
-    // TODO determine who is setting this.
-    get isQueryable () { return this._queryable; }
-    set isQueryable (value) { this._queryable = value; }
+    // TODO determine who is setting this. LayerRecord constructor & dynamic child generator?
+    get queryable () { return this._queryable; }
+    set queryable (value) { this._queryable = value; }
 
     // TODO geometry (or lack of) property?
 
@@ -1096,10 +1136,14 @@ class LayerRecord {
         return cBuff.centerAt(point);
     }
 
-    // TODO do we need a setter for queryable?
     // TODO docs
     isQueryable () {
-        return this._featClasses[this._defaultFC].isQueryable();
+        return this._featClasses[this._defaultFC].queryable;
+    }
+
+    // TODO docs
+    setQueryable (value) {
+        this._featClasses[this._defaultFC].queryable = value;
     }
 
     // returns the controls object for the root of the layer (i.e. main entry in legend, not nested child things)
@@ -1497,7 +1541,7 @@ class DynamicRecord extends AttrRecord {
     }
 
     isQueryable (childIdx) {
-        return this._featClasses[childIdx].isQueryable();
+        return this._featClasses[childIdx].queryable;
     }
 
     /**
