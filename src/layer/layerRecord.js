@@ -92,6 +92,7 @@ class LayerInterface {
     // these expose ui controls available on the interface and indicate which ones are disabled
     get availableControls () { return this._availableControls; }
     get disabledControls () { return this._disabledControls; }
+    get symbology () { this._iAmError(); }
 
     // can be group or node name
     get name () { this._iAmError(); }
@@ -146,6 +147,8 @@ class LayerInterface {
         newProp(this, 'boundingBox', standardGetBoundingBox);
         newProp(this, 'query', standardGetQuery);
 
+        newProp(this, 'geometryType', standardGetGeometryType);
+
         this.setVisibility = standardSetVisibility;
         this.setOpacity = standardSetOpacity;
         this.setBoundingBox = standardSetBoundingBox;
@@ -168,6 +171,7 @@ class LayerInterface {
         newProp(this, 'opacity', dynamicLeafGetOpacity);
         newProp(this, 'query', dynamicLeafGetQuery);
         newProp(this, 'formattedAttributes', dynamicLeafGetFormattedAttributes);
+        newProp(this, 'geometryType', dynamicLeafGetGeometryType);
 
         this.setVisibility = dynamicLeafSetVisibility;
         this.setOpacity = dynamicLeafSetOpacity;
@@ -186,6 +190,10 @@ class LayerInterface {
 
         this.setVisibility = dynamicGroupSetVisibility;
         this.setOpacity = dynamicGroupSetOpacity;
+    }
+
+    convertToStatic () {
+        // TODO figure out what is involved here.
     }
 
 }
@@ -315,6 +323,16 @@ function dynamicLeafGetFormattedAttributes() {
     return this._source.getFormattedAttributes();
 }
 
+function standardGetGeometryType() {
+    /* jshint validthis: true */
+    return this._source.getGeomType();
+}
+
+function dynamicLeafGetGeometryType() {
+    /* jshint validthis: true */
+    return this._source.geomType;
+}
+
 function standardSetVisibility(value) {
     /* jshint validthis: true */
     this._source._layer.visibile = value;
@@ -384,9 +402,17 @@ function featureGetSnapshot() {
 function featureSetSnapshot() {
     // TODO trigger the snapshot process.  need the big picture on how this orchestrates.
     //      it involves a layer reload so possible this function is irrelevant, as the record
-    //      might get nuked
+    //      will likely get nuked
     console.log('MOCKING THE SNAPSHOT PROCESS');
 }
+
+// TODO implement function to get .name
+//      where does it come from in single-layer? config? verify new schema
+//      group node?  a config entry? a layer property in auto-gen?
+//      deal with unbound information-only case (static entry)?
+
+// TODO implement infoType / infoContent for static entry.
+//      who supplies this? how does it get passed in.
 
 /* jshint validthis: false */
 
@@ -421,7 +447,9 @@ class BasicFC {
     get queryable () { return this._queryable; }
     set queryable (value) { this._queryable = value; }
 
-    // TODO geometry (or lack of) property?
+    // TODO determine who is setting this. LayerRecord constructor & dynamic child generator?
+    get geomType () { return this._geomType; }
+    set geomType (value) { this._geomType = value; }
 
     /**
      * @param {Object} parent        the Record object that this Feature Class belongs to
@@ -1158,6 +1186,10 @@ class LayerRecord {
         this._featClasses[this._defaultFC].queryable = value;
     }
 
+    getGeomType () {
+        return this._featClasses[this._defaultFC].geomType;
+    }
+
     // returns the controls object for the root of the layer (i.e. main entry in legend, not nested child things)
     // TODO docs
     getControl () {
@@ -1554,6 +1586,10 @@ class DynamicRecord extends AttrRecord {
 
     isQueryable (childIdx) {
         return this._featClasses[childIdx].queryable;
+    }
+
+    getGeomType (childIdx) {
+        return this._featClasses[childIdx].geomType;
     }
 
     /**
