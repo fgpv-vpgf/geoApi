@@ -156,6 +156,7 @@ class LayerInterface {
         this.convertToSingleLayer(layerRecord);
 
         newProp(this, 'snapshot', featureGetSnapshot);
+        newProp(this, 'formattedAttributes', standardGetFormattedAttributes);
 
         this.setSnapshot = featureSetSnapshot;
     }
@@ -166,6 +167,7 @@ class LayerInterface {
         newProp(this, 'visibility', dynamicLeafGetVisibility);
         newProp(this, 'opacity', dynamicLeafGetOpacity);
         newProp(this, 'query', dynamicLeafGetQuery);
+        newProp(this, 'formattedAttributes', dynamicLeafGetFormattedAttributes);
 
         this.setVisibility = dynamicLeafSetVisibility;
         this.setOpacity = dynamicLeafSetOpacity;
@@ -298,10 +300,20 @@ function dynamicLeafGetQuery() {
     return this._source.queryable();
 }
 
-// TODO implement these, but as standardGetX functions
-/*
-get formattedAttributes() { this._iAmError(); }
-*/
+function standardGetFormattedAttributes() {
+    /* jshint validthis: true */
+
+    return this._source.getFormattedAttributes();
+}
+
+function dynamicLeafGetFormattedAttributes() {
+    /* jshint validthis: true */
+
+    // TODO code-wise this looks identical to standardGetFormattedAttributes.
+    //      however in this case, ._source is a DynamicFC, not a LayerRecord.
+    //      This is safer. Deleting this would avoid the duplication. Decide.
+    return this._source.getFormattedAttributes();
+}
 
 function standardSetVisibility(value) {
     /* jshint validthis: true */
