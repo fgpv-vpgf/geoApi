@@ -432,9 +432,46 @@ function featureSetSnapshot() {
 // like feature layers, image layers, and composite layers like dynamic layers.
 // Can toy with alternate approaches. E.g. have a convertToPlaceholder function in the interface.
 
+// simple object packager for client symbology package
+// TODO proper docs
+function makeSymbologyOutput(symbolArray, style) {
+    return {
+        stack: symbolArray,
+        renderStyle: style
+    };
+}
+
+// legend data is our modified legend structure.
+// it is similar to esri's server output, but all individual
+// items are promises.
+// TODO proper docs
+function makeSymbologyArray(legendData) {
+    return legendData.map(item => {
+
+        const symbologyItem = {
+            svgcode: null,
+            name: null
+        };
+
+        // file-based layers don't have symbology labels, default to ''
+        // legend items are promises
+        item.then(data => {
+            symbologyItem.svgcode = data.svgcode;
+            symbologyItem.name = data.label || '';
+        });
+
+        return symbologyItem;
+    });
+}
+
 class PlaceholderFC {
     // contains dummy stuff to stop placeholder states from freaking out
     // prior to a layer being loaded.
+
+    constructor (parent, name) {
+        this._parent = parent;
+        this._name = name;
+    }
 
     // TODO probably need more stuff
 
@@ -446,6 +483,17 @@ class PlaceholderFC {
 
     // TODO same questions as visibility
     get opacity () { return 1; }
+
+    getSymbology () {
+        if (!this._symbology) {
+            // TODO deal with random colours
+            this._symbology = this._parent._api.symbology.generatePlaceholderSymbology(this._name, '#16bf27')
+                .then(symbologyItem => {
+                    return makeSymbologyOutput([symbologyItem], 'icons');
+                });
+        }
+        return this._symbology;
+    }
 
 }
 
@@ -518,10 +566,32 @@ class BasicFC {
         // basic case - set layer visibility
         this._parent._layer.visible = val;
     }
+
+    getSymbology () {
+        if (!this._symbology) {
+            // get symbology from service legend.
+            // this is used for non-feature based sources (tiles, image, raster).
+            // wms will override with own special logic.
+            const url = this._parent._layer.url;
+            if (url) {
+                // fetch legend from server, convert to local format, process local format
+                this._symbology = this._parent._api.symbology.mapServerToLocalLegend(url, this._idx)
+                    .then(legendData => {
+                        return makeSymbologyOutput(makeSymbologyArray(legendData.layers[0]), 'icons');
+                    });
+            } else {
+                // this shouldn't happen. non-url layers should be files, which are features,
+                // which will have a basic renderer and will use FeatureFC override.
+                throw new Error('encountered layer with no renderer and no url');
+            }
+        }
+        return this._symbology;
+    }
+
 }
 
 /**
- * @class BasicFC
+ * @class AttribFC
  */
 class AttribFC extends BasicFC {
     // attribute-specific variant for feature class object.
@@ -561,6 +631,20 @@ class AttribFC extends BasicFC {
     */
     getLayerData () {
         return this._layerPackage.layerData;
+    }
+
+    getSymbology () {
+        if (!this._symbology) {
+            this._symbology = this.getLayerData().then(lData => {
+                if (lData.layerType === 'Feature Layer') {
+                    return makeSymbologyOutput(makeSymbologyArray(lData.legend), 'icons');
+                } else {
+                    // non-feature source. use legend server
+                    return super.getSymbology();
+                }
+            });
+        }
+        return this._symbology;
     }
 
     /**
@@ -736,8 +820,10 @@ class DynamicFC extends AttribFC {
     constructor (parent, idx, layerPackage) {
         super(parent, idx, layerPackage);
 
-        // store pointer to the layerinfo for this FC
-        // TODO re-check that this is useful
+        // store pointer to the layerinfo for this FC.
+        // while most information here can also be gleaned from the layer object,
+        // we cannot know the type (e.g. Feature Layer, Raster Layer), so this object
+        // is required.
         this._layerInfo = parent._layer.layerInfos[idx];
 
         // TODO this may be obsolete now.
@@ -756,6 +842,12 @@ class DynamicFC extends AttribFC {
         });
     }
 
+    // TODO we may need to override some of the methods in AttribFC
+    //      and have logic like
+    //      if this._layerInfo.then(l.layerType === 'Feature Layer') then super(xxx) else non-attrib response
+    //
+    //      could be tricky, as it is promised based, thus wrecking the override of any synchronous function
+
     setVisibility (val) {
         // update visible layers array
         const vLayers = this._parent.visibleLayers;
@@ -773,6 +865,88 @@ class DynamicFC extends AttribFC {
     // TODO extend this function to other FC's?  do they need it?
     getVisibility () {
         return this._parent.visibleLayers.indexOf(parseInt(this._idx)) > -1;
+    }
+
+}
+
+/**
+ * Searches for a layer title defined by a wms.
+ * @function getWMSLayerTitle
+ * @private
+ * @param  {Object} wmsLayer     esri layer object for the wms
+ * @param  {String} wmsLayerId   layers id as defined in the wms (i.e. not wmsLayer.id)
+ * @return {String}              layer title as defined on the service, '' if no title defined
+ */
+function getWMSLayerTitle(wmsLayer, wmsLayerId) {
+    // TODO move this to ogc.js module?
+
+    // crawl esri layerInfos (which is a nested structure),
+    // returns sublayer that has matching id or null if not found.
+    // written as function to allow recursion
+    const crawlSubLayers = (subLayerInfos, wmsLayerId) => {
+        let targetEntry = null;
+
+        // we use .some to allow the search to stop when we find something
+        subLayerInfos.some(layerInfo => {
+            // wms ids are stored in .name
+            if (layerInfo.name === wmsLayerId) {
+                // found it. save it and exit the search
+                targetEntry = layerInfo;
+                return true;
+            } else if (layerInfo.subLayers) {
+                // search children. if in children, will exit search, else will continue
+                return crawlSubLayers(layerInfo.subLayers, wmsLayerId);
+            } else {
+                // continue search
+                return false;
+            }
+        });
+
+        return targetEntry;
+    };
+
+    // init search on root layerInfos, then process result
+    const match = crawlSubLayers(wmsLayer.layerInfos, wmsLayerId);
+    if (match && match.title) {
+        return match.title;
+    } else {
+        return ''; // falsy!
+    }
+}
+
+/**
+ * @class WmsFC
+ */
+class WmsFC extends BasicFC {
+
+    getSymbology () {
+        if (!this._symbology) {
+            const configLayerEntries =  this._parent.config.layerEntries;
+            const gApi = this._parent._api;
+            const legendArray = gApi.layer.ogc
+                .getLegendUrls(this._parent._layer, configLayerEntries.map(le => le.id))
+                .map((imageUri, idx) => {
+
+                    const symbologyItem = {
+                        name: null,
+                        svgcode: null
+                    };
+
+                    // config specified name || server specified name || config id
+                    const name = configLayerEntries[idx].name ||
+                        getWMSLayerTitle(this._parent._layer, configLayerEntries[idx].id) ||
+                        configLayerEntries[idx].id;
+
+                    gApi.symbology.generateWMSSymbology(name, imageUri).then(data => {
+                        symbologyItem.name = data.name;
+                        symbologyItem.svgcode = data.svgcode;
+                    });
+
+                    return symbologyItem;
+                });
+            this._symbology = Promise.resolve(makeSymbologyOutput(legendArray, 'images'));
+        }
+        return this._symbology;
     }
 
 }
@@ -1474,7 +1648,7 @@ class DynamicRecord extends AttrRecord {
         //      and passed in? Generally this only applies to file layers (which
         //      are feature layers).
 
-        // figure out controls on config
+        // TODO figure out controls on config
         // TODO worry about placeholders. WORRY. how does that even work here?
 
         this._controls = {};
@@ -1547,7 +1721,7 @@ class DynamicRecord extends AttrRecord {
                 //      might need to steal from parent, since auto-gen may not have explicit
                 //      config settings.
                 const leaf = new LayerInterface();
-                leaf.convertToDynamicLeaf(new PlaceholderFC());
+                leaf.convertToDynamicLeaf(new PlaceholderFC(this, layerInfo.name));
                 layerControls[layerInfo.id.toString()] = leaf;
                 return [leaf];
             }
@@ -1574,6 +1748,8 @@ class DynamicRecord extends AttrRecord {
 
         // idx is a string
         attributeBundle.indexes.forEach(idx => {
+            // TODO need to worry about Raster Layers here.  DynamicFC is based off of
+            //      attribute things.
             this._featClasses[idx] = new DynamicFC(this, idx, attributeBundle[idx]);
 
             // if we have a control watching this leaf, replace its placeholder with the real data
@@ -2096,5 +2272,6 @@ module.exports = () => ({
     ImageRecord,
     TileRecord,
     WmsRecord,
+    WmsFC, // TODO compiler temp. remove once we are referencing it
     States: states
 });
