@@ -1376,18 +1376,18 @@ class LayerRecord {
         return this._featClasses[this._defaultFC].geomType;
     }
 
-    // returns the controls object for the root of the layer (i.e. main entry in legend, not nested child things)
+    // returns the proxy interface object for the root of the layer (i.e. main entry in legend, not nested child things)
     // TODO docs
-    getControl () {
+    getProxy () {
         // TODO figure out control name arrays from config (specifically, disabled list)
         //      updated config schema uses term "enabled" but have a feeling it really means available
         // TODO figure out how placeholders work with all this
         // TODO does this even make sense in the baseclass anymore? Everything *should* be overriding this.
-        if (!this._rootControl) {
-            this._rootControl = new LayerInterface(this, this.initialConfig.controls);
-            this._rootControl.convertToSingleLayer(this);
+        if (!this._rootProxy) {
+            this._rootProxy = new LayerInterface(this, this.initialConfig.controls);
+            this._rootProxy.convertToSingleLayer(this);
         }
-        return this._rootControl;
+        return this._rootProxy;
     }
 
     /**
@@ -1651,26 +1651,27 @@ class DynamicRecord extends AttrRecord {
         // TODO figure out controls on config
         // TODO worry about placeholders. WORRY. how does that even work here?
 
-        this._controls = {};
+        this._proxies = {};
 
     }
 
     /**
-     * Return a controls interface for a child layer
+     * Return a proxy interface for a child layer
      *
      * @param {Integer} featureIdx    index of child entry (leaf or group)
-     * @return {Object}               control interface for given child
+     * @return {Object}               proxy interface for given child
      */
-    getChildControl (featureIdx) {
+    getChildProxy (featureIdx) {
         // TODO verify we have integer coming in and not a string
         // in this case, featureIdx can also be a group index
-        if (this._controls[featureIdx.toString]) {
-            return this._controls[featureIdx.toString];
+        if (this._proxies[featureIdx.toString]) {
+            return this._proxies[featureIdx.toString];
         } else {
-            throw new Error(`attempt to get non-existing child control. Index ${featureIdx}`);
+            throw new Error(`attempt to get non-existing child proxy. Index ${featureIdx}`);
         }
     }
 
+    // TODO docs
     getFeatureCount (featureIdx) {
         // point url to sub-index we want
         // TODO might change how we manage index and url
@@ -1691,11 +1692,11 @@ class DynamicRecord extends AttrRecord {
         //      for structured legend.
 
         // this subfunction will recursively crawl a dynamic layerInfo structure.
-        // it will generate control objects for all groups and leafs under the
+        // it will generate proxy objects for all groups and leafs under the
         // input layerInfo.
         // it also collects and returns an array of leaf nodes so each group
         // can store it and have fast access to all leaves under it.
-        const processLayerInfo = (layerInfo, layerControls) => {
+        const processLayerInfo = (layerInfo, layerProxies) => {
             if (layerInfo.subLayerIds && layerInfo.subLayerIds.length > 0) {
                 // group
                 // TODO probably need some placeholder magic going on here too
@@ -1704,13 +1705,13 @@ class DynamicRecord extends AttrRecord {
                 const group = new LayerInterface();
                 group.convertToDynamicGroup(this, layerInfo.id.toString());
 
-                layerControls[layerInfo.id.toString()] = group;
+                layerProxies[layerInfo.id.toString()] = group;
 
                 // process the kids in the group.
                 // store the child leaves in the internal variable
                 layerInfo.subLayerIds.forEach(slid => {
                     group._childLeafs = group._childLeafs.concat(
-                        processLayerInfo(this._layer.layerInfos[slid], layerControls));
+                        processLayerInfo(this._layer.layerInfos[slid], layerProxies));
                 });
 
                 return group._childLeafs;
@@ -1722,14 +1723,14 @@ class DynamicRecord extends AttrRecord {
                 //      config settings.
                 const leaf = new LayerInterface();
                 leaf.convertToDynamicLeaf(new PlaceholderFC(this, layerInfo.name));
-                layerControls[layerInfo.id.toString()] = leaf;
+                layerProxies[layerInfo.id.toString()] = leaf;
                 return [leaf];
             }
         };
 
         if (this.config.layerEntries) {
             this.config.layerEntries.forEach(le => {
-                processLayerInfo(this._layer.layerInfos[le.index], this._controls);
+                processLayerInfo(this._layer.layerInfos[le.index], this._proxies);
             });
         }
 
@@ -1743,7 +1744,7 @@ class DynamicRecord extends AttrRecord {
         //                         not to skip.
         //      Alternate: add new option that is opposite of .skip.  Will be more of a
         //                 .only, and we won't have to derive a "skip" set from our inclusive
-        //                 list that was created in the ._controls
+        //                 list that was created in the ._proxies
         const attributeBundle = this._apiRef.attribs.loadLayerAttribs(this._layer);
 
         // idx is a string
@@ -1752,9 +1753,9 @@ class DynamicRecord extends AttrRecord {
             //      attribute things.
             this._featClasses[idx] = new DynamicFC(this, idx, attributeBundle[idx]);
 
-            // if we have a control watching this leaf, replace its placeholder with the real data
-            if (this._controls[idx]) {
-                this._controls[idx].updateSource(this._featClasses[idx]);
+            // if we have a proxy watching this leaf, replace its placeholder with the real data
+            if (this._proxies[idx]) {
+                this._proxies[idx].updateSource(this._featClasses[idx]);
             }
         });
 
@@ -2099,17 +2100,17 @@ class FeatureRecord extends AttrRecord {
         return cfg;
     }
 
-    // returns the controls object for the root of the layer (i.e. main entry in legend, not nested child things)
+    // returns the proxy interface object for the root of the layer (i.e. main entry in legend, not nested child things)
     // TODO docs
-    getControl () {
+    getProxy () {
         // TODO figure out control name arrays from config (specifically disabled stuff)
         //      updated config schema uses term "enabled" but have a feeling it really means available
         // TODO figure out how placeholders work with all this
-        if (!this._rootControl) {
-            this._rootControl = new LayerInterface(this, this.initialConfig.controls);
-            this._rootControl.convertToFeatureLayer(this);
+        if (!this._rootProxy) {
+            this._rootProxy = new LayerInterface(this, this.initialConfig.controls);
+            this._rootProxy.convertToFeatureLayer(this);
         }
-        return this._rootControl;
+        return this._rootProxy;
     }
 
     /**
