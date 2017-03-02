@@ -36,11 +36,45 @@
                 }
             };
 
+            var lods = [
+                { "level": 15, "resolution": 13.229193125052918, "scale": 50000 },
+                { "level": 16, "resolution": 7.9375158750317505, "scale": 30000 },
+                { "level": 17, "resolution": 4.6302175937685215, "scale": 17500 } ];
+
             var layerRec = api.layer.createFeatureRecord(config1);
             console.log('layer PROOF ', layerRec);
+            var proxy = layerRec.getProxy();
+            console.log('proxy PROOF ', proxy);
+
+            // hack to wait for layer to load
+
+            var to = setTimeout(() => {
+                if (layerRec.state === 'rv-loaded') {
+                    clearTimeout(to);
+                    afterLoadTests();
+                }
+            }, 1000);
+
+            function afterLoadTests() {
+                console.log('enhanced loaded')
+
+                layerRec.isOffScale(20000).then(offscale => {
+                    console.log('offscale test - sb false, flase', offscale);
+                });
+
+                // note using hack of layerRec._layer for zoom scales, as that thing is private
+                console.log('find zoom scale test - sb level 17', layerRec.findZoomScale(lods, layerRec._layer, false));
+
+                console.log('visible - sb true', layerRec.visible);
+
+                proxy.symbology.then(sym => {
+                    console.log('symbology - sb 1 element', sym);
+                });
+                
+            }
 
 /*
-            layerRec.onLoad(); // cuz we're not using a map here
+           
 
             var formAttr = layerRec.getFormattedAttributes();
             formAttr.then(a => {

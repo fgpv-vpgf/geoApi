@@ -139,6 +139,7 @@ class LayerInterface {
     convertToSingleLayer (layerRecord) {
         this._source = layerRecord;
 
+        newProp(this, 'symbology', standardGetSymbology);
         newProp(this, 'layerState', standardGetLayerState);
         newProp(this, 'isRefreshing', standardGetIsRefreshing);
 
@@ -167,6 +168,8 @@ class LayerInterface {
 
     convertToDynamicLeaf (dynamicFC) {
         this._source = dynamicFC;
+
+        newProp(this, 'symbology', dynamicLeafGetSymbology);
 
         newProp(this, 'visibility', dynamicLeafGetVisibility);
         newProp(this, 'opacity', dynamicLeafGetOpacity);
@@ -323,6 +326,21 @@ function dynamicLeafGetFormattedAttributes() {
     //      however in this case, ._source is a DynamicFC, not a LayerRecord.
     //      This is safer. Deleting this would avoid the duplication. Decide.
     return this._source.getFormattedAttributes();
+}
+
+function standardGetSymbology() {
+    /* jshint validthis: true */
+
+    return this._source.getSymbology();
+}
+
+function dynamicLeafGetSymbology() {
+    /* jshint validthis: true */
+
+    // TODO code-wise this looks identical to standardGetSymbology.
+    //      however in this case, ._source is a DynamicFC, not a LayerRecord.
+    //      This is safer. Deleting this would avoid the duplication. Decide.
+    return this._source.getSymbology();
 }
 
 function standardGetGeometryType() {
@@ -637,7 +655,8 @@ class AttribFC extends BasicFC {
         if (!this._symbology) {
             this._symbology = this.getLayerData().then(lData => {
                 if (lData.layerType === 'Feature Layer') {
-                    return makeSymbologyOutput(makeSymbologyArray(lData.legend), 'icons');
+                    // feature always has a single item, so index 0
+                    return makeSymbologyOutput(makeSymbologyArray(lData.legend.layers[0].legend), 'icons');
                 } else {
                     // non-feature source. use legend server
                     return super.getSymbology();
@@ -1199,19 +1218,23 @@ class LayerRecord {
     }
 
     /**
-     * Figure out visibility scale and zoom to it.  Will use layer minScale/maxScale
+     * Figure out visibility scale.  Will use layer minScale/maxScale
      * and map levels of detail to determine scale boundaries.
      *
-     * @param {Integer} lods    index of item we want
-     * @param {Array} scaleSet            level of detail definitions for the current map
+     * @param {Array} lods            array of valid levels of detail for the map
+     * @param {Object} scaleSet       contains .minScale and .maxScale for valid viewing scales
      * @param {Boolean} zoomIn        the zoom to scale direction; true need to zoom in; false need to zoom out
      * @param {Boolean} zoomGraphic   an optional value when zoomToScale is use to zoom to a graphic element;
      *                                    true used to zoom to a graphic element; false not used to zoom to a graphic element
+     * @returns {Object} a level of detail (lod) object for the appropriate scale to zoom to
      */
     findZoomScale (lods, scaleSet, zoomIn, zoomGraphic = false) {
         // TODO rename function to getZoomScale?
         // TODO take a second look at parameters zoomIn and zoomGraphic. how are they derived (in the caller code)?
         //      seems weird to me to do it this way
+        // TODO naming of "zoomIn" is very misleading and confusing. in practice, we are often
+        //      setting the value to false when we are zooming down close to the ground.
+        //      Need full analysis of usage, possibly rename parameter or update param docs.
         // TODO update function parameters once things are working
 
         // if the function is used to zoom to a graphic element and the layer is out of scale we always want
@@ -1509,6 +1532,10 @@ class AttrRecord extends LayerRecord {
 
     getFeatureName (objId, attribs) {
         return this._featClasses[this._defaultFC].getFeatureName(objId, attribs);
+    }
+
+    getSymbology () {
+        return this._featClasses[this._defaultFC].getSymbology();
     }
 
     getFeatureCount (url) {
@@ -1845,6 +1872,10 @@ class DynamicRecord extends AttrRecord {
 
     getFeatureName (childIndex, objId, attribs) {
         return this._featClasses[childIndex].getFeatureName(objId, attribs);
+    }
+
+    getSymbology (childIndex) {
+        return this._featClasses[childIndex].getSymbology();
     }
 
     /**
@@ -2283,5 +2314,5 @@ module.exports = () => ({
     TileRecord,
     WmsRecord,
     WmsFC, // TODO compiler temp. remove once we are referencing it
-    States: states
+    States: states // TODO should this get exposed on the geoApi as well? currently layer module is not re-exposing it
 });
