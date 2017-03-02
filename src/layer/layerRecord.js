@@ -649,7 +649,7 @@ class AttribFC extends BasicFC {
 
     /**
     * Extract the feature name from a feature as best we can.
-    * Support for dynamic layers is limited at the moment.
+    * Support for dynamic layers is limited at the moment. // TODO explain this comment
     *
     * @function getFeatureName
     * @param {String} objId      the object id of the attribute
@@ -986,7 +986,15 @@ class IdentifyResult {
  * @class LayerRecord
  */
 class LayerRecord {
-    get layerClass () { throw new Error('This should be overridden in subclasses'); }
+    // NOTE: we used to override layerClass in each specific class.
+    //       since we require the class in the generic constructor,
+    //       and since it was requested that the esri class be passed in
+    //       as a constructor parameter instead of holding a ref to the esriBundle,
+    //       and since you must call `super` first in a constructor,
+    //       it was impossible to assign the specific class before the generic
+    //       constructor executed, resulting in null-dereferences.
+    //       this approach solves the problem.
+    get layerClass () { return this._layerClass; }
     get config () { return this.initialConfig; } // TODO: add a live config reference if needed
     get legendEntry () { return this._legendEntry; } // legend entry class corresponding to those defined in legend entry service
     set legendEntry (value) { this._legendEntry = value; } // TTODO: determine if we still link legends inside this class
@@ -996,7 +1004,7 @@ class LayerRecord {
     get layerId () { return this.config.id; }
     get _layerPassthroughBindings () { return ['setOpacity', 'setVisibility']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
     get _layerPassthroughProperties () { return ['visibleAtMapScale', 'visible', 'spatialReference']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
-    get userLayer () { return this._user; } // indicates if file is added by a user
+    get userLayer () { return this._user; } // indicates if layer was added by a user
     set userLayer (value) { this._user = value; }
     get layerName () { return this._name; } // the top level layer name
     set layerName (value) { this._name = value; }
@@ -1172,16 +1180,16 @@ class LayerRecord {
     makeLayerConfig () {
         return {
             id: this.config.id,
-            opacity: this.config.options.opacity.value,
-            visible: this.config.options.visibility.value
+            opacity: this.config.state.opacity,
+            visible: this.config.state.visibility
         };
     }
 
     /**
-    * Indicates if the bounding box is visible
-    *
-    * @returns {Boolean} indicates if the bounding box is visible
-    */
+     * Indicates if the bounding box is visible
+     *
+     * @returns {Boolean} indicates if the bounding box is visible
+     */
     isBBoxVisible () {
         if (this._bbox) {
             return this._bbox.visible;
@@ -1394,12 +1402,14 @@ class LayerRecord {
      * Create a layer record with the appropriate geoApi layer type.  Layer config
      * should be fully merged with all layer options defined (i.e. this constructor
      * will not apply any defaults).
+     * @param {Object} layerClass    the ESRI api object for the layer
      * @param {Object} apiRef        object pointing to the geoApi. allows us to call other geoApi functions.
      * @param {Object} config        layer config values
      * @param {Object} esriLayer     an optional pre-constructed layer
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
-    constructor (apiRef, config, esriLayer, epsgLookup) {
+    constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
+        this._layerClass = layerClass;
         this._featClasses = {}; // TODO how to populate first one
         this._defaultFC = '0'; // TODO how to populate first one  TODO check if int or string
         this._apiRef = apiRef;
@@ -1442,14 +1452,15 @@ class AttrRecord extends LayerRecord {
      * Create a layer record with the appropriate geoApi layer type.  Layer config
      * should be fully merged with all layer options defined (i.e. this constructor
      * will not apply any defaults).
+     * @param {Object} layerClass    the ESRI api object for the layer
      * @param {Object} esriRequest   the ESRI api object for making web requests with proxy support
      * @param {Object} apiRef        object pointing to the geoApi. allows us to call other geoApi functions.
      * @param {Object} config        layer config values
      * @param {Object} esriLayer     an optional pre-constructed layer
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
-    constructor (esriRequest, apiRef, config, esriLayer, epsgLookup) {
-        super(apiRef, config, esriLayer, epsgLookup);
+    constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
+        super(layerClass, apiRef, config, esriLayer, epsgLookup);
 
         this._esriRequest = esriRequest;
     }
@@ -1586,7 +1597,6 @@ class ImageRecord extends LayerRecord {
     // NOTE: if we decide to support attributes from ImageServers,
     //       we would extend from AttrRecord instead of LayerRecord
     //       (and do a lot of testing!)
-    get layerClass () { return this.ArcGISImageServiceLayer; }
 
     /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
@@ -1599,8 +1609,8 @@ class ImageRecord extends LayerRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
+        // TODO if we have nothing to add here, delete this constructor
         super(apiRef, config, esriLayer, epsgLookup);
-        this.ArcGISImageServiceLayer = layerClass;
     }
 
     /**
@@ -1627,7 +1637,6 @@ class DynamicRecord extends AttrRecord {
     get _layerPassthroughProperties () {
         return ['visibleAtMapScale', 'visible', 'spatialReference', 'layerInfos', 'supportsDynamicLayers'];
     }
-    get layerClass () { return this.ArcGISDynamicMapServiceLayer; }
 
     /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
@@ -1641,7 +1650,7 @@ class DynamicRecord extends AttrRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
-        super(esriRequest, apiRef, config, esriLayer, epsgLookup);
+        super(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup);
         this.ArcGISDynamicMapServiceLayer = layerClass;
 
         // TODO what is the case where we have dynamic layer already prepared
@@ -1940,7 +1949,6 @@ class DynamicRecord extends AttrRecord {
  * @class TileRecord
  */
 class TileRecord extends LayerRecord {
-    get layerClass () { return this.ArcGISTiledMapServiceLayer; }
 
     /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
@@ -1953,8 +1961,8 @@ class TileRecord extends LayerRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
+        // TODO if we have nothing to add here, delete this constructor
         super(apiRef, config, esriLayer, epsgLookup);
-        this.ArcGISTiledMapServiceLayer = layerClass;
     }
 
     /**
@@ -1976,7 +1984,6 @@ class TileRecord extends LayerRecord {
  * @class WmsRecord
  */
 class WmsRecord extends LayerRecord {
-    get layerClass () { return this.WmsLayer; }
 
     /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
@@ -1989,8 +1996,8 @@ class WmsRecord extends LayerRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
-        super(apiRef, config, esriLayer, epsgLookup);
-        this.WmsLayer = layerClass;
+        // TODO if we have nothing to add here, delete this constructor
+        super(layerClass, apiRef, config, esriLayer, epsgLookup);
     }
 
     makeLayerConfig () {
@@ -2069,7 +2076,6 @@ class WmsRecord extends LayerRecord {
  * @class FeatureRecord
  */
 class FeatureRecord extends AttrRecord {
-    get layerClass () { return this.FeatureLayer; }
 
     // TODO add flags for file based layers?
 
@@ -2085,8 +2091,8 @@ class FeatureRecord extends AttrRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
-        super(esriRequest, apiRef, config, esriLayer, epsgLookup);
-        this.FeatureLayer = layerClass;
+        // TODO if we have nothing to add here, delete this constructor
+        super(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup);
     }
 
     // TODO ensure whoever is making layers from config fragments is also setting the feature index.
@@ -2094,9 +2100,12 @@ class FeatureRecord extends AttrRecord {
 
     makeLayerConfig () {
         const cfg = super.makeLayerConfig();
-        cfg.mode = this.config.options.snapshot.value ? this.layerClass.MODE_SNAPSHOT
-                                                        : this.layerClass.MODE_ONDEMAND;
-        this.config.options.snapshot.enabled = !this.config.options.snapshot.value;
+        cfg.mode = this.config.state.snapshot ? this._layerClass.MODE_SNAPSHOT
+                                                        : this._layerClass.MODE_ONDEMAND;
+
+        // TODO confirm this logic. old code mapped .options.snapshot.value to the button -- meaning if we were in snapshot mode,
+        //      we would want the button disabled. in the refactor, the button may get it's enabled/disabled from a different source.
+        this.config.state.snapshot = !this.config.state.snapshot;
         return cfg;
     }
 
