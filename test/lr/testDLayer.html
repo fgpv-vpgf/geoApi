@@ -18,22 +18,37 @@
             // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
 
             var config1 = {
-                id: 'dog',
+                id: 'guts',
                 name: 'Feature Test',
-                url: 'http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/2',
+                url: 'http://section917.cloudapp.net/arcgis/rest/services/TestData/Nest/MapServer',
                 nameField: 'siteShortName_en',
                 metadataUrl: 'http://www.github.com',
-                layerType: 'esriFeature',
+                layerType: 'esriDynamic',
                 tolerance: 5,
                 extent: {},
-                controls: ['snapshot', 'visibility', 'opacity', 'boundingBox', 'query', 'data'],
+                controls: ['visibility', 'opacity', 'boundingBox', 'query', 'data'],
                 state: {
                     opacity: 1,
                     visibility: true,
                     boundingBox: false,
-                    query: true,
-                    snapshot: false
-                }
+                    query: true
+                },
+                layerEntries: [
+                    {
+                        index: 0,
+                        outfields: '*',
+                        controls: ['visibility', 'opacity', 'boundingBox', 'query'],
+                        state: {
+                            opacity: 1,
+                            visibility: true,
+                            boundingBox: false,
+                            query: true
+                        }
+                    }
+                ],
+                childOptions: [
+
+                ]
             };
 
             var lods = [
@@ -41,7 +56,7 @@
                 { "level": 16, "resolution": 7.9375158750317505, "scale": 30000 },
                 { "level": 17, "resolution": 4.6302175937685215, "scale": 17500 } ];
 
-            var layerRec = api.layer.createFeatureRecord(config1);
+            var layerRec = api.layer.createDynamicRecord(config1);
             console.log('layer PROOF ', layerRec);
             var proxy = layerRec.getProxy();
             console.log('proxy PROOF ', proxy);
@@ -57,7 +72,7 @@
 
             function afterLoadTests() {
                 console.log('enhanced loaded')
-
+/*
                 layerRec.isOffScale(20000).then(offscale => {
                     console.log('offscale test - sb false, flase', offscale);
                 });
@@ -66,11 +81,12 @@
                 console.log('find zoom scale test - sb level 17', layerRec.findZoomScale(lods, layerRec._layer, false));
 
                 console.log('visible - sb true', layerRec.visible);
-
-                proxy.symbology.then(sym => {
-                    console.log('symbology - sb 1 element', sym);
+*/
+                var leaf3proxy = layerRec.getChildProxy(3);
+                leaf3proxy.symbology.then(sym => {
+                    console.log('symbology - sb one circle svg', sym);
                 });
-                
+
                 // mock an identify
 
             }

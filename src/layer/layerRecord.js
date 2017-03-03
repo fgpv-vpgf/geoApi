@@ -1194,7 +1194,7 @@ class LayerRecord {
     }
 
     /**
-     * Creates a config snippet for the layer
+     * Creates an options object for the physical layer
      */
     makeLayerConfig () {
         return {
@@ -1700,8 +1700,8 @@ class DynamicRecord extends AttrRecord {
     getChildProxy (featureIdx) {
         // TODO verify we have integer coming in and not a string
         // in this case, featureIdx can also be a group index
-        if (this._proxies[featureIdx.toString]) {
-            return this._proxies[featureIdx.toString];
+        if (this._proxies[featureIdx.toString()]) {
+            return this._proxies[featureIdx.toString()];
         } else {
             throw new Error(`attempt to get non-existing child proxy. Index ${featureIdx}`);
         }
@@ -1726,6 +1726,12 @@ class DynamicRecord extends AttrRecord {
         // TODO worry about structured legend.  how is that defined in a config?
         //      this code here is doing auto-fill. we might need to not do this
         //      for structured legend.
+
+        // TODO do we need to do config defaulting here?
+        //      e.g. a group may be defined in the config. if there is
+        //      no specific config items for the children of the group,
+        //      should we be copying the parent values and using those
+        //      as initial values?
 
         // this subfunction will recursively crawl a dynamic layerInfo structure.
         // it will generate proxy objects for all groups and leafs under the
@@ -1787,6 +1793,7 @@ class DynamicRecord extends AttrRecord {
         attributeBundle.indexes.forEach(idx => {
             // TODO need to worry about Raster Layers here.  DynamicFC is based off of
             //      attribute things.
+            // TODO need to pass some type of initial state to these FCs (e.g. queryable)
             this._featClasses[idx] = new DynamicFC(this, idx, attributeBundle[idx]);
 
             // if we have a proxy watching this leaf, replace its placeholder with the real data
@@ -1794,6 +1801,11 @@ class DynamicRecord extends AttrRecord {
                 this._proxies[idx].updateSource(this._featClasses[idx]);
             }
         });
+
+        // TODO after config defaulting for any autogen children,
+        //      need to get list of visible leaves and manually set
+        //      the layer doing this._layer.setVisibleLayers([visible indexes]) .
+        //      possibly need to do something similar for opacity (if supported)
 
     }
 
