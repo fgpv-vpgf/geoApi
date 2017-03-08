@@ -1723,9 +1723,9 @@ class DynamicRecord extends AttrRecord {
 
         super.onLoad();
 
-        // TODO worry about structured legend.  how is that defined in a config?
-        //      this code here is doing auto-fill. we might need to not do this
-        //      for structured legend.
+        // don't worry about structured legend. the legend part is separate from
+        // the layers part. we just load what we are told to. the legend module
+        // will handle the structured part.
 
         // TODO do we need to do config defaulting here?
         //      e.g. a group may be defined in the config. if there is
@@ -1733,27 +1733,76 @@ class DynamicRecord extends AttrRecord {
         //      should we be copying the parent values and using those
         //      as initial values?
 
+        // NOTE regarding config objects. any config part coming from a file
+        //      or RCS will be pre-defaulted. I.e. we don't need to worry about
+        //      a missing property or figuring out the default value.
+        //      For child layers that are "revealed" after a dynamic layer loads,
+        //      we use parent configs for the defaults, unless specifics are
+        //      already included for the child in the config file.
+        //
+        //      for now, the only relevant properties to be propagated
+        //      from parent to child are .state and .controls .
+        //      .outfields does not make sense as chilren can have different fields.
+
+        // subconfig lookup. initialize with the layer root (-1), then add
+        // in anything provided in the initial config.
+        const subConfigs = {
+            '-1': {
+                state: this.config.state,
+                controls: this.config.controls
+            }
+        };
+
+        // do child options first, then layer entries. in weird case where both are defined,
+        // will give priority to the layer entries.
+        // works because both child options and layer entries have identical structure
+        // for properties we need in this routine.
+        this.config.childOptions.concat(this.config.layerEntries).forEach(c => {
+            subConfigs[c.index.toString()] = c;
+        });
+
+        // subfunction to either return a stored sub-config, or
+        // derive a new subconfig from the parent config.
+        // both params integers in string format.
+        const fetchSubConfig = (id, parentId) => {
+            if (subConfigs[id]) {
+                return subConfigs[id];
+            } else {
+                // copy properties from parent
+                const newConfig = {
+                    state: Object.assign({}, subConfigs[parentId].state),
+                    controls: subConfigs[parentId].controls.concat()
+                };
+                subConfigs[id] = newConfig;
+                return newConfig;
+            }
+        };
+
         // this subfunction will recursively crawl a dynamic layerInfo structure.
         // it will generate proxy objects for all groups and leafs under the
         // input layerInfo.
         // it also collects and returns an array of leaf nodes so each group
         // can store it and have fast access to all leaves under it.
-        const processLayerInfo = (layerInfo, layerProxies) => {
+        const processLayerInfo = (layerInfo, layerProxies, parentId) => {
+            const sId = layerInfo.id.toString();
+            const subConfig = fetchSubConfig(sId, parentId.toString());
             if (layerInfo.subLayerIds && layerInfo.subLayerIds.length > 0) {
                 // group
                 // TODO probably need some placeholder magic going on here too
+                // TODO do we need to apply any config state?
                 // TODO figure out control lists, whats available, whats disabled.
                 //      supply on second and third parameters
-                const group = new LayerInterface();
-                group.convertToDynamicGroup(this, layerInfo.id.toString());
+                const group = new LayerInterface(this, subConfig.controls);
 
-                layerProxies[layerInfo.id.toString()] = group;
+                group.convertToDynamicGroup(this, sId);
+
+                layerProxies[sId] = group;
 
                 // process the kids in the group.
                 // store the child leaves in the internal variable
                 layerInfo.subLayerIds.forEach(slid => {
                     group._childLeafs = group._childLeafs.concat(
-                        processLayerInfo(this._layer.layerInfos[slid], layerProxies));
+                        processLayerInfo(this._layer.layerInfos[slid], layerProxies, sId));
                 });
 
                 return group._childLeafs;
@@ -1763,16 +1812,16 @@ class DynamicRecord extends AttrRecord {
                 //      supply on second and third parameters.
                 //      might need to steal from parent, since auto-gen may not have explicit
                 //      config settings.
-                const leaf = new LayerInterface();
+                const leaf = new LayerInterface(null, subConfig.controls);
                 leaf.convertToDynamicLeaf(new PlaceholderFC(this, layerInfo.name));
-                layerProxies[layerInfo.id.toString()] = leaf;
+                layerProxies[sId] = leaf;
                 return [leaf];
             }
         };
 
         if (this.config.layerEntries) {
             this.config.layerEntries.forEach(le => {
-                processLayerInfo(this._layer.layerInfos[le.index], this._proxies);
+                processLayerInfo(this._layer.layerInfos[le.index], this._proxies, -1);
             });
         }
 
@@ -1787,6 +1836,10 @@ class DynamicRecord extends AttrRecord {
         //      Alternate: add new option that is opposite of .skip.  Will be more of a
         //                 .only, and we won't have to derive a "skip" set from our inclusive
         //                 list that was created in the ._proxies
+        //      Furthermore: skipping / being effecient might not really matter here anymore.
+        //                   back in the day, loadLayerAttribs would actually load everything.
+        //                   now it just sets up promises that dont trigger until someone asks for
+        //                   the information.
         const attributeBundle = this._apiRef.attribs.loadLayerAttribs(this._layer);
 
         // idx is a string
