@@ -505,7 +505,7 @@ class PlaceholderFC {
     getSymbology () {
         if (!this._symbology) {
             // TODO deal with random colours
-            this._symbology = this._parent._api.symbology.generatePlaceholderSymbology(this._name, '#16bf27')
+            this._symbology = this._parent._apiRef.symbology.generatePlaceholderSymbology(this._name, '#16bf27')
                 .then(symbologyItem => {
                     return makeSymbologyOutput([symbologyItem], 'icons');
                 });
@@ -521,7 +521,6 @@ class PlaceholderFC {
 class BasicFC {
     // base class for feature class object. deals with stuff specific to a feature class (or raster equivalent)
 
-    // TODO determine who is setting this. LayerRecord constructor & dynamic child generator?
     get queryable () { return this._queryable; }
     set queryable (value) { this._queryable = value; }
 
@@ -532,10 +531,15 @@ class BasicFC {
     /**
      * @param {Object} parent        the Record object that this Feature Class belongs to
      * @param {String} idx           the service index of this Feature Class. an integer in string format. use '0' for non-indexed sources.
+     * @param {Object} config        the config object for this sublayer
      */
-    constructor (parent, idx) {
+    constructor (parent, idx, config) {
         this._parent = parent;
         this._idx = idx;
+        this.queryable = config.state.query;
+
+        // TODO do we need to store a copy of the config? for the memories?
+
     }
 
     // returns a promise of an object with minScale and maxScale values for the feature class
@@ -593,7 +597,7 @@ class BasicFC {
             const url = this._parent._layer.url;
             if (url) {
                 // fetch legend from server, convert to local format, process local format
-                this._symbology = this._parent._api.symbology.mapServerToLocalLegend(url, this._idx)
+                this._symbology = this._parent._apiRef.symbology.mapServerToLocalLegend(url, this._idx)
                     .then(legendData => {
                         return makeSymbologyOutput(makeSymbologyArray(legendData.layers[0]), 'icons');
                     });
@@ -622,9 +626,10 @@ class AttribFC extends BasicFC {
      * @param {Object} parent        the Record object that this Feature Class belongs to
      * @param {String} idx           the service index of this Feature Class. an integer in string format. use '0' for non-indexed sources.
      * @param {Object} layerPackage  a layer package object from the attribute module for this feature class
+     * @param {Object} config        the config object for this sublayer
      */
-    constructor (parent, idx, layerPackage) {
-        super(parent, idx);
+    constructor (parent, idx, layerPackage, config) {
+        super(parent, idx, config);
 
         this._layerPackage = layerPackage;
 
@@ -824,7 +829,7 @@ class AttribFC extends BasicFC {
 }
 
 /**
- * @class BasicFC
+ * @class DynamicFC
  */
 class DynamicFC extends AttribFC {
     // dynamic child variant for feature class object.
@@ -835,9 +840,10 @@ class DynamicFC extends AttribFC {
      * @param {Object} parent        the Record object that this Feature Class belongs to
      * @param {String} idx           the service index of this Feature Class. an integer in string format. use '0' for non-indexed sources.
      * @param {Object} layerPackage  a layer package object from the attribute module for this feature class
+     * @param {Object} config        the config object for this sublayer
      */
-    constructor (parent, idx, layerPackage) {
-        super(parent, idx, layerPackage);
+    constructor (parent, idx, layerPackage, config) {
+        super(parent, idx, layerPackage, config);
 
         // store pointer to the layerinfo for this FC.
         // while most information here can also be gleaned from the layer object,
@@ -845,8 +851,12 @@ class DynamicFC extends AttribFC {
         // is required.
         this._layerInfo = parent._layer.layerInfos[idx];
 
-        // TODO this may be obsolete now.
-        this._visible = true; // TODO should be config value or some type of default if auto-gen
+        // TODO put the config stuff into private properties
+        //      this will probably only be opacity, which we still need to figure out
+
+        // visibility is kept stateful by the parent. keeping an internal property
+        // just means we would need to keep it in synch.
+        this.setVisibility(config.state.visible);
     }
 
     // returns an object with minScale and maxScale values for the feature class
@@ -869,7 +879,7 @@ class DynamicFC extends AttribFC {
 
     setVisibility (val) {
         // update visible layers array
-        const vLayers = this._parent.visibleLayers;
+        const vLayers = this._parent._layer.visibleLayers;
         const intIdx = parseInt(this._idx);
         const vIdx = vLayers.indexOf(intIdx);
         if (val && vIdx === -1) {
@@ -883,7 +893,9 @@ class DynamicFC extends AttribFC {
 
     // TODO extend this function to other FC's?  do they need it?
     getVisibility () {
-        return this._parent.visibleLayers.indexOf(parseInt(this._idx)) > -1;
+        // TODO would we ever need to worry about _parent._layer.visible being false while
+        //      the visibleLayers array still contains valid indexes?
+        return this._parent._layer.visibleLayers.indexOf(parseInt(this._idx)) > -1;
     }
 
 }
@@ -1387,7 +1399,7 @@ class LayerRecord {
         const buffSize = 2 * tolerance * map.extent.getWidth() / map.width;
 
         // Build tolerance envelope of correct size
-        const cBuff = new this._api.mapManager.Extent(0, 0, buffSize, buffSize, point.spatialReference);
+        const cBuff = new this._apiRef.mapManager.Extent(0, 0, buffSize, buffSize, point.spatialReference);
 
         // move the envelope so it is centered around the point
         return cBuff.centerAt(point);
@@ -1650,7 +1662,7 @@ class ImageRecord extends LayerRecord {
 
         // TODO consider making this a function, as it is common across less-fancy layers
         this._defaultFC = '0';
-        this._featClasses['0'] = new BasicFC(this, '0');
+        this._featClasses['0'] = new BasicFC(this, '0', this.config);
     }
 }
 
@@ -1726,12 +1738,6 @@ class DynamicRecord extends AttrRecord {
         // don't worry about structured legend. the legend part is separate from
         // the layers part. we just load what we are told to. the legend module
         // will handle the structured part.
-
-        // TODO do we need to do config defaulting here?
-        //      e.g. a group may be defined in the config. if there is
-        //      no specific config items for the children of the group,
-        //      should we be copying the parent values and using those
-        //      as initial values?
 
         // NOTE regarding config objects. any config part coming from a file
         //      or RCS will be pre-defaulted. I.e. we don't need to worry about
@@ -1844,14 +1850,18 @@ class DynamicRecord extends AttrRecord {
 
         // idx is a string
         attributeBundle.indexes.forEach(idx => {
-            // TODO need to worry about Raster Layers here.  DynamicFC is based off of
-            //      attribute things.
-            // TODO need to pass some type of initial state to these FCs (e.g. queryable)
-            this._featClasses[idx] = new DynamicFC(this, idx, attributeBundle[idx]);
+            // if we don't have a sub-config, it means the attribute leaf is not present
+            // in our visible tree structure.
+            if (subConfigs[idx]) {
+                // TODO need to worry about Raster Layers here.  DynamicFC is based off of
+                //      attribute things.
+                // TODO need to pass some type of initial state to these FCs (e.g. queryable)
+                this._featClasses[idx] = new DynamicFC(this, idx, attributeBundle[idx], subConfigs[idx]);
 
-            // if we have a proxy watching this leaf, replace its placeholder with the real data
-            if (this._proxies[idx]) {
-                this._proxies[idx].updateSource(this._featClasses[idx]);
+                // if we have a proxy watching this leaf, replace its placeholder with the real data
+                if (this._proxies[idx]) {
+                    this._proxies[idx].updateSource(this._featClasses[idx]);
+                }
             }
         });
 
@@ -1975,7 +1985,7 @@ class DynamicRecord extends AttrRecord {
 
         opts.tolerance = this.clickTolerance;
 
-        const identifyPromise = this._api.layer.serverLayerIdentify(this._layer, opts)
+        const identifyPromise = this._apiRef.layer.serverLayerIdentify(this._layer, opts)
             .then(clickResults => {
                 const hitIndexes = []; // sublayers that we got results for
 
@@ -2008,7 +2018,7 @@ class DynamicRecord extends AttrRecord {
                                 data: this.attributesToDetails(ele.feature.attributes),
                                 oid: unAliasAtt[lData.oidField],
                                 symbology: [{
-                                    svgcode: this._api.symbology.getGraphicIcon(unAliasAtt, lData.renderer)
+                                    svgcode: this._apiRef.symbology.getGraphicIcon(unAliasAtt, lData.renderer)
                                 }]
                             });
                         }
@@ -2071,7 +2081,7 @@ class TileRecord extends LayerRecord {
 
         // TODO consider making this a function, as it is common across less-fancy layers
         this._defaultFC = '0';
-        this._featClasses['0'] = new BasicFC(this, '0');
+        this._featClasses['0'] = new BasicFC(this, '0', this.config);
     }
 
 }
@@ -2112,7 +2122,7 @@ class WmsRecord extends LayerRecord {
 
         // TODO consider making this a function, as it is common across less-fancy layers
         this._defaultFC = '0';
-        this._featClasses['0'] = new BasicFC(this, '0');
+        this._featClasses['0'] = new BasicFC(this, '0', this.config);
     }
 
     /**
@@ -2146,7 +2156,7 @@ class WmsRecord extends LayerRecord {
             new IdentifyResult('legendEntry.name', 'legendEntry.symbology', infoMap[this.config.featureInfoMimeType],
                 this);
 
-        const identifyPromise = this._api.layer.ogc
+        const identifyPromise = this._apiRef.layer.ogc
             .getFeatureInfo(
                 this._layer,
                 opts.clickEvent,
@@ -2201,7 +2211,9 @@ class FeatureRecord extends AttrRecord {
 
         // TODO confirm this logic. old code mapped .options.snapshot.value to the button -- meaning if we were in snapshot mode,
         //      we would want the button disabled. in the refactor, the button may get it's enabled/disabled from a different source.
-        this.config.state.snapshot = !this.config.state.snapshot;
+        // this.config.state.snapshot = !this.config.state.snapshot;
+        this._snapshot = this.config.state.snapshot;
+
         return cfg;
     }
 
@@ -2232,7 +2244,7 @@ class FeatureRecord extends AttrRecord {
 
         // feature has only one layer
         const idx = attributeBundle.indexes[0];
-        const aFC = new AttribFC(this, idx, attributeBundle[idx]);
+        const aFC = new AttribFC(this, idx, attributeBundle[idx], this.config);
         aFC.nameField = this.config.nameField;
         this._defaultFC = idx;
         this._featClasses[idx] = aFC;
@@ -2324,7 +2336,7 @@ class FeatureRecord extends AttrRecord {
                 this, this._defaultFC);
 
         // run a spatial query
-        const qry = new this._api.layer.Query();
+        const qry = new this._apiRef.layer.Query();
         qry.outFields = ['*']; // this will result in just objectid fields, as that is all we have in feature layers
 
         // more accurate results without making the buffer if we're dealing with extents
@@ -2361,7 +2373,7 @@ class FeatureRecord extends AttrRecord {
                             data: this.attributesToDetails(featAttribs, layerData.fields),
                             oid: objId,
                             symbology: [
-                                { svgcode: this._api.symbology.getGraphicIcon(featAttribs, layerData.renderer) }
+                                { svgcode: this._apiRef.symbology.getGraphicIcon(featAttribs, layerData.renderer) }
                             ]
                         };
                     });
