@@ -210,6 +210,14 @@ class LayerInterface {
         // TODO figure out what is involved here.
     }
 
+    convertToFakeGroup (fakeGroupRecord) {
+        // TODO name?
+        this._source = fakeGroupRecord;
+
+        newProp(this, 'visibility', standardGetVisibility);
+        this.setVisibility = standardSetVisibility;
+    }
+
 }
 
 /**
@@ -262,10 +270,7 @@ function standardGetVisibility() {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    // TODO should we make interface on _source (a layer record) for this and other properties?
-    //      e.g. _source.getVisiblility() ?
-    //      or too much overkill on fancy abstractions?
-    return this._source._layer.visibile;
+    return this._source.visibile;
 }
 
 function dynamicLeafGetVisibility() {
@@ -403,7 +408,7 @@ function standardSetVisibility(value) {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    this._source._layer.visibile = value;
+    this._source.visibile = value;
 }
 
 function dynamicLeafSetVisibility(value) {
@@ -1104,7 +1109,7 @@ class LayerRecord {
     get layerClass () { return this._layerClass; }
     get config () { return this.initialConfig; } // TODO: add a live config reference if needed
     get legendEntry () { return this._legendEntry; } // legend entry class corresponding to those defined in legend entry service
-    set legendEntry (value) { this._legendEntry = value; } // TTODO: determine if we still link legends inside this class
+    set legendEntry (value) { this._legendEntry = value; } // TODO: determine if we still link legends inside this class
     get bbox () { return this._bbox; } // bounding box layer
     get state () { return this._state; }
     set state (value) { this._state = value; }
@@ -1115,6 +1120,23 @@ class LayerRecord {
     set userLayer (value) { this._user = value; }
     get layerName () { return this._name; } // the top level layer name
     set layerName (value) { this._name = value; }
+
+    get visibility () {
+        // TEST STATUS none
+        if (this._layer) {
+            return this._layer.visibile;
+        } else {
+            return true; // TODO what should a proper default be? example of this situation??
+        }
+    }
+    set visibility (value) {
+        // TEST STATUS none
+        if (this._layer) {
+            this._layer.visibility = value;
+        }
+
+        // TODO do we need an ELSE case here?
+    }
 
     /**
      * Generate a bounding box for the layer on the given map.
@@ -1843,6 +1865,10 @@ class DynamicRecord extends AttrRecord {
         }
     }
 
+    // TODO I think we need to override getProxy to return a special Dynamic proxy.
+    //      Need to figure out how visibility works (i.e. layer is invisible or just empty visibleChildren array)
+    //      Might also need to manage the root children somehow (i.e. the layerEntries from the config)
+
     // TODO docs
     getFeatureCount (featureIdx) {
         // TEST STATUS none
@@ -2532,12 +2558,104 @@ class FeatureRecord extends AttrRecord {
 
 }
 
+/**
+ * @class FakeGroupRecord
+ */
+class FakeGroupRecord {
+    // NOTE we don't inherit from LayerRecord, because we don't want all the layerish default behavior
+    // Fake News.
+
+    // TODO verifiy layerId is useful / needed
+    // get layerId () { return this.config.id; }
+    get layerName () { return this._name; } // the top level layer name
+    set layerName (value) { this._name = value; }
+
+    get visible () {
+        // cumulation of visiblity of all childs
+        return this._childProxies.some(p => p.visibility);
+    }
+    set visible (value) {
+        // set all the kids
+        this._childProxies.forEach(p => { p.setVisibility(value); });
+    }
+
+    // TODO do we need a layer type?  e.g. `Fake`?
+
+    // TODO do groups need to propagate / summarize query status of children?
+    /*
+    // TODO docs
+    isQueryable () {
+        // TEST STATUS none
+        return this._featClasses[this._defaultFC].queryable;
+    }
+
+    // TODO docs
+    setQueryable (value) {
+        // TEST STATUS none
+        this._featClasses[this._defaultFC].queryable = value;
+    }
+    */
+
+    // TODO does fake news have symbols?
+    /*
+    getSymbology () {
+        // TEST STATUS none
+        return mystery;
+    }
+    */
+
+    // returns the proxy interface object for the root of the layer (i.e. main entry in legend, not nested child things)
+    // TODO docs
+    getProxy () {
+        // TEST STATUS none
+        // TODO figure out control name arrays, if they apply at all for fake groups, and where they come from
+
+        if (!this._rootProxy) {
+            this._rootProxy = new LayerInterface(this);
+            this._rootProxy.convertToFakeGroup(this);
+        }
+        return this._rootProxy;
+    }
+
+    // add a child proxy post-constructor
+    // TODO docs
+    addChildProxy (proxy) {
+        // TEST STATUS none
+        this._childProxies.push(proxy);
+    }
+
+    removeChildProxy (proxy) {
+        // TEST STATUS none
+        const idx = this._childProxies.indexOf(proxy);
+
+        if (idx > -1) {
+            this._childProxies.splice(idx, 1);
+        }
+    }
+
+    /**
+     * Create a fake record to support groups not tied to a layer.
+     * @param {String} name          the text to show for the group
+     * @param {Array} childProxies   an optional array of proxies for immediate children of the group
+     *
+     */
+    constructor (name, childProxies) {
+        // TEST STATUS none
+
+        // TODO will we have a config coming in?  if so, make that part of the constructor, do stuff with it.
+
+        this._name = name;
+        this._childProxies = childProxies || [];
+    }
+}
+
 module.exports = () => ({
     DynamicRecord,
     FeatureRecord,
     ImageRecord,
     TileRecord,
     WmsRecord,
+    FakeGroupRecord,
     WmsFC, // TODO compiler temp. remove once we are referencing it
     States: states // TODO should this get exposed on the geoApi as well? currently layer module is not re-exposing it
 });
