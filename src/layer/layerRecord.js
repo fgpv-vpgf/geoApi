@@ -50,6 +50,8 @@ const states = { // these are used as css classes; hence the `rv` prefix
     ERROR: 'rv-error'
 };
 
+// TODO remove all TEST STATUS tags once things are stable
+
 // TODO crazy idea. instead of having attribute .layerInfo as a promise,
 //      we pair that promise with the layer's load event.  Essentially, don't
 //      change our state to loaded until both the layer is loaded AND the .layerInfo
@@ -79,6 +81,7 @@ class LayerInterface {
      * @param {Array} disabledControls [optional=[]]   an array or controls names that are disabled and cannot be interacted wiht by a user
      */
     constructor (source, availableControls = [], disabledControls = []) {
+        // TEST STATUS basic
         this._source = source;
         this._availableControls = availableControls;
         this._disabledConrols = disabledControls;
@@ -133,10 +136,12 @@ class LayerInterface {
     // the interface reading off the real FC.
     // TODO docs
     updateSource (newSource) {
+        // TEST STATUS basic
         this._source = newSource;
     }
 
     convertToSingleLayer (layerRecord) {
+        // TEST STATUS basic
         this._source = layerRecord;
 
         newProp(this, 'symbology', standardGetSymbology);
@@ -158,6 +163,7 @@ class LayerInterface {
     }
 
     convertToFeatureLayer (layerRecord) {
+        // TEST STATUS basic
         this.convertToSingleLayer(layerRecord);
 
         newProp(this, 'snapshot', featureGetSnapshot);
@@ -167,6 +173,7 @@ class LayerInterface {
     }
 
     convertToDynamicLeaf (dynamicFC) {
+        // TEST STATUS basic
         this._source = dynamicFC;
 
         newProp(this, 'symbology', dynamicLeafGetSymbology);
@@ -184,6 +191,7 @@ class LayerInterface {
     }
 
     convertToDynamicGroup (layerRecord, groupId) {
+        // TEST STATUS basic
         this._source = layerRecord;
         this._groupId = groupId;
 
@@ -198,6 +206,7 @@ class LayerInterface {
     }
 
     convertToStatic () {
+        // TEST STATUS none
         // TODO figure out what is involved here.
     }
 
@@ -213,6 +222,7 @@ class LayerInterface {
  * @param {Function} getter   the function defining the guts of the get property.
  */
 function newProp(target, propName, getter) {
+    // TEST STATUS none
     Object.defineProperty(target, propName, {
         get: getter
     });
@@ -225,6 +235,7 @@ function newProp(target, propName, getter) {
 function standardGetLayerState() {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     // returns one of Loading, Loaded, Error
     // TODO verify what DEFAULT actually is
     switch (this._source.state) {
@@ -242,12 +253,15 @@ function standardGetLayerState() {
 
 function standardGetIsRefreshing() {
     /* jshint validthis: true */
+
+    // TEST STATUS none
     return this._source.state === states.REFRESH;
 }
 
 function standardGetVisibility() {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     // TODO should we make interface on _source (a layer record) for this and other properties?
     //      e.g. _source.getVisiblility() ?
     //      or too much overkill on fancy abstractions?
@@ -256,12 +270,15 @@ function standardGetVisibility() {
 
 function dynamicLeafGetVisibility() {
     /* jshint validthis: true */
+
+    // TEST STATUS none
     return this._source.getVisibility();
 }
 
 function dynamicGroupGetVisibility() {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     // check visibility of all children.
     // only return false if all children are invisible
     return this._childLeafs.some(leaf => { return leaf.visibility; });
@@ -269,12 +286,15 @@ function dynamicGroupGetVisibility() {
 
 function standardGetOpacity() {
     /* jshint validthis: true */
+
+    // TEST STATUS none
     return this._source._layer.opacity;
 }
 
 function dynamicLeafGetOpacity() {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     // TODO figure out how to handle layers that don't support this.
     //      possibly crosscheck against disabled settings
     //      might not be an issue if, since there will be no control, nothing will call this
@@ -284,6 +304,7 @@ function dynamicLeafGetOpacity() {
 }
 
 function dynamicGroupGetOpacity() {
+    // TEST STATUS none
     // TODO validate if we really need this?
     //      currently changing opacity on a group will do nothing.
     //      see AAFC AGRI Environmental Indicators layer in index-one sample.
@@ -294,6 +315,7 @@ function dynamicGroupGetOpacity() {
 function standardGetBoundingBox() {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     // dont be fooled by function/prop name, we are returning bbox visibility,
     // not the box itself
     return this._source.isBBoxVisible();
@@ -302,6 +324,7 @@ function standardGetBoundingBox() {
 function standardGetQuery() {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     return this._source.isQueryable();
 }
 
@@ -310,18 +333,21 @@ function standardGetQuery() {
 function dynamicLeafGetQuery() {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     return this._source.queryable();
 }
 
 function standardGetFormattedAttributes() {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     return this._source.getFormattedAttributes();
 }
 
 function dynamicLeafGetFormattedAttributes() {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     // TODO code-wise this looks identical to standardGetFormattedAttributes.
     //      however in this case, ._source is a DynamicFC, not a LayerRecord.
     //      This is safer. Deleting this would avoid the duplication. Decide.
@@ -331,12 +357,14 @@ function dynamicLeafGetFormattedAttributes() {
 function standardGetSymbology() {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     return this._source.getSymbology();
 }
 
 function dynamicLeafGetSymbology() {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     // TODO code-wise this looks identical to standardGetSymbology.
     //      however in this case, ._source is a DynamicFC, not a LayerRecord.
     //      This is safer. Deleting this would avoid the duplication. Decide.
@@ -345,31 +373,43 @@ function dynamicLeafGetSymbology() {
 
 function standardGetGeometryType() {
     /* jshint validthis: true */
+
+    // TEST STATUS none
     return this._source.getGeomType();
 }
 
 function dynamicLeafGetGeometryType() {
     /* jshint validthis: true */
+
+    // TEST STATUS none
     return this._source.geomType;
 }
 
 function standardGetFeatureCount() {
     /* jshint validthis: true */
+
+    // TEST STATUS none
     return this._source.getFeatureCount();
 }
 
 function dynamicLeafGetFeatureCount() {
     /* jshint validthis: true */
+
+    // TEST STATUS none
     return this._source._parent.getFeatureCount(this._source._idx);
 }
 
 function standardSetVisibility(value) {
     /* jshint validthis: true */
+
+    // TEST STATUS none
     this._source._layer.visibile = value;
 }
 
 function dynamicLeafSetVisibility(value) {
     /* jshint validthis: true */
+
+    // TEST STATUS none
     this._source.setVisibility(value);
 
     // TODO see if we need to trigger any refresh of parents.
@@ -379,6 +419,7 @@ function dynamicLeafSetVisibility(value) {
 function dynamicGroupSetVisibility(value) {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     // TODO be aware of cycles of updates. may need a force / dont broadcast flag.
     //      since we are only hitting leaves and skipping child-groups, should be ok.
     this._childLeafs.forEach(leaf => {
@@ -388,11 +429,15 @@ function dynamicGroupSetVisibility(value) {
 
 function standardSetOpacity(value) {
     /* jshint validthis: true */
+
+    // TEST STATUS none
     this._source._layer.opacity = value;
 }
 
 function dynamicLeafSetOpacity(value) {
     /* jshint validthis: true */
+
+    // TEST STATUS none
     this._source.opacity = value;
 
     // TODO call something in this._parent that will update
@@ -401,6 +446,7 @@ function dynamicLeafSetOpacity(value) {
 }
 
 function dynamicGroupSetOpacity(value) {
+    // TEST STATUS none
     // TODO see comments on dynamicGroupSetVisibility
     console.log('enhance group opacity', value);
 }
@@ -408,6 +454,7 @@ function dynamicGroupSetOpacity(value) {
 function standardSetBoundingBox(value) {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     // TODO test if object exists? Is it possible to have control without bbox layer?
     this._source.bbox.visible = value;
 }
@@ -415,21 +462,26 @@ function standardSetBoundingBox(value) {
 function standardSetQuery(value) {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     this._source.setQueryable(value);
 }
 
 function dynamicLeafSetQuery(value) {
     /* jshint validthis: true */
 
+    // TEST STATUS none
     this._source.queryable = value;
 }
 
 function featureGetSnapshot() {
     /* jshint validthis: true */
+
+    // TEST STATUS none
     return this._source.isSnapshot;
 }
 
 function featureSetSnapshot() {
+    // TEST STATUS none
     // TODO trigger the snapshot process.  need the big picture on how this orchestrates.
     //      it involves a layer reload so possible this function is irrelevant, as the record
     //      will likely get nuked
@@ -453,6 +505,7 @@ function featureSetSnapshot() {
 // simple object packager for client symbology package
 // TODO proper docs
 function makeSymbologyOutput(symbolArray, style) {
+    // TEST STATUS basic
     return {
         stack: symbolArray,
         renderStyle: style
@@ -464,6 +517,7 @@ function makeSymbologyOutput(symbolArray, style) {
 // items are promises.
 // TODO proper docs
 function makeSymbologyArray(legendData) {
+    // TEST STATUS basic
     return legendData.map(item => {
 
         const symbologyItem = {
@@ -487,6 +541,7 @@ class PlaceholderFC {
     // prior to a layer being loaded.
 
     constructor (parent, name) {
+        // TEST STATUS basic
         this._parent = parent;
         this._name = name;
     }
@@ -494,15 +549,18 @@ class PlaceholderFC {
     // TODO probably need more stuff
 
     getVisibility () {
+        // TEST STATUS none
         // TODO enhance to have some default value, assigned in constructor?
         // TODO can a user toggle placeholders? does state need to be updated?
         return true;
     }
 
     // TODO same questions as visibility
+    // TEST STATUS none
     get opacity () { return 1; }
 
     getSymbology () {
+        // TEST STATUS none
         if (!this._symbology) {
             // TODO deal with random colours
             this._symbology = this._parent._apiRef.symbology.generatePlaceholderSymbology(this._name, '#16bf27')
@@ -521,10 +579,12 @@ class PlaceholderFC {
 class BasicFC {
     // base class for feature class object. deals with stuff specific to a feature class (or raster equivalent)
 
+    // TEST STATUS none
     get queryable () { return this._queryable; }
     set queryable (value) { this._queryable = value; }
 
     // TODO determine who is setting this. LayerRecord constructor & dynamic child generator?
+    // TEST STATUS none
     get geomType () { return this._geomType; }
     set geomType (value) { this._geomType = value; }
 
@@ -534,6 +594,7 @@ class BasicFC {
      * @param {Object} config        the config object for this sublayer
      */
     constructor (parent, idx, config) {
+        // TEST STATUS basic
         this._parent = parent;
         this._idx = idx;
         this.queryable = config.state.query;
@@ -545,6 +606,7 @@ class BasicFC {
     // returns a promise of an object with minScale and maxScale values for the feature class
     // TODO we may be able to make scale stuff non-asynch. scales are stored in dynamiclayer.layerInfos[idx]
     getScaleSet () {
+        // TEST STATUS none
         // basic case - we get it from the esri layer
         const l = this._parent._layer;
         return Promise.resolve({
@@ -554,6 +616,7 @@ class BasicFC {
     }
 
     isOffScale (mapScale) {
+        // TEST STATUS none
         return this.getScaleSet().then(scaleSet => {
             // GIS for dummies.
             // scale increases as you zoom out, decreases as you zoom in
@@ -580,16 +643,19 @@ class BasicFC {
 
     // TODO docs
     getVisibility () {
+        // TEST STATUS none
         return this._parent._layer.visible;
     }
 
     // TODO docs
     setVisibility (val) {
+        // TEST STATUS none
         // basic case - set layer visibility
         this._parent._layer.visible = val;
     }
 
     getSymbology () {
+        // TEST STATUS none
         if (!this._symbology) {
             // get symbology from service legend.
             // this is used for non-feature based sources (tiles, image, raster).
@@ -619,8 +685,6 @@ class AttribFC extends BasicFC {
     // attribute-specific variant for feature class object.
     // deals with stuff specific to a feature class that has attributes
 
-    // TODO add attribute and layer info promises
-
     /**
      * Create an attribute specific feature class object
      * @param {Object} parent        the Record object that this Feature Class belongs to
@@ -629,6 +693,7 @@ class AttribFC extends BasicFC {
      * @param {Object} config        the config object for this sublayer
      */
     constructor (parent, idx, layerPackage, config) {
+        // TEST STATUS basic
         super(parent, idx, config);
 
         this._layerPackage = layerPackage;
@@ -643,6 +708,7 @@ class AttribFC extends BasicFC {
     * @returns {Promise}         resolves with a layer attribute data object
     */
     getAttribs () {
+        // TEST STATUS none
         return this._layerPackage.getAttribs();
     }
 
@@ -653,10 +719,12 @@ class AttribFC extends BasicFC {
     * @returns {Promise}         resolves with a layer data object
     */
     getLayerData () {
+        // TEST STATUS none
         return this._layerPackage.layerData;
     }
 
     getSymbology () {
+        // TEST STATUS basic
         if (!this._symbology) {
             this._symbology = this.getLayerData().then(lData => {
                 if (lData.layerType === 'Feature Layer') {
@@ -681,7 +749,7 @@ class AttribFC extends BasicFC {
     * @returns {Promise}         resolves with the name of the feature
     */
     getFeatureName (objId, attribs) {
-
+        // TEST STATUS none
         let nameField = '';
 
         if (this.nameField) {
@@ -716,7 +784,7 @@ class AttribFC extends BasicFC {
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
     getFormattedAttributes () {
-
+        // TEST STATUS none
         if (this._formattedAttributes) {
             return this._formattedAttributes;
         }
@@ -759,7 +827,7 @@ class AttribFC extends BasicFC {
      * @return {Promise}              resolves to true or false based on the attribName type being esriFieldTypeDate
      */
     checkDateType (attribName) {
-
+        // TEST STATUS none
         // grab attribute info (waiting for it it finish loading)
         return this.getLayerData().then(lData => {
             // inspect attribute fields
@@ -782,7 +850,7 @@ class AttribFC extends BasicFC {
      * @return {Promise}              resolves to the best available user friendly attribute name
      */
     aliasedFieldName (attribName) {
-
+        // TEST STATUS none
         // grab attribute info (waiting for it it finish loading)
         return this.getLayerData().then(lData => {
             return AttribFC.aliasedFieldNameDirect(attribName, lData.fields);
@@ -791,7 +859,7 @@ class AttribFC extends BasicFC {
     }
 
     static aliasedFieldNameDirect (attribName, fields) {
-
+        // TEST STATUS none
         let fName = attribName;
 
         // search for aliases
@@ -814,6 +882,7 @@ class AttribFC extends BasicFC {
      * @return {Object}              attribute key-value mapping with fields as keys
      */
     static unAliasAttribs (attribs, fields) {
+        // TEST STATUS none
         const newA = {};
         fields.forEach(field => {
             // attempt to extract on name. if not found, attempt to extract on alias
@@ -843,6 +912,7 @@ class DynamicFC extends AttribFC {
      * @param {Object} config        the config object for this sublayer
      */
     constructor (parent, idx, layerPackage, config) {
+        // TEST STATUS basic
         super(parent, idx, layerPackage, config);
 
         // store pointer to the layerinfo for this FC.
@@ -861,6 +931,7 @@ class DynamicFC extends AttribFC {
 
     // returns an object with minScale and maxScale values for the feature class
     getScaleSet () {
+        // TEST STATUS none
         // get the layerData promise for this FC, wait for it to load,
         // then return the scale data
         return this.getLayerData().then(lData => {
@@ -878,6 +949,7 @@ class DynamicFC extends AttribFC {
     //      could be tricky, as it is promised based, thus wrecking the override of any synchronous function
 
     setVisibility (val) {
+        // TEST STATUS none
         // update visible layers array
         const vLayers = this._parent._layer.visibleLayers;
         const intIdx = parseInt(this._idx);
@@ -893,6 +965,7 @@ class DynamicFC extends AttribFC {
 
     // TODO extend this function to other FC's?  do they need it?
     getVisibility () {
+        // TEST STATUS none
         // TODO would we ever need to worry about _parent._layer.visible being false while
         //      the visibleLayers array still contains valid indexes?
         return this._parent._layer.visibleLayers.indexOf(parseInt(this._idx)) > -1;
@@ -909,6 +982,7 @@ class DynamicFC extends AttribFC {
  * @return {String}              layer title as defined on the service, '' if no title defined
  */
 function getWMSLayerTitle(wmsLayer, wmsLayerId) {
+    // TEST STATUS none
     // TODO move this to ogc.js module?
 
     // crawl esri layerInfos (which is a nested structure),
@@ -951,6 +1025,7 @@ function getWMSLayerTitle(wmsLayer, wmsLayerId) {
 class WmsFC extends BasicFC {
 
     getSymbology () {
+        // TEST STATUS none
         if (!this._symbology) {
             const configLayerEntries =  this._parent.config.layerEntries;
             const gApi = this._parent._api;
@@ -995,6 +1070,7 @@ class IdentifyResult {
      * @param  {String} caption   optional captions to be displayed along with the name
      */
     constructor (name, symbology, format, layerRec, featureIdx, caption) {
+        // TEST STATUS none
         // TODO revisit what should be in this class, and what belongs in the app
         // also what can be abstacted to come from layerRec
         this.isLoading = true;
@@ -1044,6 +1120,7 @@ class LayerRecord {
      * Generate a bounding box for the layer on the given map.
      */
     createBbox (map) {
+        // TEST STATUS none
         if (this._bbox) {
             throw new Error('Bbox is already setup');
         }
@@ -1057,6 +1134,7 @@ class LayerRecord {
      * Destroy bounding box
      */
     destroyBbox (map) {
+        // TEST STATUS none
         map.removeLayer(this._bbox);
         this._bbox = undefined;
     }
@@ -1065,6 +1143,7 @@ class LayerRecord {
      * Attach event handlers to layer events
      */
     bindEvents (layer) {
+        // TEST STATUS basic
         // TODO optional refactor.  Rather than making the events object in the parameter,
         //      do it as a variable, and only add mouse-over, mouse-out events if we are
         //      in an app configuration that will use it. May save a bit of processing
@@ -1085,6 +1164,7 @@ class LayerRecord {
      * Perform layer initialization tasks
      */
     constructLayer () {
+        // TEST STATUS basic
         this._layer = this.layerClass(this.config.url, this.makeLayerConfig());
         this.bindEvents(this._layer);
         return this._layer;
@@ -1094,6 +1174,7 @@ class LayerRecord {
      * Handle a change in layer state
      */
     _stateChange (newState) {
+        // TEST STATUS basic
         this._state = newState;
         console.log(`State change for ${this.layerId} to ${newState}`);
 
@@ -1106,6 +1187,7 @@ class LayerRecord {
      * Wire up state change listener
      */
     addStateListener (listenerCallback) {
+        // TEST STATUS none
         this._stateListeners.push(listenerCallback);
         return listenerCallback;
     }
@@ -1114,6 +1196,7 @@ class LayerRecord {
      * Remove a state change listener
      */
     removeStateListener (listenerCallback) {
+        // TEST STATUS none
         const idx = this._stateListeners.indexOf(listenerCallback);
         if (idx < 0) {
             throw new Error('Attempting to remove a listener which is not registered.');
@@ -1125,6 +1208,7 @@ class LayerRecord {
      * Wire up mouse hover listener
      */
     addHoverListener (listenerCallback) {
+        // TEST STATUS none
         this._hoverListeners.push(listenerCallback);
         return listenerCallback;
     }
@@ -1133,6 +1217,7 @@ class LayerRecord {
      * Remove a mouse hover listener
      */
     removeHoverListener (listenerCallback) {
+        // TEST STATUS none
         const idx = this._hoverListeners.indexOf(listenerCallback);
         if (idx < 0) {
             throw new Error('Attempting to remove a listener which is not registered.');
@@ -1146,6 +1231,8 @@ class LayerRecord {
     * @function onLoad
     */
     onLoad () {
+        // TEST STATUS basic
+        // TODO is legend entry valid anymore? will it be a different system?
         if (this.legendEntry && this.legendEntry.removed) { return; }
         console.info(`Layer loaded: ${this._layer.id}`);
         let lookupPromise = Promise.resolve();
@@ -1165,6 +1252,7 @@ class LayerRecord {
      * Handles when the layer has an error
      */
     onError (e) {
+        // TEST STATUS basic
         console.warn(`Layer error: ${e}`);
         console.warn(e);
         this._stateChange(states.ERROR);
@@ -1174,6 +1262,7 @@ class LayerRecord {
      * Handles when the layer starts to update
      */
     onUpdateStart () {
+        // TEST STATUS none
         this._stateChange(states.REFRESH);
     }
 
@@ -1181,6 +1270,7 @@ class LayerRecord {
      * Handles when the layer finishes updating
      */
     onUpdateEnd () {
+        // TEST STATUS none
         this._stateChange(states.LOADED);
     }
 
@@ -1202,6 +1292,7 @@ class LayerRecord {
      * Utility for triggering an event and giving it to the listeners
      */
     _fireEvent (handlerArray, ...eventParams) {
+        // TEST STATUS none
         handlerArray.slice(0).forEach(l => l(...eventParams));
     }
 
@@ -1209,6 +1300,7 @@ class LayerRecord {
      * Creates an options object for the physical layer
      */
     makeLayerConfig () {
+        // TEST STATUS none
         return {
             id: this.config.id,
             opacity: this.config.state.opacity,
@@ -1222,6 +1314,7 @@ class LayerRecord {
      * @returns {Boolean} indicates if the bounding box is visible
      */
     isBBoxVisible () {
+        // TEST STATUS none
         if (this._bbox) {
             return this._bbox.visible;
         } else {
@@ -1241,6 +1334,7 @@ class LayerRecord {
      * @returns {Object} a level of detail (lod) object for the appropriate scale to zoom to
      */
     findZoomScale (lods, scaleSet, zoomIn, zoomGraphic = false) {
+        // TEST STATUS none
         // TODO rename function to getZoomScale?
         // TODO take a second look at parameters zoomIn and zoomGraphic. how are they derived (in the caller code)?
         //      seems weird to me to do it this way
@@ -1272,6 +1366,7 @@ class LayerRecord {
     * @returns {Promise} resolves after map is done changing its extent
     */
     setMapScale (map, lod, zoomIn) {
+        // TEST STATUS none
         // TODO possible this would live in the map manager in a bigger refactor.
         // NOTE because we utilize the layer object's full extent (and not child feature class extents),
         //      this function stays in this class.
@@ -1310,6 +1405,7 @@ class LayerRecord {
      *                                    true used to zoom to a graphic element; false not used to zoom to a graphic element
      */
     _zoomToScaleSet (map, lods, zoomIn, scaleSet, zoomGraphic = false) {
+        // TEST STATUS none
         // TODO update function parameters once things are working
 
         // if the function is used to zoom to a graphic element and the layer is out of scale we always want
@@ -1325,14 +1421,18 @@ class LayerRecord {
 
     }
 
+    // TODO docs
     zoomToScale (map, lods, zoomIn, zoomGraphic = false) {
+        // TEST STATUS none
         // get scale set from child, then execute zoom
         return this._featClasses[this._defaultFC].getScaleSet().then(scaleSet => {
             return this._zoomToScaleSet(map, lods, zoomIn, scaleSet, zoomGraphic);
         });
     }
 
+    // TODO docs
     isOffScale (mapScale) {
+        // TEST STATUS none
         return this._featClasses[this._defaultFC].isOffScale(mapScale);
     }
 
@@ -1342,6 +1442,7 @@ class LayerRecord {
     * @return {Promise} resolves when map is done zooming
     */
     zoomToBoundary (map) {
+        // TEST STATUS none
         // TODO add some caching? make sure it will get wiped if we end up changing projections
         //                        or use wkid as caching key?
         // NOTE this function uses the full extent property of the layer object.  it does not
@@ -1370,6 +1471,7 @@ class LayerRecord {
     * @returns {Promise} resolves in object properties .minScale and .maxScale
     */
     getVisibleScales () {
+        // TEST STATUS none
         // default layer, take from layer object
         return Promise.resolve({
             minScale: this._layer.minScale,
@@ -1382,6 +1484,7 @@ class LayerRecord {
     * @returns {Promise} resolves feature count
     */
     getFeatureCount () {
+        // TEST STATUS none
         // TODO determine best result to indicate that layer does not have features
         //      we may want a null so that UI can display a different message (or suppress the message)
         return Promise.resolve(0);
@@ -1395,6 +1498,7 @@ class LayerRecord {
      * @return {Object} an extent of desired size and location
      */
     makeClickBuffer (point, map, tolerance = 5) {
+        // TEST STATUS none
         // take pixel tolerance, convert to map units at current scale. x2 to turn radius into diameter
         const buffSize = 2 * tolerance * map.extent.getWidth() / map.width;
 
@@ -1407,21 +1511,25 @@ class LayerRecord {
 
     // TODO docs
     isQueryable () {
+        // TEST STATUS none
         return this._featClasses[this._defaultFC].queryable;
     }
 
     // TODO docs
     setQueryable (value) {
+        // TEST STATUS none
         this._featClasses[this._defaultFC].queryable = value;
     }
 
     getGeomType () {
+        // TEST STATUS none
         return this._featClasses[this._defaultFC].geomType;
     }
 
     // returns the proxy interface object for the root of the layer (i.e. main entry in legend, not nested child things)
     // TODO docs
     getProxy () {
+        // TEST STATUS basic
         // TODO figure out control name arrays from config (specifically, disabled list)
         //      updated config schema uses term "enabled" but have a feeling it really means available
         // TODO figure out how placeholders work with all this
@@ -1444,6 +1552,7 @@ class LayerRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
+        // TEST STATUS basic
         this._layerClass = layerClass;
         this._featClasses = {}; // TODO how to populate first one
         this._defaultFC = '0'; // TODO how to populate first one  TODO check if int or string
@@ -1495,6 +1604,7 @@ class AttrRecord extends LayerRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
+        // TEST STATUS basic
         super(layerClass, apiRef, config, esriLayer, epsgLookup);
 
         this._esriRequest = esriRequest;
@@ -1507,6 +1617,7 @@ class AttrRecord extends LayerRecord {
      * @return {Promise}              resolves to the best available user friendly attribute name
      */
     aliasedFieldName (attribName) {
+        // TEST STATUS basic
         return this._featClasses[this._defaultFC].aliasedFieldName(attribName);
     }
 
@@ -1515,10 +1626,12 @@ class AttrRecord extends LayerRecord {
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
     getFormattedAttributes () {
+        // TEST STATUS none
         return this._featClasses[this._defaultFC].getFormattedAttributes();
     }
 
     checkDateType (attribName) {
+        // TEST STATUS basic
         return this._featClasses[this._defaultFC].checkDateType(attribName);
     }
 
@@ -1529,6 +1642,7 @@ class AttrRecord extends LayerRecord {
     * @returns {Promise}         resolves with a layer attribute data object
     */
     getAttribs () {
+        // TEST STATUS basic
         return this._featClasses[this._defaultFC].getAttribs();
     }
 
@@ -1539,19 +1653,22 @@ class AttrRecord extends LayerRecord {
     * @returns {Promise}         resolves with a layer data object
     */
     getLayerData () {
+        // TEST STATUS none
         return this._featClasses[this._defaultFC].getLayerData();
     }
 
     getFeatureName (objId, attribs) {
+        // TEST STATUS basic
         return this._featClasses[this._defaultFC].getFeatureName(objId, attribs);
     }
 
     getSymbology () {
+        // TEST STATUS basic
         return this._featClasses[this._defaultFC].getSymbology();
     }
 
     getFeatureCount (url) {
-
+        // TEST STATUS none
         if (url) {
             // wrapping server call in a function, as we regularly encounter sillyness
             // where we need to execute the count request twice.
@@ -1615,6 +1732,7 @@ class AttrRecord extends LayerRecord {
      * @return {Array}               attribute data transformed into a list, with potential field aliasing applied
      */
     attributesToDetails (attribs, fields) {
+        // TEST STATUS none
         // TODO make this extensible / modifiable / configurable to allow different details looks for different data
         // simple array of text mapping for demonstration purposes. fancy grid formatting later?
         return Object.keys(attribs)
@@ -1648,6 +1766,7 @@ class ImageRecord extends LayerRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
+        // TEST STATUS none
         // TODO if we have nothing to add here, delete this constructor
         super(apiRef, config, esriLayer, epsgLookup);
     }
@@ -1658,6 +1777,7 @@ class ImageRecord extends LayerRecord {
     * @function onLoad
     */
     onLoad () {
+        // TEST STATUS none
         super.onLoad();
 
         // TODO consider making this a function, as it is common across less-fancy layers
@@ -1671,9 +1791,11 @@ class ImageRecord extends LayerRecord {
  */
 class DynamicRecord extends AttrRecord {
     get _layerPassthroughBindings () {
+        // TEST STATUS none
         return ['setOpacity', 'setVisibility', 'setVisibleLayers', 'setLayerDrawingOptions'];
     }
     get _layerPassthroughProperties () {
+        // TEST STATUS none
         return ['visibleAtMapScale', 'visible', 'spatialReference', 'layerInfos', 'supportsDynamicLayers'];
     }
 
@@ -1689,6 +1811,7 @@ class DynamicRecord extends AttrRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
+        // TEST STATUS basic
         super(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup);
         this.ArcGISDynamicMapServiceLayer = layerClass;
 
@@ -1710,6 +1833,7 @@ class DynamicRecord extends AttrRecord {
      * @return {Object}               proxy interface for given child
      */
     getChildProxy (featureIdx) {
+        // TEST STATUS none
         // TODO verify we have integer coming in and not a string
         // in this case, featureIdx can also be a group index
         if (this._proxies[featureIdx.toString()]) {
@@ -1721,6 +1845,7 @@ class DynamicRecord extends AttrRecord {
 
     // TODO docs
     getFeatureCount (featureIdx) {
+        // TEST STATUS none
         // point url to sub-index we want
         // TODO might change how we manage index and url
         return super.getFeatureCount(this._layer.url + '/' + featureIdx);
@@ -1732,7 +1857,7 @@ class DynamicRecord extends AttrRecord {
     * @function onLoad
     */
     onLoad () {
-
+        // TEST STATUS basic
         super.onLoad();
 
         // don't worry about structured legend. the legend part is separate from
@@ -1833,15 +1958,12 @@ class DynamicRecord extends AttrRecord {
 
         // trigger attribute load and set up children bundles.
         // TODO do we need an options object, with .skip set for sub-layers we are not dealing with?
-        //      would need to inspect all leafs in this._layer.layerInfos,
-        //      then cross reference against incoming config.  extra code probably
-        //      needed to derive auto-gen childs that are not explicitly in config.
-        //      Alternate: figure all this out on constructor, as we might need placeholders????
-        //                 update: we are doing this, but it gives us a list of things to keep,
-        //                         not to skip.
+        //      we currently (sort-of) have the list of things included -- the keys of the
+        //      subConfigs object. we would need to iterate layerInfos again and find keys
+        //      not in subConfigs.
         //      Alternate: add new option that is opposite of .skip.  Will be more of a
         //                 .only, and we won't have to derive a "skip" set from our inclusive
-        //                 list that was created in the ._proxies
+        //                 list
         //      Furthermore: skipping / being effecient might not really matter here anymore.
         //                   back in the day, loadLayerAttribs would actually load everything.
         //                   now it just sets up promises that dont trigger until someone asks for
@@ -1874,6 +1996,7 @@ class DynamicRecord extends AttrRecord {
 
     // override to add child index parameter
     zoomToScale (childIdx, map, lods, zoomIn, zoomGraphic = false) {
+        // TEST STATUS none
         // get scale set from child, then execute zoom
         return this._featClasses[childIdx].getScaleSet().then(scaleSet => {
             return this._zoomToScaleSet(map, lods, zoomIn, scaleSet, zoomGraphic);
@@ -1881,14 +2004,17 @@ class DynamicRecord extends AttrRecord {
     }
 
     isOffScale (childIdx, mapScale) {
+        // TEST STATUS none
         return this._featClasses[childIdx].isOffScale(mapScale);
     }
 
     isQueryable (childIdx) {
+        // TEST STATUS none
         return this._featClasses[childIdx].queryable;
     }
 
     getGeomType (childIdx) {
+        // TEST STATUS none
         return this._featClasses[childIdx].geomType;
     }
 
@@ -1900,6 +2026,7 @@ class DynamicRecord extends AttrRecord {
      * @return {Promise}              resolves to the best available user friendly attribute name
      */
     aliasedFieldName (attribName, childIndex) {
+        // TEST STATUS none
         return this._featClasses[childIndex].aliasedFieldName(attribName);
     }
 
@@ -1909,6 +2036,7 @@ class DynamicRecord extends AttrRecord {
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
     getFormattedAttributes (childIndex) {
+        // TEST STATUS none
         return this._featClasses[childIndex].getFormattedAttributes();
     }
 
@@ -1920,6 +2048,7 @@ class DynamicRecord extends AttrRecord {
      * @return {Promise}              resolves to true or false based on the attribName type being esriFieldTypeDate
      */
     checkDateType (attribName, childIndex) {
+        // TEST STATUS none
         return this._featClasses[childIndex].checkDateType(attribName);
     }
 
@@ -1931,6 +2060,7 @@ class DynamicRecord extends AttrRecord {
     * @returns {Promise}          resolves with a layer attribute data object
     */
     getAttribs (childIndex) {
+        // TEST STATUS none
         return this._featClasses[childIndex].getAttribs();
     }
 
@@ -1942,14 +2072,17 @@ class DynamicRecord extends AttrRecord {
     * @returns {Promise}          resolves with a layer data object
     */
     getLayerData (childIndex) {
+        // TEST STATUS none
         return this._featClasses[childIndex].getLayerData();
     }
 
     getFeatureName (childIndex, objId, attribs) {
+        // TEST STATUS none
         return this._featClasses[childIndex].getFeatureName(objId, attribs);
     }
 
     getSymbology (childIndex) {
+        // TEST STATUS basic
         return this._featClasses[childIndex].getSymbology();
     }
 
@@ -1960,7 +2093,7 @@ class DynamicRecord extends AttrRecord {
     * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
     */
     identify (opts) {
-
+        // TEST STATUS none
         // TODO caller must pass in layer ids to interrogate.  geoApi wont know what is toggled in the legend.
         //      param is opts.layerIds, array of integer for every leaf to interrogate.
         // TODO add full documentation for options parameter
@@ -2043,6 +2176,7 @@ class DynamicRecord extends AttrRecord {
 
     // TODO docs
     getChildName (index) {
+        // TEST STATUS none
         // TODO revisit logic. is this the best way to do this? what are the needs of the consuming code?
         // TODO restructure so WMS can use this too?
         // will not use FC classes, as we also need group names
@@ -2067,6 +2201,7 @@ class TileRecord extends LayerRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
+        // TEST STATUS none
         // TODO if we have nothing to add here, delete this constructor
         super(apiRef, config, esriLayer, epsgLookup);
     }
@@ -2077,6 +2212,7 @@ class TileRecord extends LayerRecord {
     * @function onLoad
     */
     onLoad () {
+        // TEST STATUS none
         super.onLoad();
 
         // TODO consider making this a function, as it is common across less-fancy layers
@@ -2102,11 +2238,13 @@ class WmsRecord extends LayerRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
+        // TEST STATUS none
         // TODO if we have nothing to add here, delete this constructor
         super(layerClass, apiRef, config, esriLayer, epsgLookup);
     }
 
     makeLayerConfig () {
+        // TEST STATUS none
         const cfg = super.makeLayerConfig();
         cfg.visibleLayers = this.config.layerEntries.map(le => le.id);
         return cfg;
@@ -2118,6 +2256,7 @@ class WmsRecord extends LayerRecord {
     * @function onLoad
     */
     onLoad () {
+        // TEST STATUS none
         super.onLoad();
 
         // TODO consider making this a function, as it is common across less-fancy layers
@@ -2132,6 +2271,7 @@ class WmsRecord extends LayerRecord {
      * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
      */
     identify (opts) {
+        // TEST STATUS none
         // TODO add full documentation for options parameter
 
         // TODO consider having a constants area in geoApi / better place for this definition
@@ -2197,6 +2337,7 @@ class FeatureRecord extends AttrRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
+        // TEST STATUS basic
         // TODO if we have nothing to add here, delete this constructor
         super(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup);
     }
@@ -2205,6 +2346,7 @@ class FeatureRecord extends AttrRecord {
     //      remove comment once that is done
 
     makeLayerConfig () {
+        // TEST STATUS basic
         const cfg = super.makeLayerConfig();
         cfg.mode = this.config.state.snapshot ? this._layerClass.MODE_SNAPSHOT
                                                         : this._layerClass.MODE_ONDEMAND;
@@ -2220,6 +2362,7 @@ class FeatureRecord extends AttrRecord {
     // returns the proxy interface object for the root of the layer (i.e. main entry in legend, not nested child things)
     // TODO docs
     getProxy () {
+        // TEST STATUS basic
         // TODO figure out control name arrays from config (specifically disabled stuff)
         //      updated config schema uses term "enabled" but have a feeling it really means available
         // TODO figure out how placeholders work with all this
@@ -2236,7 +2379,7 @@ class FeatureRecord extends AttrRecord {
     * @function onLoad
     */
     onLoad () {
-
+        // TEST STATUS basic
         super.onLoad();
 
         // set up attributes, set up children bundles.
@@ -2252,11 +2395,13 @@ class FeatureRecord extends AttrRecord {
     }
 
     getFeatureCount () {
+        // TEST STATUS basic
         // just use the layer url (or lack of in case of file layer)
         return super.getFeatureCount(this._layer.url);
     }
 
     isFileLayer () {
+        // TEST STATUS none
         // TODO revisit.  is it robust enough?
         return this._layer && this._layer.url === '';
     }
@@ -2267,6 +2412,7 @@ class FeatureRecord extends AttrRecord {
     set isSnapshot (value) { this._snapshot = value; }
 
     onMouseOver (e) {
+        // TEST STATUS none
         if (this._hoverListeners.length > 0) {
             // TODO add in quick lookup for layers that dont have attributes loaded yet
 
@@ -2309,6 +2455,7 @@ class FeatureRecord extends AttrRecord {
     }
 
     onMouseOut (e) {
+        // TEST STATUS none
         // tell anyone listening we moused out
         const outBundle = {
             type: 'mouseOut',
@@ -2324,6 +2471,7 @@ class FeatureRecord extends AttrRecord {
     * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
     */
     identify (opts) {
+        // TEST STATUS none
         // TODO add full documentation for options parameter
 
         // TODO fix these params
