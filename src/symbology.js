@@ -755,6 +755,39 @@ function mapServerLegendToRenderer(serverLegend, layerIndex) {
     };
 }
 
+/**
+  * Our symbology engine works off of renderers. When dealing with layers with no renderers,
+  * we need to take server-side legend and convert it to a fake renderer, which lets us
+  * leverage all the existing symbology code.
+  *
+  * Same as mapServerLegendToRenderer function but combines all layer renderers.
+  *
+  * @function mapServerLegendToRendererAll
+  * @private
+  * @param {Object} serverLegend legend json from an esri map server
+  * @returns {Object} a fake unique value renderer based off the legend
+  */
+
+function mapServerLegendToRendererAll(serverLegend) {
+
+    let uniqueValueInfos = [];
+    serverLegend.layers.forEach(layer => {
+        uniqueValueInfos = layer.legend.map(layerLegend => ({
+            label: layerLegend.label,
+            symbol: {
+                type: 'esriPMS',
+                imageData: layerLegend.imageData,
+                contentType: layerLegend.contentType
+            }
+        })).concat(uniqueValueInfos);
+    });
+
+    return {
+        type: 'uniqueValue',
+        uniqueValueInfos
+    };
+}
+
 function buildMapServerToLocalLegend(esriBundle, geoApi) {
     /**
      * Orchestrator function that will:
@@ -773,7 +806,9 @@ function buildMapServerToLocalLegend(esriBundle, geoApi) {
         // get esri legend from server
         return getMapServerLegend(mapServerUrl, esriBundle).then(serverLegendData => {
             // derive renderer for specified layer
-            const fakeRenderer = mapServerLegendToRenderer(serverLegendData, layerIndex);
+            const fakeRenderer = typeof layerIndex === 'undefined' ?
+                mapServerLegendToRendererAll(serverLegendData) :
+                mapServerLegendToRenderer(serverLegendData, layerIndex);
 
             // convert renderer to viewer specific legend
             return geoApi.symbology.rendererToLegend(fakeRenderer);
