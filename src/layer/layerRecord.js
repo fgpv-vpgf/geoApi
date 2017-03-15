@@ -276,14 +276,14 @@ function standardGetVisibility() {
 function dynamicLeafGetVisibility() {
     /* jshint validthis: true */
 
-    // TEST STATUS none
+    // TEST STATUS basic
     return this._source.getVisibility();
 }
 
 function dynamicGroupGetVisibility() {
     /* jshint validthis: true */
 
-    // TEST STATUS none
+    // TEST STATUS basic
     // check visibility of all children.
     // only return false if all children are invisible
     return this._childLeafs.some(leaf => { return leaf.visibility; });
@@ -1690,7 +1690,7 @@ class AttrRecord extends LayerRecord {
     }
 
     getFeatureCount (url) {
-        // TEST STATUS none
+        // TEST STATUS basic
         if (url) {
             // wrapping server call in a function, as we regularly encounter sillyness
             // where we need to execute the count request twice.
@@ -1812,6 +1812,7 @@ class ImageRecord extends LayerRecord {
  * @class DynamicRecord
  */
 class DynamicRecord extends AttrRecord {
+    // TODO are we still using passthrough stuff?
     get _layerPassthroughBindings () {
         // TEST STATUS none
         return ['setOpacity', 'setVisibility', 'setVisibleLayers', 'setLayerDrawingOptions'];
@@ -1855,7 +1856,7 @@ class DynamicRecord extends AttrRecord {
      * @return {Object}               proxy interface for given child
      */
     getChildProxy (featureIdx) {
-        // TEST STATUS none
+        // TEST STATUS basic
         // TODO verify we have integer coming in and not a string
         // in this case, featureIdx can also be a group index
         if (this._proxies[featureIdx.toString()]) {
@@ -1871,7 +1872,7 @@ class DynamicRecord extends AttrRecord {
 
     // TODO docs
     getFeatureCount (featureIdx) {
-        // TEST STATUS none
+        // TEST STATUS basic
         // point url to sub-index we want
         // TODO might change how we manage index and url
         return super.getFeatureCount(this._layer.url + '/' + featureIdx);
@@ -1995,6 +1996,7 @@ class DynamicRecord extends AttrRecord {
         //                   now it just sets up promises that dont trigger until someone asks for
         //                   the information.
         const attributeBundle = this._apiRef.attribs.loadLayerAttribs(this._layer);
+        const initVis = [];
 
         // idx is a string
         attributeBundle.indexes.forEach(idx => {
@@ -2005,6 +2007,9 @@ class DynamicRecord extends AttrRecord {
                 //      attribute things.
                 // TODO need to pass some type of initial state to these FCs (e.g. queryable)
                 this._featClasses[idx] = new DynamicFC(this, idx, attributeBundle[idx], subConfigs[idx]);
+                if (subConfigs[idx].state.visibility) {
+                    initVis.push(parseInt(idx)); // store for initial visibility
+                }
 
                 // if we have a proxy watching this leaf, replace its placeholder with the real data
                 if (this._proxies[idx]) {
@@ -2013,10 +2018,12 @@ class DynamicRecord extends AttrRecord {
             }
         });
 
-        // TODO after config defaulting for any autogen children,
-        //      need to get list of visible leaves and manually set
-        //      the layer doing this._layer.setVisibleLayers([visible indexes]) .
-        //      possibly need to do something similar for opacity (if supported)
+        if (initVis.length === 0) {
+            initVis.push(-1); // esri code for set all to invisible
+        }
+        this._layer.setVisibleLayers(initVis);
+
+        // TODO possibly need to do something similar for opacity (if supported)
 
     }
 

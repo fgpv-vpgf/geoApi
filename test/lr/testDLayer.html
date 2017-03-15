@@ -19,7 +19,7 @@
 
             var config1 = {
                 id: 'guts',
-                name: 'Feature Test',
+                name: 'Dynamic Test',
                 url: 'http://section917.cloudapp.net/arcgis/rest/services/TestData/Nest/MapServer',
                 nameField: 'siteShortName_en',
                 metadataUrl: 'http://www.github.com',
@@ -47,7 +47,14 @@
                     }
                 ],
                 childOptions: [
-
+                    { 
+                        index: 2, 
+                        state: {
+                            opacity: 0,
+                            visibility: false,                            
+                            query: false
+                        }
+                    }
                 ]
             };
 
@@ -82,12 +89,23 @@
 
                 console.log('visible - sb true', layerRec.visible);
 */
+                var leaf2proxy = layerRec.getChildProxy(2);
                 var leaf3proxy = layerRec.getChildProxy(3);
+                var group0proxy = layerRec.getChildProxy(0);
+                var group1proxy = layerRec.getChildProxy(1);
+
                 leaf3proxy.symbology.then(sym => {
                     console.log('symbology - sb one circle svg', sym);
                 });
 
-                // mock an identify
+                console.log('leaf 3 visible, should be true', leaf3proxy.visibility);
+                console.log('leaf 2 visible, should be false', leaf2proxy.visibility);
+                console.log('group 0 visible, should be true', group0proxy.visibility);
+                console.log('group 1 visible, should be false', group1proxy.visibility);
+
+                layerRec.getFeatureCount(2).then(fc2 => {
+                    console.log('feature count child 2 - sb 13', fc2);
+                });
 
             }
 
