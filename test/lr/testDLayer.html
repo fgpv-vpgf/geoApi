@@ -107,6 +107,14 @@
                     console.log('feature count child 2 - sb 13', fc2);
                 });
 
+                layerRec.getFormattedAttributes(2).then(fa => {
+                    console.log('formatted attributes child 2', fa);
+                });
+
+                layerRec.getGeomType(2).then(gt => {
+                    console.log('geom type child 3 - sb point', gt);
+                });
+
             }
 
 /*

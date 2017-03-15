@@ -588,10 +588,10 @@ class BasicFC {
     get queryable () { return this._queryable; }
     set queryable (value) { this._queryable = value; }
 
-    // TODO determine who is setting this. LayerRecord constructor & dynamic child generator?
     // TEST STATUS none
-    get geomType () { return this._geomType; }
-    set geomType (value) { this._geomType = value; }
+    // non-attributes have no geometry.
+    // TODO decide on proper defaulting or handling of non-geometry layers.
+    get geomType () { return Promise.resolve('none'); }
 
     /**
      * @param {Object} parent        the Record object that this Feature Class belongs to
@@ -724,9 +724,12 @@ class AttribFC extends BasicFC {
     * @returns {Promise}         resolves with a layer data object
     */
     getLayerData () {
-        // TEST STATUS none
+        // TEST STATUS basic
         return this._layerPackage.layerData;
     }
+
+    // TEST STATUS basic
+    get geomType () { return this.getLayerData().then(ld => { return ld.geometryType; }); }
 
     getSymbology () {
         // TEST STATUS basic
@@ -789,7 +792,7 @@ class AttribFC extends BasicFC {
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
     getFormattedAttributes () {
-        // TEST STATUS none
+        // TEST STATUS basic
         if (this._formattedAttributes) {
             return this._formattedAttributes;
         }
