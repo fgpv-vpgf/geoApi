@@ -1891,32 +1891,29 @@ class DynamicRecord extends AttrRecord {
         // the layers part. we just load what we are told to. the legend module
         // will handle the structured part.
 
-        // NOTE regarding config objects. any config part coming from a file
-        //      or RCS will be pre-defaulted. I.e. we don't need to worry about
-        //      a missing property or figuring out the default value.
-        //      For child layers that are "revealed" after a dynamic layer loads,
-        //      we use parent configs for the defaults, unless specifics are
-        //      already included for the child in the config file.
-        //
-        //      for now, the only relevant properties to be propagated
+        // NOTE for now, the only relevant properties to be propagated
         //      from parent to child are .state and .controls .
         //      .outfields does not make sense as chilren can have different fields.
+        //      We assume the objects at the layer level (index -1) are fully defaulted.
+        //      All other missing items assigned from parent item.
 
         // subconfig lookup. initialize with the layer root (-1), then add
         // in anything provided in the initial config.
         const subConfigs = {
             '-1': {
-                state: this.config.state,
-                controls: this.config.controls
+                config: {
+                    state: this.config.state,
+                    controls: this.config.controls
+                },
+                defaulted: true
             }
         };
 
-        // do child options first, then layer entries. in weird case where both are defined,
-        // will give priority to the layer entries.
-        // works because both child options and layer entries have identical structure
-        // for properties we need in this routine.
-        this.config.childOptions.concat(this.config.layerEntries).forEach(c => {
-            subConfigs[c.index.toString()] = c;
+        this.config.layerEntries.forEach(c => {
+            subConfigs[c.index.toString()] = {
+                config: c,
+                defaulted: false
+            };
         });
 
         // subfunction to either return a stored sub-config, or
@@ -1924,14 +1921,48 @@ class DynamicRecord extends AttrRecord {
         // both params integers in string format.
         const fetchSubConfig = (id, parentId) => {
             if (subConfigs[id]) {
-                return subConfigs[id];
+                const subC = subConfigs[id];
+                if (!subC.defaulted) {
+                    // get any missing properties from parent
+                    const parent = subConfigs[parentId].config;
+
+                    // TODO verify if we need to check for controls array of .length === 0.
+                    //      I am assuming an empty array a valid setting (i.e. no controls should be shown)
+                    if (!subC.config.controls) {
+                        subC.config.controls = parent.controls.concat();
+                    }
+
+                    if (!subC.config.state) {
+                        // copy all
+                        subC.config.state = Object.assign({}, parent.state);
+                    } else {
+                        // selective inheritance
+                        Object.keys(parent.state).forEach(stateKey => {
+                            // be aware of falsey logic here.
+                            if (!subC.config.state.hasOwnProperty(stateKey)) {
+                                subC.config.state[stateKey] = parent.state[stateKey];
+                            }
+                        });
+                    }
+
+                    if (!subC.config.hasOwnProperty('outfields')) {
+                        subC.config.outfields = '*';
+                    }
+
+                    subC.defaulted = true;
+                }
+                return subC.config;
             } else {
-                // copy properties from parent
+                // no config at all. direct copy properties from parent
                 const newConfig = {
-                    state: Object.assign({}, subConfigs[parentId].state),
-                    controls: subConfigs[parentId].controls.concat()
+                    state: Object.assign({}, subConfigs[parentId].config.state),
+                    controls: subConfigs[parentId].config.controls.concat(),
+                    outfields: '*'
                 };
-                subConfigs[id] = newConfig;
+                subConfigs[id] = {
+                    config: newConfig,
+                    defaulted: true
+                };
                 return newConfig;
             }
         };
@@ -1979,7 +2010,9 @@ class DynamicRecord extends AttrRecord {
 
         if (this.config.layerEntries) {
             this.config.layerEntries.forEach(le => {
-                processLayerInfo(this._layer.layerInfos[le.index], this._proxies, -1);
+                if (le.isLayerEntry) {
+                    processLayerInfo(this._layer.layerInfos[le.index], this._proxies, -1);
+                }
             });
         }
 
@@ -2000,14 +2033,14 @@ class DynamicRecord extends AttrRecord {
 
         // idx is a string
         attributeBundle.indexes.forEach(idx => {
-            // if we don't have a sub-config, it means the attribute leaf is not present
+            // if we don't have a defaulted sub-config, it means the attribute leaf is not present
             // in our visible tree structure.
-            if (subConfigs[idx]) {
+            const subC = subConfigs[idx];
+            if (subC && subC.defaulted) {
                 // TODO need to worry about Raster Layers here.  DynamicFC is based off of
                 //      attribute things.
-                // TODO need to pass some type of initial state to these FCs (e.g. queryable)
-                this._featClasses[idx] = new DynamicFC(this, idx, attributeBundle[idx], subConfigs[idx]);
-                if (subConfigs[idx].state.visibility) {
+                this._featClasses[idx] = new DynamicFC(this, idx, attributeBundle[idx], subC.config);
+                if (subC.config.state.visibility) {
                     initVis.push(parseInt(idx)); // store for initial visibility
                 }
 
