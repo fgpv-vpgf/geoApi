@@ -1793,7 +1793,7 @@ class ImageRecord extends LayerRecord {
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
         // TEST STATUS none
         // TODO if we have nothing to add here, delete this constructor
-        super(apiRef, config, esriLayer, epsgLookup);
+        super(layerClass, apiRef, config, esriLayer, epsgLookup);
     }
 
     /**
@@ -2293,7 +2293,7 @@ class TileRecord extends LayerRecord {
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
         // TEST STATUS none
         // TODO if we have nothing to add here, delete this constructor
-        super(apiRef, config, esriLayer, epsgLookup);
+        super(layerClass, apiRef, config, esriLayer, epsgLookup);
     }
 
     /**
