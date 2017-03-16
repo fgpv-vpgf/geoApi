@@ -102,6 +102,8 @@
                 console.log('leaf 2 visible, should be false', leaf2proxy.visibility);
                 console.log('group 0 visible, should be true', group0proxy.visibility);
                 console.log('group 1 visible, should be false', group1proxy.visibility);
+                
+                console.log('leaf 2 available controls, should be visible, query', leaf2proxy.availableControls);
 
                 layerRec.getFeatureCount(2).then(fc2 => {
                     console.log('feature count child 2 - sb 13', fc2);

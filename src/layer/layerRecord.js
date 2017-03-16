@@ -1889,6 +1889,22 @@ class DynamicRecord extends AttrRecord {
     onLoad () {
         // TEST STATUS basic
         super.onLoad();
+        const supportsDynamic = this._layer.supportsDynamicLayers;
+        const controlBanlist = ['reload', 'snapshot', 'boundingBox'];
+        if (!supportsDynamic) {
+            controlBanlist.push('opacity');
+        }
+
+        // strip any banned controls from a controls array
+        // array is modified
+        const banControls = controls => {
+            controlBanlist.forEach(bc => {
+                const idx = controls.indexOf(bc);
+                if (idx > -1) {
+                    controls.splice(idx, 1);
+                }
+            });
+        };
 
         // don't worry about structured legend. the legend part is separate from
         // the layers part. we just load what we are told to. the legend module
@@ -1906,15 +1922,15 @@ class DynamicRecord extends AttrRecord {
             '-1': {
                 config: {
                     state: this.config.state,
-                    controls: this.config.controls
+                    controls: banControls(this.config.controls.concat())
                 },
                 defaulted: true
             }
         };
 
-        this.config.layerEntries.forEach(c => {
-            subConfigs[c.index.toString()] = {
-                config: c,
+        this.config.layerEntries.forEach(le => {
+            subConfigs[le.index.toString()] = {
+                config: le,
                 defaulted: false
             };
         });
@@ -1932,7 +1948,11 @@ class DynamicRecord extends AttrRecord {
                     // TODO verify if we need to check for controls array of .length === 0.
                     //      I am assuming an empty array a valid setting (i.e. no controls should be shown)
                     if (!subC.config.controls) {
+                        // we can assume parent.controls has already been ban-scraped
                         subC.config.controls = parent.controls.concat();
+                    } else {
+                        // ensure we dont have any bad controls lurking
+                        banControls(subC.config.controls);
                     }
 
                     if (!subC.config.state) {
@@ -1957,6 +1977,7 @@ class DynamicRecord extends AttrRecord {
                 return subC.config;
             } else {
                 // no config at all. direct copy properties from parent
+                // we can assume parent.controls has already been ban-scraped
                 const newConfig = {
                     state: Object.assign({}, subConfigs[parentId].config.state),
                     controls: subConfigs[parentId].config.controls.concat(),
