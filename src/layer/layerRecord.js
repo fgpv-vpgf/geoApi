@@ -1496,7 +1496,7 @@ class LayerRecord {
     * @returns {Promise} resolves in object properties .minScale and .maxScale
     */
     getVisibleScales () {
-        // TEST STATUS none
+        // TEST STATUS basic
         // default layer, take from layer object
         return Promise.resolve({
             minScale: this._layer.minScale,
@@ -1509,7 +1509,7 @@ class LayerRecord {
     * @returns {Promise} resolves feature count
     */
     getFeatureCount () {
-        // TEST STATUS none
+        // TEST STATUS basic
         // TODO determine best result to indicate that layer does not have features
         //      we may want a null so that UI can display a different message (or suppress the message)
         return Promise.resolve(0);
@@ -1536,7 +1536,7 @@ class LayerRecord {
 
     // TODO docs
     isQueryable () {
-        // TEST STATUS none
+        // TEST STATUS basic
         return this._featClasses[this._defaultFC].queryable;
     }
 

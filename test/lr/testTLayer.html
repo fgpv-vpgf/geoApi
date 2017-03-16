@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Image Layer Test Page</title>
+    <title>Tile Layer Test Page</title>
     <style>
         .layerTile { position: absolute; }
     </style>
@@ -19,18 +19,18 @@
 
             var config1 = {
                 id: 'dog',
-                name: 'Image Test',
-                url: 'http://section917.cloudapp.net/arcgis/rest/services/TestData/LCV_AAFC_CLASSIFIED_30M_1995/ImageServer',
+                name: 'Tile Test',
+                url: 'http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Graticule/MapServer',
                 
                 metadataUrl: 'http://www.github.com',
-                layerType: 'esriImage',
+                layerType: 'esriTile',
                 extent: {},
-                controls: ['visibility', 'opacity', 'boundingBox', 'query'],
+                controls: ['visibility', 'opacity', 'boundingBox'],
                 state: {
                     opacity: 1,
                     visibility: true,
                     boundingBox: false,
-                    query: true
+                    query: false
                 }
             };
 
@@ -39,7 +39,7 @@
                 { "level": 16, "resolution": 7.9375158750317505, "scale": 30000 },
                 { "level": 17, "resolution": 4.6302175937685215, "scale": 17500 } ];
 
-            var layerRec = api.layer.createImageRecord(config1);
+            var layerRec = api.layer.createTileRecord(config1);
             console.log('layer PROOF ', layerRec);
             var proxy = layerRec.getProxy();
             console.log('proxy PROOF ', proxy);
@@ -64,7 +64,7 @@
                     console.log('feature count - sb 0', fc);
                 });
 
-                console.log('queryable, should be true', layerRec.isQueryable());
+                console.log('queryable, should be false', layerRec.isQueryable());
 
 
 /*

@@ -1,6 +1,6 @@
 {
   "name": "geoApi",
-  "version": "0.0.0-protoLR-04",
+  "version": "0.0.0-protoLR-05",
   "description": "",
   "main": "dist/geoapi.js",
   "dependencies": {
