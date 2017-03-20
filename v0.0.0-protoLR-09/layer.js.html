@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>layer.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AttribFC.html">AttribFC</a><ul class='methods'><li data-type='method'><a href="AttribFC.html#.unAliasAttribs">unAliasAttribs</a></li><li data-type='method'><a href="AttribFC.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="AttribFC.html#checkDateType">checkDateType</a></li><li data-type='method'><a href="AttribFC.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="AttrRecord.html">AttrRecord</a><ul class='methods'><li data-type='method'><a href="AttrRecord.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="AttrRecord.html#attributesToDetails">attributesToDetails</a></li><li data-type='method'><a href="AttrRecord.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="BasicFC.html">BasicFC</a></li><li><a href="DynamicFC.html">DynamicFC</a></li><li><a href="DynamicRecord.html">DynamicRecord</a><ul class='methods'><li data-type='method'><a href="DynamicRecord.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="DynamicRecord.html#checkDateType">checkDateType</a></li><li data-type='method'><a href="DynamicRecord.html#getChildProxy">getChildProxy</a></li><li data-type='method'><a href="DynamicRecord.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="FakeGroupRecord.html">FakeGroupRecord</a></li><li><a href="FeatureRecord.html">FeatureRecord</a></li><li><a href="IdentifyResult.html">IdentifyResult</a></li><li><a href="ImageRecord.html">ImageRecord</a></li><li><a href="LayerInterface.html">LayerInterface</a></li><li><a href="LayerRecord.html">LayerRecord</a><ul class='methods'><li data-type='method'><a href="LayerRecord.html#_fireEvent">_fireEvent</a></li><li data-type='method'><a href="LayerRecord.html#_stateChange">_stateChange</a></li><li data-type='method'><a href="LayerRecord.html#_zoomToScaleSet">_zoomToScaleSet</a></li><li data-type='method'><a href="LayerRecord.html#addHoverListener">addHoverListener</a></li><li data-type='method'><a href="LayerRecord.html#addStateListener">addStateListener</a></li><li data-type='method'><a href="LayerRecord.html#bindEvents">bindEvents</a></li><li data-type='method'><a href="LayerRecord.html#constructLayer">constructLayer</a></li><li data-type='method'><a href="LayerRecord.html#createBbox">createBbox</a></li><li data-type='method'><a href="LayerRecord.html#destroyBbox">destroyBbox</a></li><li data-type='method'><a href="LayerRecord.html#findZoomScale">findZoomScale</a></li><li data-type='method'><a href="LayerRecord.html#getFeatureCount">getFeatureCount</a></li><li data-type='method'><a href="LayerRecord.html#getVisibleScales">getVisibleScales</a></li><li data-type='method'><a href="LayerRecord.html#isBBoxVisible">isBBoxVisible</a></li><li data-type='method'><a href="LayerRecord.html#makeClickBuffer">makeClickBuffer</a></li><li data-type='method'><a href="LayerRecord.html#makeLayerConfig">makeLayerConfig</a></li><li data-type='method'><a href="LayerRecord.html#onError">onError</a></li><li data-type='method'><a href="LayerRecord.html#onMouseOut">onMouseOut</a></li><li data-type='method'><a href="LayerRecord.html#onMouseOver">onMouseOver</a></li><li data-type='method'><a href="LayerRecord.html#onUpdateEnd">onUpdateEnd</a></li><li data-type='method'><a href="LayerRecord.html#onUpdateStart">onUpdateStart</a></li><li data-type='method'><a href="LayerRecord.html#removeHoverListener">removeHoverListener</a></li><li data-type='method'><a href="LayerRecord.html#removeStateListener">removeStateListener</a></li><li data-type='method'><a href="LayerRecord.html#setMapScale">setMapScale</a></li><li data-type='method'><a href="LayerRecord.html#zoomToBoundary">zoomToBoundary</a></li></ul></li><li><a href="TileRecord.html">TileRecord</a></li><li><a href="WmsFC.html">WmsFC</a></li><li><a href="WmsRecord.html">WmsRecord</a><ul class='methods'><li data-type='method'><a href="WmsRecord.html#identify">identify</a></li></ul></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-developer-guide.html">developer-guide</a></li><li><a href="tutorial-getting_started.html">getting_started</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addHilight">addHilight</a></li><li><a href="global.html#addPin">addPin</a></li><li><a href="global.html#allComb">allComb</a></li><li><a href="global.html#allocateLayersToSections">allocateLayersToSections</a></li><li><a href="global.html#arrayBufferToString">arrayBufferToString</a></li><li><a href="global.html#assignIds">assignIds</a></li><li><a href="global.html#assignLayerSplits">assignLayerSplits</a></li><li><a href="global.html#checkProj">checkProj</a></li><li><a href="global.html#clearHilight">clearHilight</a></li><li><a href="global.html#clipExtentCoords">clipExtentCoords</a></li><li><a href="global.html#cloneLayerGraphic">cloneLayerGraphic</a></li><li><a href="global.html#convertImageToCanvas">convertImageToCanvas</a></li><li><a href="global.html#convertImagetoDataURL">convertImagetoDataURL</a></li><li><a href="global.html#crawlLayerInfos">crawlLayerInfos</a></li><li><a href="global.html#createAttribSet">createAttribSet</a></li><li><a href="global.html#csvPeek">csvPeek</a></li><li><a href="global.html#enforceBoundary">enforceBoundary</a></li><li><a href="global.html#enhanceRenderer">enhanceRenderer</a></li><li><a href="global.html#extractFields">extractFields</a></li><li><a href="global.html#featureTypeToRenderer">featureTypeToRenderer</a></li><li><a href="global.html#findClosestLOD">findClosestLOD</a></li><li><a href="global.html#findOptimalSplit">findOptimalSplit</a></li><li><a href="global.html#generateLocalCanvas">generateLocalCanvas</a></li><li><a href="global.html#generatePlaceholderSymbology">generatePlaceholderSymbology</a></li><li><a href="global.html#generateServerImage">generateServerImage</a></li><li><a href="global.html#generateUUID">generateUUID</a></li><li><a href="global.html#generateWMSSymbology">generateWMSSymbology</a></li><li><a href="global.html#geomToGraphic">geomToGraphic</a></li><li><a href="global.html#getAttribs">getAttribs</a></li><li><a href="global.html#getExtentFromJson">getExtentFromJson</a></li><li><a href="global.html#getFeatureName">getFeatureName</a></li><li><a href="global.html#getGraphicIcon">getGraphicIcon</a></li><li><a href="global.html#getGraphicSymbol">getGraphicSymbol</a></li><li><a href="global.html#getLayerData">getLayerData</a></li><li><a href="global.html#getLayerType">getLayerType</a></li><li><a href="global.html#getLegendUrls">getLegendUrls</a></li><li><a href="global.html#getMapServerLegend">getMapServerLegend</a></li><li><a href="global.html#getNorthArrowAngle">getNorthArrowAngle</a></li><li><a href="global.html#getScaleRatio">getScaleRatio</a></li><li><a href="global.html#getUnboundGraphics">getUnboundGraphics</a></li><li><a href="global.html#getWMSLayerTitle">getWMSLayerTitle</a></li><li><a href="global.html#getZoomLevel">getZoomLevel</a></li><li><a href="global.html#guessCSVfields">guessCSVfields</a></li><li><a href="global.html#hideLayers">hideLayers</a></li><li><a href="global.html#identify">identify</a></li><li><a href="global.html">isSpatialRefEqual</a></li><li><a href="global.html#loadDataBatch">loadDataBatch</a></li><li><a href="global.html#loadFeatureAttribs">loadFeatureAttribs</a></li><li><a href="global.html#localProjectExtent">localProjectExtent</a></li><li><a href="global.html#localProjectGeometry">localProjectGeometry</a></li><li><a href="global.html#localProjectPoint">localProjectPoint</a></li><li><a href="global.html#makeBasemaps">makeBasemaps</a></li><li><a href="global.html#makeBoundingBox">makeBoundingBox</a></li><li><a href="global.html#makeGeoJsonLayer">makeGeoJsonLayer</a></li><li><a href="global.html#makeHilightLayer">makeHilightLayer</a></li><li><a href="global.html#makeLegend">makeLegend</a></li><li><a href="global.html#mapDefault">mapDefault</a></li><li><a href="global.html#mapServerLegendToRenderer">mapServerLegendToRenderer</a></li><li><a href="global.html#mapServerToLocalLegend">mapServerToLocalLegend</a></li><li><a href="global.html#newLayerBundle">newLayerBundle</a></li><li><a href="global.html#newLayerPackage">newLayerPackage</a></li><li><a href="global.html#newProp">newProp</a></li><li><a href="global.html#normalizeProj">normalizeProj</a></li><li><a href="global.html#onLoad">onLoad</a></li><li><a href="global.html#packLayersIntoExactSections">packLayersIntoExactSections</a></li><li><a href="global.html#packLayersIntoOptimalSections">packLayersIntoOptimalSections</a></li><li><a href="global.html#predictLayerUrl">predictLayerUrl</a></li><li><a href="global.html#processDynamicLayer">processDynamicLayer</a></li><li><a href="global.html#processFeatureLayer">processFeatureLayer</a></li><li><a href="global.html#projectGeojson">projectGeojson</a></li><li><a href="global.html#projectionLookup">projectionLookup</a></li><li><a href="global.html#resizeSVGElement">resizeSVGElement</a></li><li><a href="global.html#scrapeListRenderer">scrapeListRenderer</a></li><li><a href="global.html#searchRenderer">searchRenderer</a></li><li><a href="global.html#serverLayerIdentify">serverLayerIdentify</a></li><li><a href="global.html#serviceType">serviceType</a></li><li><a href="global.html#setProxy">setProxy</a></li><li><a href="global.html#setupMap">setupMap</a></li><li><a href="global.html#showLayers">showLayers</a></li><li><a href="global.html#splitLayer">splitLayer</a></li><li><a href="global.html#svgDrawImage">svgDrawImage</a></li><li><a href="global.html#symbolToLegend">symbolToLegend</a></li><li><a href="global.html#validateCSV">validateCSV</a></li><li><a href="global.html#validateFile">validateFile</a></li><li><a href="global.html#validateGeoJson">validateGeoJson</a></li><li><a href="global.html#validateLatLong">validateLatLong</a></li><li><a href="global.html#wrapEvents">wrapEvents</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">layer.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+// TODO consider splitting this module into different modules.  in particular,
+//      file-based stuff vs server based stuff, and layer creation vs layer support
+
+// TODO convert internal function header comments to JSDoc, and use the @private tag
+
+const csv2geojson = require('csv2geojson');
+const Terraformer = require('terraformer');
+const shp = require('shpjs');
+const ogc = require('./layer/ogc.js');
+const bbox = require('./layer/bbox.js');
+const layerRecord = require('./layer/layerRecord.js');
+const defaultRenderers = require('./defaultRenderers.json');
+Terraformer.ArcGIS = require('terraformer-arcgis-parser');
+
+/**
+* Maps GeoJSON geometry types to a set of default renders defined in GlobalStorage.DefaultRenders
+* @property featureTypeToRenderer {Object}
+* @private
+*/
+const featureTypeToRenderer = {
+    Point: 'circlePoint',
+    MultiPoint: 'circlePoint',
+    LineString: 'solidLine',
+    MultiLineString: 'solidLine',
+    Polygon: 'outlinedPoly',
+    MultiPolygon: 'outlinedPoly'
+};
+
+/**
+* Different types of services that a URL could point to
+* @property serviceType {Object}
+*/
+const serviceType = {
+    CSV: 'csv',
+    GeoJSON: 'geojson',
+    Shapefile: 'shapefile',
+    FeatureLayer: 'featurelayer',
+    RasterLayer: 'rasterlayer',
+    GroupLayer: 'grouplayer',
+    TileService: 'tileservice',
+    FeatureService: 'featureservice',
+    DynamicService: 'dynamicservice',
+    ImageService: 'imageservice',
+    WMS: 'wms',
+    Unknown: 'unknown',
+    Error: 'error'
+};
+
+// attempts to determine if a path points to a location on the internet,
+// or is a local file.  Returns true if internetish
+function isServerFile(url) {
+    // TODO possibly enhance to be better check, or support more cases
+
+    const lowUrl = url.toLowerCase();
+    const tests = [/^http:/, /^https:/, /^ftp:/, /^\/\//];
+    return tests.some(test => lowUrl.match(test));
+
+}
+
+// will grab a file from a server address as binary.
+// returns a promise that resolves with the file data.
+function getServerFile(url, esriBundle) {
+    return new Promise((resolve, reject) => {
+        // extract info for this service
+        const defService = esriBundle.esriRequest({
+            url: url,
+            handleAs: 'arraybuffer'
+        });
+
+        defService.then(srvResult => {
+            resolve(srvResult);
+        }, error => {
+            // something went wrong
+            reject(error);
+        });
+    });
+}
+
+// returns a standard information object with serviceType
+// supports predictLayerUrl
+// type is serviceType enum value
+function makeInfo(type) {
+    return {
+        serviceType: type
+    };
+}
+
+// returns a standard information object with serviceType and name
+// common for most ESRI endpoints
+// supports predictLayerUrl
+// type is serviceType enum value
+// name is property in json containing a service name
+// json is json result from service
+function makeLayerInfo(type, name, json) {
+    const info = makeInfo(type);
+    info.name = json[name] || '';
+    return info;
+}
+
+// returns promise of standard information object with serviceType
+// and fileData if file is located online (not on disk).
+function makeFileInfo(type, url, esriBundle) {
+    return new Promise(resolve => {
+        const info = makeInfo(type);
+        if (url &amp;&amp; isServerFile(url)) {
+            // be a pal and download the file content
+            getServerFile(url, esriBundle).then(data => {
+                info.fileData = data;
+                resolve(info);
+            }).catch(() => {
+                info.type = serviceType.Error;
+                resolve(info);
+            });
+        } else {
+            resolve(info);
+        }
+    });
+}
+
+// inspects the JSON that was returned from a service.
+// if the JSON belongs to an ESRI endpoint, we do some terrible dog-logic to attempt
+// to derive what type of endpoint it is (mainly by looking for properties that are
+// unique to that type of service).
+// returns an enumeration value (string) from serviceType based on the match found.
+// non-esri services or unexpected esri services will return the .Unknown value
+function crawlEsriService(srvJson) {
+    if (srvJson.type) {
+        // a layer endpoint (i.e. url ends with integer index)
+        const mapper = {
+            'Feature Layer': serviceType.FeatureLayer,
+            'Raster Layer': serviceType.RasterLayer,
+            'Group Layer': serviceType.GroupLayer
+        };
+        return mapper[srvJson.type] || serviceType.Unknown;
+
+    } else if (srvJson.hasOwnProperty('singleFusedMapCache')) {
+        if (srvJson.singleFusedMapCache) {
+            // a tile server
+            return serviceType.TileService;
+
+        } else {
+            // a map server
+            return serviceType.DynamicService;
+        }
+
+    } else if (srvJson.hasOwnProperty('allowGeometryUpdates')) {
+        // a feature server
+        return serviceType.FeatureService;
+
+    } else if (srvJson.hasOwnProperty('allowedMosaicMethods')) {
+        // an image server
+        return serviceType.ImageService;
+
+    } else {
+        return serviceType.Unknown;
+    }
+}
+
+// given a URL, attempt to read it as an ESRI rest endpoint.
+// returns a promise that resovles with an information object.
+// at minimum, the object will have a .serviceType property with a value from the above enumeration.
+// if the type is .Unknown, then we were unable to determine the url was an ESRI rest endpoint.
+// otherwise, we were successful, and the information object will have other properties depending on the service type
+// - .name : scraped from service, but may be rubbish (depends on service publisher). used as UI suggestion only
+// - .fields : for feature layer service only. list of fields to allow user to pick name field
+// - .geometryType : for feature layer service only.  for help in defining the renderer, if required.
+// - .layers : for dynamic layer service only. lists the child layers
+function pokeEsriService(url, esriBundle, hint) {
+
+    // reaction functions to different esri services
+    const srvHandler = {};
+
+    // feature layer gets some extra treats
+    srvHandler[serviceType.FeatureLayer] = srvJson => {
+        const info = makeLayerInfo(serviceType.FeatureLayer, 'name', srvJson);
+        info.fields = srvJson.fields;
+        info.geometryType = srvJson.geometryType;
+        info.smartDefaults = {
+            // TODO: try to find a name field if possible
+            primary: info.fields[0].name // pick the first field as primary and return its name for ui binding
+        };
+        return info;
+    };
+
+    // no treats for raster (for now)
+    srvHandler[serviceType.RasterLayer] = srvJson => {
+        return makeLayerInfo(serviceType.RasterLayer, 'name', srvJson);
+    };
+
+    // no treats for group (for now)
+    srvHandler[serviceType.GroupLayer] = srvJson => {
+        return makeLayerInfo(serviceType.GroupLayer, 'name', srvJson);
+    };
+
+    // no treats for tile (for now)
+    srvHandler[serviceType.TileService] = srvJson => {
+        return makeLayerInfo(serviceType.TileService, 'mapName', srvJson);
+    };
+
+    // no treats for mapserver / dynamic (for now)
+    srvHandler[serviceType.DynamicService] = srvJson => {
+        const info = makeLayerInfo(serviceType.DynamicService, 'mapName', srvJson);
+        info.layers = srvJson.layers;
+        return info;
+    };
+
+    // no treats for imageserver (for now)
+    srvHandler[serviceType.ImageService] = srvJson => {
+        const info = makeLayerInfo(serviceType.ImageService, 'name', srvJson);
+        info.fields = srvJson.fields;
+        return info;
+    };
+
+    // couldnt figure it out
+    srvHandler[serviceType.Unknown] = () => {
+        return makeInfo(serviceType.Unknown);
+    };
+
+    return new Promise(resolve => {
+        // extract info for this service
+        const defService = esriBundle.esriRequest({
+            url: url,
+            content: { f: 'json' },
+            callbackParamName: 'callback',
+            handleAs: 'json',
+        });
+
+        defService.then(srvResult => {
+            // request didnt fail, indicating it is likely an ArcGIS Server endpoint
+            let resultType = crawlEsriService(srvResult);
+
+            if (hint &amp;&amp; resultType !== hint) {
+                // our hint doesn't match the service
+                resultType = serviceType.Unknown;
+            }
+            resolve(srvHandler[resultType](srvResult));
+
+        }, () => {
+            // something went wrong, but that doesnt mean our service is invalid yet
+            // it's likely not ESRI.  return Error and let main predictor keep investigating
+            resolve(makeInfo(serviceType.Error));
+        });
+    });
+}
+
+// tests a URL to see if the value is a file
+// providing the known type as a hint will cause the function to run the
+// specific logic for that file type, rather than guessing and trying everything
+// resolves with promise of information object
+// - serviceType : the type of file (CSV, Shape, GeoJSON, Unknown)
+// - fileData : if the file is located on a server, will xhr
+function pokeFile(url, esriBundle, hint) {
+
+    // reaction functions to different files
+    // overkill right now, as files just identify the type right now
+    // but structure will let us enhance for custom things if we need to
+    const fileHandler = {};
+
+    // csv
+    fileHandler[serviceType.CSV] = () => {
+        return makeFileInfo(serviceType.CSV, url, esriBundle);
+    };
+
+    // geojson
+    fileHandler[serviceType.GeoJSON] = () => {
+        return makeFileInfo(serviceType.GeoJSON, url, esriBundle);
+    };
+
+    // csv
+    fileHandler[serviceType.Shapefile] = () => {
+        return makeFileInfo(serviceType.Shapefile, url, esriBundle);
+    };
+
+    // couldnt figure it out
+    fileHandler[serviceType.Unknown] = () => {
+        // dont supply url, as we don't want to download random files
+        return makeFileInfo(serviceType.Unknown);
+    };
+
+    return new Promise(resolve => {
+        if (hint) {
+            // force the data extraction of the hinted format
+            resolve(fileHandler[hint]());
+        } else {
+            // inspect the url for file extensions
+            let guessType = serviceType.Unknown;
+            switch (url.substr(url.lastIndexOf('.') + 1).toLowerCase()) {
+
+                // check for file extensions
+                case 'csv':
+                    guessType = serviceType.CSV;
+                    break;
+                case 'zip':
+                    guessType = serviceType.Shapefile;
+                    break;
+
+                case 'json':
+                    guessType = serviceType.GeoJSON;
+                    break;
+            }
+            resolve(fileHandler[guessType]());
+        }
+    });
+}
+
+// tests a URL to see if the value is a wms
+// resolves with promise of information object
+// - serviceType : the type of service (WMS, Unknown)
+function pokeWms(url, esriBundle) {
+
+    // FIXME add some WMS detection logic.  that would be nice
+
+    console.log(url, esriBundle); // to stop jslint from quacking. remove when params are actually used
+
+    return Promise.resolve(makeInfo(serviceType.WMS));
+}
+
+function predictLayerUrlBuilder(esriBundle) {
+    /**
+    * Attempts to determine what kind of layer the URL most likely is, and
+    * if possible, return back some useful information about the layer
+    *
+    * - serviceType: the type of layer the function thinks the url is referring to. is a value of serviceType enumeration (string)
+    * - fileData: file contents in an array buffer. only present if the URL points to a file that exists on an internet server (i.e. not a local disk drive)
+    * - name: best attempt at guessing the name of the service (string). only present for ESRI service URLs
+    * - fields: array of field definitions for the layer. conforms to ESRI's REST field standard. only present for feature layer and image service URLs.
+    * - geometryType: describes the geometry of the layer (string). conforms to ESRI's REST geometry type enum values. only present for feature layer URLs.
+    * - groupIdx: property only available if a group layer is queried. it is the layer index of the group layer in the list under its parent dynamic layer
+    *
+    * @method predictLayerUrl
+    * @param {String} url a url to something that is hopefully a map service
+    * @param {String} hint optional. allows the caller to specify the url type, forcing the function to run the data logic for that type
+    * @returns {Promise} a promise resolving with an infomation object
+    */
+    return (url, hint) => {
+
+        // TODO this function has lots of room to improve.  there are many valid urls that it will
+        //      fail to identify correctly in it's current state
+
+        // TODO refactor how this function works.
+        //      wait for the web service request library to not be esri/request
+        //      use new library to make a head call on the url provided
+        //      examine the content type of the head call result
+        //        if xml, assume WMS
+        //        if json, assume esri  (may need extra logic to differentiate from json file?)
+        //        file case is explicit (e.g text/json)
+        //      then hit appropriate handler, do a second web request for content if required
+
+        if (hint) {
+            // go directly to appropriate logic block
+            const hintToFlavour = {}; // why? cuz cyclomatic complexity + OBEY RULES
+            const flavourToHandler = {};
+
+            // hint type to hint flavour
+            hintToFlavour[serviceType.CSV] = 'F_FILE';
+            hintToFlavour[serviceType.GeoJSON] = 'F_FILE';
+            hintToFlavour[serviceType.Shapefile] = 'F_FILE';
+            hintToFlavour[serviceType.FeatureLayer] = 'F_ESRI';
+            hintToFlavour[serviceType.RasterLayer] = 'F_ESRI';
+            hintToFlavour[serviceType.GroupLayer] = 'F_ESRI';
+            hintToFlavour[serviceType.TileService] = 'F_ESRI';
+            hintToFlavour[serviceType.DynamicService] = 'F_ESRI';
+            hintToFlavour[serviceType.ImageService] = 'F_ESRI';
+            hintToFlavour[serviceType.WMS] = 'F_WMS';
+
+            // hint flavour to flavour-handler
+            flavourToHandler.F_FILE = () => {
+                return pokeFile(url, esriBundle, hint);
+            };
+
+            flavourToHandler.F_ESRI = () => {
+                return pokeEsriService(url, esriBundle, hint);
+            };
+
+            flavourToHandler.F_WMS = () => {
+                // FIXME REAL LOGIC COMING SOON
+                return pokeWms(url, esriBundle);
+            };
+
+            // execute handler.  hint -> flavour -> handler -> run it -> promise
+            return flavourToHandler[hintToFlavour[hint]]();
+
+        } else {
+
+            // TODO restructure.  this approach cleans up the pyramid of doom.
+            //      Needs to add check for empty tests, resolve as unknown.
+            //      Still a potential to take advantage of the nice structure.  Will depend
+            //      what comes first:  WMS logic (adding a 3rd test), or changing the request
+            //      library, meaning we get the type early from the head request.
+            /*
+            tests = [pokeFile, pokeService];
+
+            function runTests() {
+                test = tests.pop();
+                test(url, esriBundle).then(info => {
+                    if (info.serviceType !== serviceType.Unknown) {
+                        resolve(info);
+                        return;
+                    }
+                    runTests();
+                });
+            }
+
+            runTests();
+            */
+
+            return new Promise(resolve => {
+                // no hint. run tests until we find a match.
+                // test for file
+                pokeFile(url, esriBundle).then(infoFile => {
+                    if (infoFile.serviceType === serviceType.Unknown ||
+                        infoFile.serviceType === serviceType.Error) {
+
+                        // not a file, test for ESRI
+                        pokeEsriService(url, esriBundle).then(infoEsri => {
+                            if (infoEsri.serviceType === serviceType.Unknown ||
+                                infoEsri.serviceType === serviceType.Error) {
+
+                                // FIXME REAL LOGIC COMING SOON
+                                // pokeWMS
+                                resolve(infoEsri);
+                            } else {
+                                // it was a esri service. rejoice.
+
+                                // shortlived rejoice because grouped layers lul
+                                if (infoEsri.serviceType === serviceType.GroupLayer) {
+                                    const lastSlash = url.lastIndexOf('/');
+                                    const layerIdx = parseInt(url.substring(lastSlash + 1));
+                                    url = url.substring(0, lastSlash);
+                                    pokeEsriService(url, esriBundle).then(infoDynamic => {
+                                        infoDynamic.groupIdx = layerIdx;
+                                        resolve(infoDynamic);
+                                    });
+                                } else {
+                                    resolve(infoEsri);
+                                }
+                            }
+                        });
+                    } else {
+                        // it was a file. rejoice.
+                        resolve(infoFile);
+                    }
+                });
+            });
+        }
+    };
+}
+
+/**
+* Converts an array buffer to a string
+*
+* @method arrayBufferToString
+* @private
+* @param {Arraybuffer} buffer an array buffer containing stuff (ideally string-friendly)
+* @returns {String} array buffer in string form
+*/
+function arrayBufferToString(buffer) {
+    // handles UTF8 encoding
+    return new TextDecoder('utf-8').decode(new Uint8Array(buffer));
+}
+
+/**
+* Performs validation on GeoJson object. Returns a promise resolving with the validation object.
+* Worker function for validateFile, see that file for return value specs
+*
+* @method validateGeoJson
+* @private
+* @param {Object} geoJson feature collection in geojson form
+* @returns {Promise} promise resolving with information on the geoJson object
+*/
+function validateGeoJson(geoJson) {
+    // GeoJSON geometry type to ESRI geometry type
+    const geomMap = {
+        Point: 'esriGeometryPoint',
+        MultiPoint: 'esriGeometryMultipoint',
+        LineString: 'esriGeometryPolyline',
+        MultiLineString: 'esriGeometryPolyline',
+        Polygon: 'esriGeometryPolygon',
+        MultiPolygon: 'esriGeometryPolygon'
+    };
+
+    const fields = extractFields(geoJson);
+
+    const res = {
+        fields: fields,
+        geometryType: geomMap[geoJson.features[0].geometry.type],
+        formattedData: geoJson,
+        smartDefaults: {
+            // TODO: try to find a name field if possible
+            primary: fields[0].name // pick the first field as primary and return its name for ui binding
+        }
+    };
+
+    if (!res.geometryType) {
+        return Promise.reject(new Error('Unexpected geometry type in GeoJSON'));
+    }
+
+    // TODO optional check: iterate through every feature, ensure geometry type and properties are all identical
+
+    return Promise.resolve(res);
+}
+
+/**
+* Performs validation on csv data. Returns a promise resolving with the validation object.
+* Worker function for validateFile, see that file for return value specs
+*
+* @method validateCSV
+* @private
+* @param {Object} data csv data as string
+* @returns {Promise} promise resolving with information on the csv data
+*/
+function validateCSV(data) {
+
+    const formattedData = arrayBufferToString(data); // convert from arraybuffer to string to parsed csv. store string format for later
+    const rows = csvPeek(formattedData, ','); // FIXME: this assumes delimiter is a `,`; need validation
+    let errorMessage; // error message if any to return
+
+    // validations
+    if (rows.length === 0) {
+        // fail, no rows
+        errorMessage = 'File has no rows';
+    } else {
+        // field count of first row.
+        const fc = rows[0].length;
+        if (fc &lt; 2) {
+            // fail not enough columns
+            errorMessage = 'File has less than two columns';
+        } else {
+            // check field counts of each row
+            if (rows.every(rowArr => rowArr.length === fc)) {
+
+                const res = {
+                    formattedData,
+                    smartDefaults: guessCSVfields(rows), // calculate smart defaults
+
+                    // make field list esri-ish for consistancy
+                    fields: rows[0].map(field => ({
+                        name: field,
+                        type: 'esriFieldTypeString'
+                    })),
+                    geometryType: 'esriGeometryPoint' // always point for CSV
+                };
+
+                return Promise.resolve(res);
+            } else {
+                errorMessage = 'File has inconsistent column counts';
+            }
+        }
+    }
+
+    return Promise.reject(new Error(errorMessage));
+}
+
+/**
+* Validates file content.  Does some basic checking for errors. Attempts to get field list, and
+* if possible, provide the file in a more useful format. Promise rejection indicates failed validation
+*
+* - formattedData: file contents in a more useful format. JSON for GeoJSON and Shapefile. String for CSV
+* - fields: array of field definitions for the file. conforms to ESRI's REST field standard.
+* - geometryType: describes the geometry of the file (string). conforms to ESRI's REST geometry type enum values.
+*
+* @method validateFile
+* @param {String} type the format of file. aligns to serviceType enum (CSV, Shapefile, GeoJSON)
+* @param {Arraybuffer} data the file content in binary
+* @returns {Promise} a promise resolving with an infomation object
+*/
+function validateFile(type, data) {
+
+    const fileHandler = { // maps handlers for different file types
+        [serviceType.CSV]: data => validateCSV(data),
+
+        [serviceType.GeoJSON]: data => {
+            const geoJson = JSON.parse(arrayBufferToString(data));
+            return validateGeoJson(geoJson);
+        },
+
+        // convert from arraybuffer (containing zipped shapefile) to json (using shp library)
+        [serviceType.Shapefile]: data =>
+            shp(data).then(geoJson =>
+                validateGeoJson(geoJson))
+    };
+
+    // trigger off the appropriate handler, return promise
+    return fileHandler[type](data);
+}
+
+/**
+ * From provided CSV data, guesses which columns are long and lat. If guessing is no successful, returns null for one or both fields.
+ *
+ * @method guessCSVfields
+ * @private
+ * @param  {Array} rows csv data
+ * @return {Object}      an object with lat and long string properties indicating corresponding field names
+ */
+function guessCSVfields(rows) {
+    // magic regexes
+    // TODO: in case of performance issues with running regexes on large csv files, limit to, say, the first hundred rows
+    // TODO: explain regexes
+    const latValueRegex = new RegExp(/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/); // filters by field value
+    const longValueRegex = new RegExp(/^[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/);
+    const latNameRegex = new RegExp(/^.*(y|la).*$/i); // filters by field name
+    const longNameRegex = new RegExp(/^.*(x|lo).*$/i);
+
+    const latCandidates = findCandidates(rows, latValueRegex, latNameRegex); // filter out all columns that are not lat based on row values
+    const longCandidates = findCandidates(rows, longValueRegex, longNameRegex); // filter out all columns that are not long based on row values
+
+    // console.log(latCandidates);
+    // console.log(longCandidates);
+
+    // pick the first lat guess or null
+    const lat = latCandidates[0] || null;
+
+    // pick the first long guess or null
+    const long = longCandidates.find(field => field !== lat) || null;
+
+    // for primary field, pick the first on that is not lat or long field or null
+    const primary = rows[0].find(field => field !== lat &amp;&amp; field !== long) || null;
+
+    return {
+        lat,
+        long,
+        primary
+    };
+
+    function findCandidates(rows, valueRegex, nameRegex) {
+        const fields = rows[0]; // first row must be headers
+
+        const candidates =
+            fields.filter((field, index) =>
+                rows.every((row, rowIndex) =>
+                    rowIndex === 0 || valueRegex.test(row[index]))) // skip first row as its just headers
+            .filter(field => nameRegex.test(field));
+
+        return candidates;
+    }
+}
+
+function serverLayerIdentifyBuilder(esriBundle) {
+    // TODO we are using layerIds option property as it aligns with what the ESRI identify parameter
+    //      object uses.  However, in r2 terminology, a layerId is specific to a full map layer, not
+    //      indexes of a single dynamic layer.  for clarity, could consider renaming to .visibleLayers
+    //      and then map the value to the .layerIds property inside this function.
+
+    /**
+    * Perform a server-side identify on a layer (usually an ESRI dynamic layer)
+    * Accepts the following options:
+    *   - geometry: Required. geometry in map co-ordinates for the area to identify.
+    *     will usually be an ESRI Point, though a polygon would work.
+    *   - mapExtent: Required. ESRI Extent of the current map view
+    *   - width: Required. Width of the map in pixels
+    *   - height: Required. Height of the map in pixels
+    *   - layerIds: an array of integers specifying the layer indexes to be examined. Will override the current
+    *     visible indexes in the layer parameter
+    *   - returnGeometry: a boolean indicating if result geometery should be returned with results.  Defaults to false
+    *   - tolerance: an integer indicating how many screen pixels away from the mouse is valid for a hit.  Defaults to 5
+    *
+    * @method serverLayerIdentify
+    * @param {Object} layer an ESRI dynamic layer object
+    * @param {Object} opts An object for supplying additional parameters
+    * @returns {Promise} a promise resolving with an array of identify results (empty array if no hits)
+    */
+    return (layer, opts) => {
+
+        const identParams = new esriBundle.IdentifyParameters();
+
+        // pluck treats from options parameter
+        if (opts) {
+
+            const reqOpts = ['geometry', 'mapExtent', 'height', 'width'];
+            reqOpts.forEach(optProp => {
+                if (opts[optProp]) {
+                    identParams[optProp] = opts[optProp];
+                } else {
+                    throw new Error(`serverLayerIdentify - missing opts.${ optProp } arguement`);
+                }
+            });
+
+            identParams.layerIds = opts.layerIds || layer.visibleLayers;
+            identParams.returnGeometry = opts.returnGeometry || false;
+            identParams.layerOption = esriBundle.IdentifyParameters.LAYER_OPTION_ALL;
+            identParams.spatialReference = opts.geometry.spatialReference;
+            identParams.tolerance = opts.tolerance || 5;
+
+            // TODO add support for identParams.layerDefinitions once attribute filtering is implemented
+
+        } else {
+            throw new Error('serverLayerIdentify - missing opts arguement');
+        }
+
+        // asynch an identify task
+        return new Promise((resolve, reject) => {
+            const identify = new esriBundle.IdentifyTask(layer.url);
+
+            // TODO possibly tack on the layer.id to the resolved thing so we know which parent layer returned?
+            //      would only be required if the caller is mashing promises together and using Promise.all()
+
+            identify.on('complete', result => {
+                resolve(result.results);
+            });
+            identify.on('error', err => {
+                reject(err.error);
+            });
+
+            identify.execute(identParams);
+        });
+    };
+}
+
+/**
+* Performs in place assignment of integer ids for a GeoJSON FeatureCollection.
+* If at least one feature has an existing id outside the geoJson properties section,
+* the original id value is copied in a newly created property ID_FILE of the properties object
+* and the existing id value is replaced by an autogenerated number.
+* Features without existing id from that same dataset will get a new properties ID_FILE
+* with an empty string as value.
+**************************************
+* If at least one feature has an existing OBJECTID inside the geoJson properties section,
+* the original OBJECTID value is copied in a newly created property OBJECTID_FILE of the properties object
+* and the existing OBJECTID value is replaced by an autogenerated number.
+* Features without existing OBJECTID from that same dataset will get a new properties OBJECTID_FILE
+* with an empty string as value.
+*/
+function assignIds(geoJson) {
+    if (geoJson.type !== 'FeatureCollection') {
+        throw new Error('Assignment can only be performed on FeatureCollections');
+    }
+
+    let emptyID = true;
+    let emptyObjID = true;
+
+    // for every feature, if it does not have an id property, add it.
+    // 0 is not a valid object id
+    geoJson.features.forEach(function (val, idx) {
+        Object.assign(val.properties, { ID_FILE: '', OBJECTID_FILE: '' });
+
+        // to avoid double ID columns outside properties
+        if ('id' in val &amp;&amp; typeof val.id !== 'undefined') {
+            val.properties.ID_FILE = val.id;
+            emptyID = false;
+        }
+
+        // to avoid double OBJECTID columns. Useful for both geojson and CSV file.
+        if ('OBJECTID' in val.properties) {
+            val.properties.OBJECTID_FILE = val.properties.OBJECTID;
+            delete val.properties.OBJECTID;
+            emptyObjID = false;
+        }
+
+        val.id = idx + 1;
+    });
+
+    // remove ID_FILE if all empty
+    if (emptyID) {
+        geoJson.features.forEach(function (val) {
+            delete val.properties.ID_FILE;
+        });
+    }
+
+    // remove OBJECTID_FILE if all empty
+    if (emptyObjID) {
+        geoJson.features.forEach(function (val) {
+            delete val.properties.OBJECTID_FILE;
+        });
+    }
+}
+
+/**
+ * Extracts fields from the first feature in the feature collection, does no
+ * guesswork on property types and calls everything a string.
+ */
+function extractFields(geoJson) {
+    if (geoJson.features.length &lt; 1) {
+        throw new Error('Field extraction requires at least one feature');
+    }
+
+    return Object.keys(geoJson.features[0].properties).map(function (prop) {
+        return { name: prop, type: 'esriFieldTypeString' };
+    });
+}
+
+/**
+ * Makes an attempt to load and register a projection definition.
+ * Returns promise resolving when process is complete
+ * projModule - proj module from geoApi
+ * projCode - the string or int epsg code we want to lookup
+ * epsgLookup - function that will do the epsg lookup, taking code and returning promise of result or null
+ */
+function projectionLookup(projModule, projCode, epsgLookup) {
+    // look up projection definitions if it's not already loaded and we have enough info
+    if (!projModule.getProjection(projCode) &amp;&amp; epsgLookup &amp;&amp; projCode) {
+        return epsgLookup(projCode).then(projDef => {
+            if (projDef) {
+                // register projection
+                projModule.addProjection(projCode, projDef);
+            }
+            return projDef;
+        });
+    } else {
+        return Promise.resolve(null);
+    }
+}
+
+function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
+
+    /**
+    * Converts a GeoJSON object into a FeatureLayer.  Expects GeoJSON to be formed as a FeatureCollection
+    * containing a uniform feature type (FeatureLayer type will be set according to the type of the first
+    * feature entry).  Accepts the following options:
+    *   - targetWkid: Required. an integer for an ESRI wkid to project geometries to
+    *   - renderer: a string identifying one of the properties in defaultRenders
+    *   - sourceProjection: a string matching a proj4.defs projection to be used for the source data (overrides
+    *     geoJson.crs)
+    *   - fields: an array of fields to be appended to the FeatureLayer layerDefinition (OBJECTID is set by default)
+    *   - epsgLookup: a function that takes an EPSG code (string or number) and returns a promise of a proj4 style
+    *     definition or null if not found
+    *   - layerId: a string to use as the layerId
+    *   - colour: a hex string to define the symbol colour. e.g. '#33DD6A'
+    *
+    * @method makeGeoJsonLayer
+    * @param {Object} geoJson An object following the GeoJSON specification, should be a FeatureCollection with
+    * Features of only one type
+    * @param {Object} opts An object for supplying additional parameters
+    * @returns {Promise} a promise resolving with a {FeatureLayer}
+    */
+    return (geoJson, opts) => {
+
+        // TODO add documentation on why we only support layers with WKID (and not WKT).
+        let targetWkid;
+        let srcProj = 'EPSG:4326'; // 4326 is the default for GeoJSON with no projection defined
+        let layerId;
+        const layerDefinition = {
+            objectIdField: 'OBJECTID',
+            fields: [
+                {
+                    name: 'OBJECTID',
+                    type: 'esriFieldTypeOID',
+                },
+            ],
+        };
+
+        // ensure our features have ids
+        assignIds(geoJson);
+        layerDefinition.drawingInfo =
+            defaultRenderers[featureTypeToRenderer[geoJson.features[0].geometry.type]];
+
+        // attempt to get spatial reference from geoJson
+        if (geoJson.crs &amp;&amp; geoJson.crs.type === 'name') {
+            srcProj = geoJson.crs.properties.name;
+        }
+
+        // pluck treats from options parameter
+        if (opts) {
+            if (opts.sourceProjection) {
+                srcProj = opts.sourceProjection;
+            }
+
+            if (opts.targetWkid) {
+                targetWkid = opts.targetWkid;
+            } else {
+                throw new Error('makeGeoJsonLayer - missing opts.targetWkid arguement');
+            }
+
+            if (opts.fields) {
+                layerDefinition.fields = layerDefinition.fields.concat(opts.fields);
+            }
+
+            if (opts.layerId) {
+                layerId = opts.layerId;
+            } else {
+                layerId = geoApi.shared.generateUUID();
+            }
+
+            // TODO add support for renderer option, or drop the option
+
+        } else {
+            throw new Error('makeGeoJsonLayer - missing opts arguement');
+        }
+
+        if (layerDefinition.fields.length === 1) {
+            // caller has not supplied custom field list. so take them all.
+            layerDefinition.fields = layerDefinition.fields.concat(extractFields(geoJson));
+        }
+
+        const destProj = 'EPSG:' + targetWkid;
+
+        // look up projection definitions if they don't already exist and we have enough info
+        const srcLookup = projectionLookup(geoApi.proj, srcProj, opts.epsgLookup);
+        const destLookup = projectionLookup(geoApi.proj, destProj, opts.epsgLookup);
+
+        // make the layer
+        const buildLayer = new Promise(resolve => {
+
+            // project data and convert to esri json format
+            // console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
+            geoApi.proj.projectGeojson(geoJson, destProj, srcProj);
+            const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
+            const geometryType = layerDefinition.drawingInfo.geometryType;
+
+            const fs = {
+                features: esriJson,
+                geometryType
+            };
+            const layer = new esriBundle.FeatureLayer(
+                {
+                    layerDefinition: layerDefinition,
+                    featureSet: fs
+                }, {
+                    mode: esriBundle.FeatureLayer.MODE_SNAPSHOT,
+                    id: layerId
+                });
+
+            // ＼(｀O´)／ manually setting SR because it will come out as 4326
+            layer.spatialReference = new esriBundle.SpatialReference({ wkid: targetWkid });
+
+            if (opts.colour) {
+                layer.renderer.symbol.color = new esriBundle.Color(opts.colour);
+            }
+
+            // initializing layer using JSON does not set this property. do it manually.
+            layer.geometryType = geometryType;
+
+            resolve(layer);
+        });
+
+        // call promises in order
+        return srcLookup
+            .then(() => destLookup)
+            .then(() => buildLayer);
+
+    };
+}
+
+function makeCsvLayerBuilder(esriBundle, geoApi) {
+
+    /**
+    * Constructs a FeatureLayer from CSV data. Accepts the following options:
+    *   - targetWkid: Required. an integer for an ESRI wkid the spatial reference the returned layer should be in
+    *   - renderer: a string identifying one of the properties in defaultRenders
+    *   - fields: an array of fields to be appended to the FeatureLayer layerDefinition (OBJECTID is set by default)
+    *   - latfield: a string identifying the field containing latitude values ('Lat' by default)
+    *   - lonfield: a string identifying the field containing longitude values ('Long' by default)
+    *   - delimiter: a string defining the delimiter character of the file (',' by default)
+    *   - epsgLookup: a function that takes an EPSG code (string or number) and returns a promise of a proj4 style
+    *     definition or null if not found
+    *   - layerId: a string to use as the layerId
+    *   - colour: a hex string to define the symbol colour. e.g. '#33DD6A'
+    * @param {string} csvData the CSV data to be processed
+    * @param {object} opts options to be set for the parser
+    * @returns {Promise} a promise resolving with a {FeatureLayer}
+    */
+    return (csvData, opts) => {
+        const csvOpts = { // default values
+            latfield: 'Lat',
+            lonfield: 'Long',
+            delimiter: ','
+        };
+
+        // user options if
+        if (opts) {
+            if (opts.latfield) {
+                csvOpts.latfield = opts.latfield;
+            }
+
+            if (opts.lonfield) {
+                csvOpts.lonfield = opts.lonfield;
+            }
+
+            if (opts.delimiter) {
+                csvOpts.delimiter = opts.delimiter;
+            }
+        }
+
+        return new Promise((resolve, reject) => {
+            csv2geojson.csv2geojson(csvData, csvOpts, (err, data) => {
+                if (err) {
+                    console.warn('csv conversion error');
+                    console.log(err);
+                    reject(err);
+                } else {
+                    // csv2geojson will not include the lat and long in the feature
+                    data.features.map(feature => {
+                        // add new property Long and Lat before layer is generated
+                        feature.properties[csvOpts.lonfield] = feature.geometry.coordinates[0];
+                        feature.properties[csvOpts.latfield] = feature.geometry.coordinates[1];
+                    });
+
+                    // TODO are we at risk adding params to the var that was passed in? should we make a copy and modify the copy?
+                    opts.sourceProjection = 'EPSG:4326'; // csv is always latlong
+                    opts.renderer = 'circlePoint'; // csv is always latlong
+
+                    // NOTE: since makeGeoJsonLayer is a "built" function, grab the built version from our link to api object
+                    geoApi.layer.makeGeoJsonLayer(data, opts).then(jsonLayer => {
+                        resolve(jsonLayer);
+                    });
+                }
+
+            });
+        });
+
+    };
+}
+
+/**
+* Peek at the CSV output (useful for checking headers)
+* @param {string} csvData the CSV data to be processed
+* @param {string} delimiter the delimiter used by the data
+* @returns {Array} an array of arrays containing the parsed CSV
+*/
+function csvPeek(csvData, delimiter) {
+    return csv2geojson.dsv(delimiter).parseRows(csvData);
+}
+
+function makeShapeLayerBuilder(esriBundle, geoApi) {
+
+    /**
+    * Constructs a FeatureLayer from Shapefile data. Accepts the following options:
+    *   - targetWkid: Required. an integer for an ESRI wkid the spatial reference the returned layer should be in
+    *   - renderer: a string identifying one of the properties in defaultRenders
+    *   - sourceProjection: a string matching a proj4.defs projection to be used for the source data (overrides
+    *     geoJson.crs)
+    *   - fields: an array of fields to be appended to the FeatureLayer layerDefinition (OBJECTID is set by default)
+    *   - epsgLookup: a function that takes an EPSG code (string or number) and returns a promise of a proj4 style
+    *     definition or null if not found
+    *   - layerId: a string to use as the layerId
+    *   - colour: a hex string to define the symbol colour. e.g. '#33DD6A'
+    * @param {ArrayBuffer} shapeData an ArrayBuffer of the Shapefile in zip format
+    * @param {object} opts options to be set for the parser
+    * @returns {Promise} a promise resolving with a {FeatureLayer}
+    */
+    return (shapeData, opts) => {
+        return new Promise((resolve, reject) => {
+            // turn shape into geojson
+            shp(shapeData).then(geoJson => {
+                // turn geojson into feature layer
+                // NOTE: since makeGeoJsonLayer is a "built" function, grab the built version from our link to api object
+                geoApi.layer.makeGeoJsonLayer(geoJson, opts).then(jsonLayer => {
+                    resolve(jsonLayer);
+                });
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    };
+}
+
+function getFeatureInfoBuilder(esriBundle) {
+    /**
+    * Fetches feature information, including geometry, from esri servers for feature layer.
+    * @param {layerUrl} layerUrl linking to layer where feature layer resides
+    * @param {objectId} objectId for feature to be retrived from a feature layer
+    * @returns {Promise} promise resolves with an esri Graphic (http://resources.arcgis.com/en/help/arcgis-rest-api/#/Feature_Map_Service_Layer/02r3000000r9000000/)
+    */
+    return (layerUrl, objectId) => {
+        return new Promise(
+            (resolve, reject) => {
+                const defData = esriBundle.esriRequest({
+                    url: layerUrl + objectId,
+                    content: {
+                        f: 'json',
+                    },
+                    callbackParamName: 'callback',
+                    handleAs: 'json'
+                });
+
+                defData.then(
+                    layerObj => {
+                        console.log(layerObj);
+                        resolve(layerObj);
+                    }, error => {
+                        console.warn(error);
+                        reject(error);
+                    }
+                );
+            });
+    };
+}
+
+function createImageRecordBuilder(esriBundle, geoApi, classBundle) {
+    /**
+    * Creates an Image Layer Record class
+    * @param {Object} config         layer config values
+    * @param {Object} esriLayer      an optional pre-constructed layer
+    * @param {Function} epsgLookup   an optional lookup function for EPSG codes (see geoService for signature)
+    * @returns {Object}              instantited ImageRecord class
+    */
+    return (config, esriLayer, epsgLookup) => {
+        return new classBundle.ImageRecord(esriBundle.ArcGISImageServiceLayer, geoApi, config, esriLayer, epsgLookup);
+    };
+}
+
+function createFeatureRecordBuilder(esriBundle, geoApi, classBundle) {
+    /**
+    * Creates an Feature Layer Record class
+    * @param {Object} config         layer config values
+    * @param {Object} esriLayer      an optional pre-constructed layer
+    * @param {Function} epsgLookup   an optional lookup function for EPSG codes (see geoService for signature)
+    * @returns {Object}              instantited FeatureRecord class
+    */
+    return (config, esriLayer, epsgLookup) => {
+        return new classBundle.FeatureRecord(esriBundle.FeatureLayer, esriBundle.esriRequest,
+            geoApi, config, esriLayer, epsgLookup);
+    };
+}
+
+function createDynamicRecordBuilder(esriBundle, geoApi, classBundle) {
+    /**
+    * Creates an Dynamic Layer Record class
+    * @param {Object} config         layer config values
+    * @param {Object} esriLayer      an optional pre-constructed layer
+    * @param {Function} epsgLookup   an optional lookup function for EPSG codes (see geoService for signature)
+    * @returns {Object}              instantited DynamicRecord class
+    */
+    return (config, esriLayer, epsgLookup) => {
+        return new classBundle.DynamicRecord(esriBundle.ArcGISDynamicMapServiceLayer, esriBundle.esriRequest,
+            geoApi, config, esriLayer, epsgLookup);
+    };
+}
+
+function createTileRecordBuilder(esriBundle, geoApi, classBundle) {
+    /**
+    * Creates an Tile Layer Record class
+    * @param {Object} config         layer config values
+    * @param {Object} esriLayer      an optional pre-constructed layer
+    * @param {Function} epsgLookup   an optional lookup function for EPSG codes (see geoService for signature)
+    * @returns {Object}              instantited TileRecord class
+    */
+    return (config, esriLayer, epsgLookup) => {
+        return new classBundle.TileRecord(esriBundle.ArcGISTiledMapServiceLayer, geoApi, config,
+            esriLayer, epsgLookup);
+    };
+}
+
+function createWmsRecordBuilder(esriBundle, geoApi, classBundle) {
+    /**
+    * Creates an WMS Layer Record class
+    * @param {Object} config         layer config values
+    * @param {Object} esriLayer      an optional pre-constructed layer
+    * @param {Function} epsgLookup   an optional lookup function for EPSG codes (see geoService for signature)
+    * @returns {Object}              instantited WmsRecord class
+    */
+    return (config, esriLayer, epsgLookup) => {
+        return new classBundle.WmsRecord(esriBundle.WmsLayer, geoApi, config, esriLayer, epsgLookup);
+    };
+}
+
+/**
+* Given 2D array in column x row format, check if all entries in the two given columns are numeric.
+*
+* @param {Array} arr is a 2D array based on the CSV file that contains row information for all of the rows
+* @param {Integer} ind1 is a user specified index when uploading the CSV that specifies lat or long column (whichever isn't specified by ind2)
+* @param {Integer} ind2 is a user specified index when uploading the CSV that specifies lat or long column (whichever isn't specified by ind1)
+* @return {Boolean} returns true or false based on whether or not all all columns at ind1 and ind2 are numbers
+*/
+function validateLatLong(arr, ind1, ind2) {
+    return arr.every(row => {
+        return !(isNaN(row[ind1]) || isNaN(row[ind2]));
+    });
+}
+
+// CAREFUL NOW!
+// we are passing in a reference to geoApi.  it is a pointer to the object that contains this module,
+// along with other modules. it lets us access other modules without re-instantiating them in here.
+module.exports = function (esriBundle, geoApi) {
+
+    const layerClassBundle = layerRecord(esriBundle, geoApi);
+
+    return {
+        ArcGISDynamicMapServiceLayer: esriBundle.ArcGISDynamicMapServiceLayer,
+        ArcGISImageServiceLayer: esriBundle.ArcGISImageServiceLayer,
+        GraphicsLayer: esriBundle.GraphicsLayer,
+        FeatureLayer: esriBundle.FeatureLayer,
+        ScreenPoint: esriBundle.ScreenPoint,
+        Query: esriBundle.Query,
+        TileLayer: esriBundle.ArcGISTiledMapServiceLayer,
+        ogc: ogc(esriBundle),
+        bbox: bbox(esriBundle, geoApi),
+        createImageRecord: createImageRecordBuilder(esriBundle, geoApi, layerClassBundle),
+        createWmsRecord: createWmsRecordBuilder(esriBundle, geoApi, layerClassBundle),
+        createTileRecord: createTileRecordBuilder(esriBundle, geoApi, layerClassBundle),
+        createDynamicRecord: createDynamicRecordBuilder(esriBundle, geoApi, layerClassBundle),
+        createFeatureRecord: createFeatureRecordBuilder(esriBundle, geoApi, layerClassBundle),
+        LayerDrawingOptions: esriBundle.LayerDrawingOptions,
+        getFeatureInfo: getFeatureInfoBuilder(esriBundle),
+        makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
+        makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),
+        makeShapeLayer: makeShapeLayerBuilder(esriBundle, geoApi),
+        serverLayerIdentify: serverLayerIdentifyBuilder(esriBundle),
+        predictLayerUrl: predictLayerUrlBuilder(esriBundle),
+        validateFile,
+        csvPeek,
+        serviceType,
+        validateLatLong
+    };
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon Mar 20 2017 18:55:00 GMT+0000 (UTC) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
