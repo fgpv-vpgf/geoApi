@@ -1144,15 +1144,15 @@ class LayerRecord {
     /**
      * Generate a bounding box for the layer on the given map.
      */
-    createBbox (map) {
+    createBbox (spatialReference) {
         // TEST STATUS none
-        if (this._bbox) {
-            throw new Error('Bbox is already setup');
+        if (!this._bbox) {
+            // TODO possibly adjust extent parameter to use a config-based override
+            this._bbox = this._apiRef.layer.bbox.makeBoundingBox(`bbox_${this._layer.id}`,
+                                                                this._layer.fullExtent,
+                                                                spatialReference);
         }
-        this._bbox = this._apiRef.layer.bbox.makeBoundingBox(`bbox_${this._layer.id}`,
-                                                        this._layer.fullExtent,
-                                                        map.extent.spatialReference);
-        map.addLayer(this._bbox);
+        return this._bbox;
     }
 
     /**
@@ -1601,6 +1601,8 @@ class LayerRecord {
             this._layer = esriLayer;
             this.bindEvents(this._layer);
             this._state = states.LOADED;
+
+            // TODO fire loaded event?
         } else {
             this.constructLayer(config);
             this._state = states.LOADING;
