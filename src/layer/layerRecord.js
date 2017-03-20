@@ -106,7 +106,7 @@ class LayerInterface {
     get featureCount () { this._iAmError(); }
 
     // layer states
-    get layerState () { this._iAmError(); }
+    get state () { this._iAmError(); }
     get isRefreshing () { this._iAmError(); }
 
     // these return the current values of the corresponding controls
@@ -145,7 +145,7 @@ class LayerInterface {
         this._source = layerRecord;
 
         newProp(this, 'symbology', standardGetSymbology);
-        newProp(this, 'layerState', standardGetLayerState);
+        newProp(this, 'state', standardGetState);
         newProp(this, 'isRefreshing', standardGetIsRefreshing);
 
         newProp(this, 'visibility', standardGetVisibility);
@@ -253,7 +253,7 @@ function newProp(target, propName, getter) {
 // we don't use arrow notation, as we want the `this` to point at the object
 // that these functions get smashed into.
 
-function standardGetLayerState() {
+function standardGetState() {
     /* jshint validthis: true */
 
     // TEST STATUS none
@@ -1284,6 +1284,12 @@ class LayerRecord {
         // TODO is legend entry valid anymore? will it be a different system?
         if (this.legendEntry && this.legendEntry.removed) { return; }
         console.info(`Layer loaded: ${this._layer.id}`);
+
+        if (!this._name) {
+            // no name from config. attempt layer name
+            this._name = this._layer.name;
+        }
+
         let lookupPromise = Promise.resolve();
         if (this._epsgLookup) {
             const check = this._apiRef.proj.checkProj(this.spatialReference, this._epsgLookup);
@@ -1603,6 +1609,7 @@ class LayerRecord {
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
         // TEST STATUS basic
         this._layerClass = layerClass;
+        this._name = config.name || '';
         this._featClasses = {}; // TODO how to populate first one
         this._defaultFC = '0'; // TODO how to populate first one  TODO check if int or string
         this._apiRef = apiRef;
@@ -1625,6 +1632,10 @@ class LayerRecord {
             this._layer = esriLayer;
             this.bindEvents(this._layer);
             this._state = states.LOADED;
+            if (!this._name) {
+                // no name from config. attempt layer name
+                this._name = esriLayer.name;
+            }
 
             // TODO fire loaded event?
         } else {
@@ -2128,10 +2139,7 @@ class DynamicRecord extends AttrRecord {
 
                 // if we have a proxy watching this leaf, replace its placeholder with the real data
                 if (this._proxies[idx]) {
-                    console.log('DEBUGGIN, CONVERTING DYNAMIC LEAF INDEX', idx);
                     this._proxies[idx].convertToDynamicLeaf(this._featClasses[idx]);
-                } else {
-                    console.log('DEBUGGIN, BIG NOPE FOR INDEX', idx);
                 }
             }
         });
