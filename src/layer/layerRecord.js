@@ -153,6 +153,8 @@ class LayerInterface {
         newProp(this, 'boundingBox', standardGetBoundingBox);
         newProp(this, 'query', standardGetQuery);
 
+        newProp(this, 'name', standardGetName);
+
         newProp(this, 'geometryType', standardGetGeometryType);
         newProp(this, 'featureCount', standardGetFeatureCount);
 
@@ -176,6 +178,7 @@ class LayerInterface {
         // TEST STATUS basic
         this._source = dynamicFC;
 
+        // TODO name property
         newProp(this, 'symbology', dynamicLeafGetSymbology);
 
         newProp(this, 'visibility', dynamicLeafGetVisibility);
@@ -198,6 +201,7 @@ class LayerInterface {
         // contains a list of all child leaves for fast access
         this._childLeafs = [];
 
+        // TODO name property?
         newProp(this, 'visibility', dynamicGroupGetVisibility);
         newProp(this, 'opacity', dynamicGroupGetOpacity);
 
@@ -218,6 +222,13 @@ class LayerInterface {
         this.setVisibility = standardSetVisibility;
     }
 
+    convertToPlaceholder (placeholderFC) {
+        this._source = placeholderFC;
+
+        newProp(this, 'symbology', standardGetSymbology);
+        newProp(this, 'name', standardGetName);
+    }
+
 }
 
 /**
@@ -232,7 +243,9 @@ class LayerInterface {
 function newProp(target, propName, getter) {
     // TEST STATUS none
     Object.defineProperty(target, propName, {
-        get: getter
+        get: getter,
+        enumerable: true,
+        configurable: true
     });
 }
 
@@ -287,6 +300,13 @@ function dynamicGroupGetVisibility() {
     // check visibility of all children.
     // only return false if all children are invisible
     return this._childLeafs.some(leaf => { return leaf.visibility; });
+}
+
+function standardGetName() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return this._source.layerName;
 }
 
 function standardGetOpacity() {
@@ -563,6 +583,10 @@ class PlaceholderFC {
     // TODO same questions as visibility
     // TEST STATUS none
     get opacity () { return 1; }
+
+    // TODO once we figure out names on LeafFC and GroupFC, might want to re-align this
+    //      property name to match.  Be sure to update LayerInterface.convertToPlaceholder
+    get layerName () { return this._name; }
 
     getSymbology () {
         // TEST STATUS none
@@ -1867,7 +1891,18 @@ class DynamicRecord extends AttrRecord {
         if (this._proxies[featureIdx.toString()]) {
             return this._proxies[featureIdx.toString()];
         } else {
-            throw new Error(`attempt to get non-existing child proxy. Index ${featureIdx}`);
+            // throw new Error(`attempt to get non-existing child proxy. Index ${featureIdx}`);
+
+            // to handle the case of a structured legend needing a proxy for a child prior to the
+            // layer loading, we treat an unknown proxy request as that case and return
+            // a proxy loaded with a placeholder.
+            // TODO how to pass in a name? add an optional second parameter? expose a "set name" on the proxy?
+            const pfc = new PlaceholderFC(this, '');
+            const tProxy = new LayerInterface(pfc); // specificially no controls at this point.
+            tProxy.convertToPlaceholder(pfc);
+            this._proxies[featureIdx.toString()] = tProxy;
+            return tProxy;
+
         }
     }
 
@@ -2007,11 +2042,18 @@ class DynamicRecord extends AttrRecord {
                 // TODO do we need to apply any config state?
                 // TODO figure out control lists, whats available, whats disabled.
                 //      supply on second and third parameters
-                const group = new LayerInterface(this, subConfig.controls);
+                let group;
+                if (this._proxies[sId]) {
+                    // we have a pre-made proxy (structured legend)
+                    group = this._proxies[sId];
+                } else {
+                    // set up new proxy
+                    group = new LayerInterface(this, subConfig.controls);
+                    this._proxies[sId] = group;
 
+                }
                 group.convertToDynamicGroup(this, sId);
 
-                this._proxies[sId] = group;
                 const treeGroup = { id: layerInfo.id, childs: [] };
                 treeArray.push(treeGroup);
 
@@ -2029,9 +2071,19 @@ class DynamicRecord extends AttrRecord {
                 //      supply on second and third parameters.
                 //      might need to steal from parent, since auto-gen may not have explicit
                 //      config settings.
-                const leaf = new LayerInterface(null, subConfig.controls);
-                leaf.convertToDynamicLeaf(new PlaceholderFC(this, layerInfo.name));
-                this._proxies[sId] = leaf;
+                let leaf;
+                const pfc = new PlaceholderFC(this, layerInfo.name);
+                if (this._proxies[sId]) {
+                    // we have a pre-made proxy (structured legend)
+                    leaf = this._proxies[sId];
+                    leaf.updateSource(pfc);
+                } else {
+                    // set up new proxy
+                    leaf = new LayerInterface(null, subConfig.controls);
+                    leaf.convertToPlaceholder(pfc);
+                    this._proxies[sId] = leaf;
+                }
+
                 treeArray.push({ id: layerInfo.id });
                 return [leaf];
             }
@@ -2076,7 +2128,10 @@ class DynamicRecord extends AttrRecord {
 
                 // if we have a proxy watching this leaf, replace its placeholder with the real data
                 if (this._proxies[idx]) {
-                    this._proxies[idx].updateSource(this._featClasses[idx]);
+                    console.log('DEBUGGIN, CONVERTING DYNAMIC LEAF INDEX', idx);
+                    this._proxies[idx].convertToDynamicLeaf(this._featClasses[idx]);
+                } else {
+                    console.log('DEBUGGIN, BIG NOPE FOR INDEX', idx);
                 }
             }
         });

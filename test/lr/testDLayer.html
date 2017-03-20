@@ -68,6 +68,10 @@
             var proxy = layerRec.getProxy();
             console.log('proxy PROOF ', proxy);
 
+            // do early proxy attempts
+            layerRec.getChildProxy(3); // throw away result, make sure test below is good.
+            console.log('early proxy 11 - should be placeholder', layerRec.getChildProxy(11));
+
             // hack to wait for layer to load
 
             var to = setTimeout(() => {
