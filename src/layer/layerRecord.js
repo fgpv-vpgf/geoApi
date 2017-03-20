@@ -1998,7 +1998,7 @@ class DynamicRecord extends AttrRecord {
         // input layerInfo.
         // it also collects and returns an array of leaf nodes so each group
         // can store it and have fast access to all leaves under it.
-        const processLayerInfo = (layerInfo, layerProxies, parentId) => {
+        const processLayerInfo = (layerInfo, treeArray, parentId) => {
             const sId = layerInfo.id.toString();
             const subConfig = fetchSubConfig(sId, parentId.toString());
             if (layerInfo.subLayerIds && layerInfo.subLayerIds.length > 0) {
@@ -2011,13 +2011,15 @@ class DynamicRecord extends AttrRecord {
 
                 group.convertToDynamicGroup(this, sId);
 
-                layerProxies[sId] = group;
+                this._proxies[sId] = group;
+                const treeGroup = { id: layerInfo.id, childs: [] };
+                treeArray.push(treeGroup);
 
                 // process the kids in the group.
                 // store the child leaves in the internal variable
                 layerInfo.subLayerIds.forEach(slid => {
                     group._childLeafs = group._childLeafs.concat(
-                        processLayerInfo(this._layer.layerInfos[slid], layerProxies, sId));
+                        processLayerInfo(this._layer.layerInfos[slid], treeGroup.childs, sId));
                 });
 
                 return group._childLeafs;
@@ -2029,15 +2031,17 @@ class DynamicRecord extends AttrRecord {
                 //      config settings.
                 const leaf = new LayerInterface(null, subConfig.controls);
                 leaf.convertToDynamicLeaf(new PlaceholderFC(this, layerInfo.name));
-                layerProxies[sId] = leaf;
+                this._proxies[sId] = leaf;
+                treeArray.push({ id: layerInfo.id });
                 return [leaf];
             }
         };
 
+        this._childTree = []; // public structure describing the tree
         if (this.config.layerEntries) {
             this.config.layerEntries.forEach(le => {
                 if (le.isLayerEntry) {
-                    processLayerInfo(this._layer.layerInfos[le.index], this._proxies, -1);
+                    processLayerInfo(this._layer.layerInfos[le.index], this._childTree, -1);
                 }
             });
         }
@@ -2108,6 +2112,14 @@ class DynamicRecord extends AttrRecord {
     getGeomType (childIdx) {
         // TEST STATUS none
         return this._featClasses[childIdx].geomType;
+    }
+
+    getChildTree () {
+        if (this._childTree) {
+            return this._childTree;
+        } else {
+            throw new Error('Called getChildTree before layer is loaded');
+        }
     }
 
     /**
