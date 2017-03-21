@@ -50,6 +50,17 @@ const states = { // these are used as css classes; hence the `rv` prefix
     ERROR: 'rv-error'
 };
 
+// these match strings in the client.
+const clientLayerType = {
+    ESRI_DYNAMIC: 'esriDynamic',
+    ESRI_FEATURE: 'esriFeature',
+    ESRI_IMAGE: 'esriImage',
+    ESRI_TILE: 'esriTile',
+    ESRI_GROUP: 'esriGroup',
+    ESRI_RASTER: 'esriRaster',
+    OGC_WMS: 'ogcWms'
+};
+
 // TODO remove all TEST STATUS tags once things are stable
 
 // TODO crazy idea. instead of having attribute .layerInfo as a promise,
@@ -84,7 +95,7 @@ class LayerInterface {
         // TEST STATUS basic
         this._source = source;
         this._availableControls = availableControls;
-        this._disabledConrols = disabledControls;
+        this._disabledControls = disabledControls;
     }
 
     // shortcut function for throwing errors on unimplemented functions.
@@ -156,6 +167,7 @@ class LayerInterface {
         newProp(this, 'name', standardGetName);
 
         newProp(this, 'geometryType', standardGetGeometryType);
+        newProp(this, 'layerType', standardGetLayerType);
         newProp(this, 'featureCount', standardGetFeatureCount);
 
         this.setVisibility = standardSetVisibility;
@@ -185,7 +197,9 @@ class LayerInterface {
         newProp(this, 'opacity', dynamicLeafGetOpacity);
         newProp(this, 'query', dynamicLeafGetQuery);
         newProp(this, 'formattedAttributes', dynamicLeafGetFormattedAttributes);
+
         newProp(this, 'geometryType', dynamicLeafGetGeometryType);
+        newProp(this, 'layerType', dynamicLeafGetLayerType);
         newProp(this, 'featureCount', dynamicLeafGetFeatureCount);
 
         this.setVisibility = dynamicLeafSetVisibility;
@@ -204,6 +218,7 @@ class LayerInterface {
         // TODO name property?
         newProp(this, 'visibility', dynamicGroupGetVisibility);
         newProp(this, 'opacity', dynamicGroupGetOpacity);
+        newProp(this, 'layerType', dynamicGroupGetLayerType);
 
         this.setVisibility = dynamicGroupSetVisibility;
         this.setOpacity = dynamicGroupSetOpacity;
@@ -335,6 +350,37 @@ function dynamicGroupGetOpacity() {
     //      see AAFC AGRI Environmental Indicators layer in index-one sample.
     //      could be we should not show opacity for groups?
     return 1;
+}
+
+function standardGetLayerType() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    // it's a promise
+    return this._source.layerType;
+}
+
+function dynamicGroupGetLayerType() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return Promise.resolve(clientLayerType.ESRI_GROUP);
+}
+
+function dynamicLeafGetLayerType() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return this._source.layerType.then(lt => {
+        switch (lt) {
+            case 'Feature Layer':
+                return clientLayerType.ESRI_FEATURE;
+            case 'Raster Layer':
+                return clientLayerType.ESRI_RASTER;
+            default:
+                throw new Error('Unexpected layer type in dynamicLeafGetLayerType', lt);
+        }
+    });
 }
 
 function standardGetBoundingBox() {
@@ -754,6 +800,8 @@ class AttribFC extends BasicFC {
 
     // TEST STATUS basic
     get geomType () { return this.getLayerData().then(ld => { return ld.geometryType; }); }
+
+    get layerType () { return this.getLayerData().then(ld => { return ld.layerType; }); }
 
     getSymbology () {
         // TEST STATUS basic
@@ -1833,6 +1881,8 @@ class ImageRecord extends LayerRecord {
         super(layerClass, apiRef, config, esriLayer, epsgLookup);
     }
 
+    get layerType () { return Promise.resolve(clientLayerType.ESRI_IMAGE); }
+
     /**
     * Triggers when the layer loads.
     *
@@ -1861,6 +1911,8 @@ class DynamicRecord extends AttrRecord {
         // TEST STATUS none
         return ['visibleAtMapScale', 'visible', 'spatialReference', 'layerInfos', 'supportsDynamicLayers'];
     }
+
+    get layerType () { return Promise.resolve(clientLayerType.ESRI_DYNAMIC); }
 
     /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
@@ -2387,6 +2439,8 @@ class TileRecord extends LayerRecord {
         this._featClasses['0'] = new BasicFC(this, '0', this.config);
     }
 
+    get layerType () { return Promise.resolve(clientLayerType.ESRI_TILE); }
+
 }
 
 /**
@@ -2409,6 +2463,8 @@ class WmsRecord extends LayerRecord {
         // TODO if we have nothing to add here, delete this constructor
         super(layerClass, apiRef, config, esriLayer, epsgLookup);
     }
+
+    get layerType () { return Promise.resolve(clientLayerType.OGC_WMS); }
 
     makeLayerConfig () {
         // TEST STATUS none
@@ -2577,6 +2633,8 @@ class FeatureRecord extends AttrRecord {
     //      snapshot process, it might become a read-only property
     get isSnapshot () { return this._snapshot; }
     set isSnapshot (value) { this._snapshot = value; }
+
+    get layerType () { return Promise.resolve(clientLayerType.ESRI_FEATURE); }
 
     onMouseOver (e) {
         // TEST STATUS none

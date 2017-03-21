@@ -123,6 +123,18 @@
 
                 console.log('child tree', layerRec.getChildTree());
 
+                proxy.layerType.then(lt => {
+                    console.log('root layer type - sb dynamic', lt);
+                });
+
+                group0proxy.layerType.then(lt => {
+                    console.log('group layer type - sb group', lt);
+                });
+
+                leaf3proxy.layerType.then(lt => {
+                    console.log('leaf layer type - sb feature', lt);
+                });
+
             }
 
 /*
