@@ -1148,12 +1148,12 @@ function createWmsRecordBuilder(esriBundle, geoApi, classBundle) {
 function createFakeGroupRecordBuilder(classBundle) {
     /**
     * Creates an Fake Group Record class
-    * @param {Object} config         layer config values
+    * @param {Object} name           text content for fake group
     * @param {Array} proxies         an optional list of proxies for immediate child layers
     * @returns {Object}              instantited WmsRecord class
     */
-    return (config, proxies) => {
-        return new classBundle.FakeGroupRecord(config, proxies);
+    return (name, proxies) => {
+        return new classBundle.FakeGroupRecord(name, proxies);
     };
 }
 

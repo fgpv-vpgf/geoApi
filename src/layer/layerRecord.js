@@ -96,6 +96,7 @@ class LayerInterface {
         this._source = source;
         this._availableControls = availableControls;
         this._disabledControls = disabledControls;
+        this._isPlaceholder = true;
     }
 
     // shortcut function for throwing errors on unimplemented functions.
@@ -103,36 +104,38 @@ class LayerInterface {
         throw new Error('Call not supported.');
     }
 
+    get isPlaceholder () { return this._isPlaceholder; } // returns Boolean
+
     // these expose ui controls available on the interface and indicate which ones are disabled
-    get availableControls () { return this._availableControls; }
-    get disabledControls () { return this._disabledControls; }
-    get symbology () { this._iAmError(); }
+    get availableControls () { return this._availableControls; } // returns Array
+    get disabledControls () { return this._disabledControls; } // returns Array
+    get symbology () { this._iAmError(); } // returns Promise of Object
 
     // can be group or node name
-    get name () { this._iAmError(); }
+    get name () { this._iAmError(); } // returns String
 
     // these are needed for the type flag
-    get layerType () { this._iAmError(); }
-    get geometryType () { this._iAmError(); }
-    get featureCount () { this._iAmError(); }
+    get layerType () { this._iAmError(); } // returns Promise of String
+    get geometryType () { this._iAmError(); } // returns Promise of String
+    get featureCount () { this._iAmError(); } // returns Promise of Integer
 
     // layer states
-    get state () { this._iAmError(); }
-    get isRefreshing () { this._iAmError(); }
+    get state () { this._iAmError(); } // returns String
+    get isRefreshing () { this._iAmError(); } // returns Boolean
 
     // these return the current values of the corresponding controls
-    get visibility () { this._iAmError(); }
-    get opacity () { this._iAmError(); }
-    get boundingBox () { this._iAmError(); }
-    get query () { this._iAmError(); }
-    get snapshot () { this._iAmError(); }
+    get visibility () { this._iAmError(); } // returns Boolean
+    get opacity () { this._iAmError(); } // returns Decimal
+    get boundingBox () { this._iAmError(); } // returns Boolean
+    get query () { this._iAmError(); } // returns Boolean
+    get snapshot () { this._iAmError(); } // returns Boolean
 
     // fetches attributes for use in the datatable
-    get formattedAttributes () { this._iAmError(); }
+    get formattedAttributes () { this._iAmError(); } // returns Promise of Object
 
     // content for static legend entires (non-layer/non-group)
-    get infoType () { this._iAmError(); }
-    get infoContent () { this._iAmError(); }
+    get infoType () { this._iAmError(); } // returns ?
+    get infoContent () { this._iAmError(); } // returns ?
 
     // these set values to the corresponding controls
     setVisibility () { this._iAmError(); }
@@ -154,6 +157,7 @@ class LayerInterface {
     convertToSingleLayer (layerRecord) {
         // TEST STATUS basic
         this._source = layerRecord;
+        this._isPlaceholder = false;
 
         newProp(this, 'symbology', standardGetSymbology);
         newProp(this, 'state', standardGetState);
@@ -189,6 +193,7 @@ class LayerInterface {
     convertToDynamicLeaf (dynamicFC) {
         // TEST STATUS basic
         this._source = dynamicFC;
+        this._isPlaceholder = false;
 
         // TODO name property
         newProp(this, 'symbology', dynamicLeafGetSymbology);
@@ -209,29 +214,31 @@ class LayerInterface {
 
     convertToDynamicGroup (layerRecord, groupId) {
         // TEST STATUS basic
+        // Note: we do not support opacity on dynamic groups
         this._source = layerRecord;
         this._groupId = groupId;
+        this._isPlaceholder = false;
 
         // contains a list of all child leaves for fast access
         this._childLeafs = [];
 
         // TODO name property?
         newProp(this, 'visibility', dynamicGroupGetVisibility);
-        newProp(this, 'opacity', dynamicGroupGetOpacity);
         newProp(this, 'layerType', dynamicGroupGetLayerType);
 
         this.setVisibility = dynamicGroupSetVisibility;
-        this.setOpacity = dynamicGroupSetOpacity;
     }
 
     convertToStatic () {
         // TEST STATUS none
         // TODO figure out what is involved here.
+        this._isPlaceholder = false;
     }
 
     convertToFakeGroup (fakeGroupRecord) {
         // TODO name?
         this._source = fakeGroupRecord;
+        this._isPlaceholder = false; // TODO is fake considered placeholder?
 
         newProp(this, 'visibility', standardGetVisibility);
         this.setVisibility = standardSetVisibility;
@@ -239,6 +246,7 @@ class LayerInterface {
 
     convertToPlaceholder (placeholderFC) {
         this._source = placeholderFC;
+        this._isPlaceholder = true;
 
         newProp(this, 'symbology', standardGetSymbology);
         newProp(this, 'name', standardGetName);
@@ -328,28 +336,14 @@ function standardGetOpacity() {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    return this._source._layer.opacity;
+    return this._source.opacity;
 }
 
 function dynamicLeafGetOpacity() {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    // TODO figure out how to handle layers that don't support this.
-    //      possibly crosscheck against disabled settings
-    //      might not be an issue if, since there will be no control, nothing will call this
-    //      Alternative: convertToDynamicLeaf() will check and make decisions then?
-    // TODO ensure .opacity is implemented.
-    return this._sourceFC.opacity;
-}
-
-function dynamicGroupGetOpacity() {
-    // TEST STATUS none
-    // TODO validate if we really need this?
-    //      currently changing opacity on a group will do nothing.
-    //      see AAFC AGRI Environmental Indicators layer in index-one sample.
-    //      could be we should not show opacity for groups?
-    return 1;
+    return this._source.opacity;
 }
 
 function standardGetLayerType() {
@@ -474,7 +468,7 @@ function standardSetVisibility(value) {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    this._source.visibile = value;
+    this._source.visible = value;
 }
 
 function dynamicLeafSetVisibility(value) {
@@ -510,16 +504,6 @@ function dynamicLeafSetOpacity(value) {
 
     // TEST STATUS none
     this._source.opacity = value;
-
-    // TODO call something in this._parent that will update
-    //      this._source._parent._layer.layerDrawingOptions[this._source.idx].transparency
-    //      being careful to remember that transparency is opacity * -1 (good job!)
-}
-
-function dynamicGroupSetOpacity(value) {
-    // TEST STATUS none
-    // TODO see comments on dynamicGroupSetVisibility
-    console.log('enhance group opacity', value);
 }
 
 function standardSetBoundingBox(value) {
@@ -625,10 +609,6 @@ class PlaceholderFC {
         // TODO can a user toggle placeholders? does state need to be updated?
         return true;
     }
-
-    // TODO same questions as visibility
-    // TEST STATUS none
-    get opacity () { return 1; }
 
     // TODO once we figure out names on LeafFC and GroupFC, might want to re-align this
     //      property name to match.  Be sure to update LayerInterface.convertToPlaceholder
@@ -1002,11 +982,27 @@ class DynamicFC extends AttribFC {
         this._layerInfo = parent._layer.layerInfos[idx];
 
         // TODO put the config stuff into private properties
-        //      this will probably only be opacity, which we still need to figure out
+        this.opacity = config.state.opacity;
 
         // visibility is kept stateful by the parent. keeping an internal property
         // just means we would need to keep it in synch.
         this.setVisibility(config.state.visible);
+    }
+
+    get opacity () { return this._opacity; }
+    set opacity (value) {
+        this._opacity = value;
+
+        const layer = this._parent._layer;
+        if (layer.supportsDynamicLayers) {
+            // only attempt to set the layer if we support that kind of magic.
+            // instead of being consistent, esri using value from 0 to 100 for sublayer transparency where 100 is fully transparent
+            const optionsArray = [];
+            const drawingOptions = new this._parent._apiRef.layer.LayerDrawingOptions();
+            drawingOptions.transparency = (value - 1) * -100;
+            optionsArray[this._idx] = drawingOptions;
+            layer.setLayerDrawingOptions(optionsArray);
+        }
     }
 
     // returns an object with minScale and maxScale values for the feature class
@@ -1208,6 +1204,23 @@ class LayerRecord {
         // TEST STATUS none
         if (this._layer) {
             this._layer.visibility = value;
+        }
+
+        // TODO do we need an ELSE case here?
+    }
+
+    get opacity () {
+        // TEST STATUS none
+        if (this._layer) {
+            return this._layer.opacity;
+        } else {
+            return 1; // TODO what should a proper default be? example of this situation??
+        }
+    }
+    set opacity (value) {
+        // TEST STATUS none
+        if (this._layer) {
+            this._layer.opacity = value;
         }
 
         // TODO do we need an ELSE case here?
@@ -2004,6 +2017,9 @@ class DynamicRecord extends AttrRecord {
                     controls.splice(idx, 1);
                 }
             });
+
+            // a bit redundant. useful if we are passing in an anonymous array.
+            return controls;
         };
 
         // don't worry about structured legend. the legend part is separate from
@@ -2108,6 +2124,7 @@ class DynamicRecord extends AttrRecord {
                 let group;
                 if (this._proxies[sId]) {
                     // we have a pre-made proxy (structured legend)
+                    // TODO might need to pass controls array into group proxy
                     group = this._proxies[sId];
                 } else {
                     // set up new proxy
@@ -2134,10 +2151,12 @@ class DynamicRecord extends AttrRecord {
                 //      supply on second and third parameters.
                 //      might need to steal from parent, since auto-gen may not have explicit
                 //      config settings.
+                // TODO since we are doing placeholder, might want to not provide controls array yet.
                 let leaf;
                 const pfc = new PlaceholderFC(this, layerInfo.name);
                 if (this._proxies[sId]) {
                     // we have a pre-made proxy (structured legend)
+                    // TODO might need to pass controls array into leaf proxy
                     leaf = this._proxies[sId];
                     leaf.updateSource(pfc);
                 } else {
@@ -2155,7 +2174,7 @@ class DynamicRecord extends AttrRecord {
         this._childTree = []; // public structure describing the tree
         if (this.config.layerEntries) {
             this.config.layerEntries.forEach(le => {
-                if (le.isLayerEntry) {
+                if (!le.stateOnly) {
                     processLayerInfo(this._layer.layerInfos[le.index], this._childTree, -1);
                 }
             });
@@ -2191,8 +2210,32 @@ class DynamicRecord extends AttrRecord {
 
                 // if we have a proxy watching this leaf, replace its placeholder with the real data
                 if (this._proxies[idx]) {
+                    // TODO update controls array?
                     this._proxies[idx].convertToDynamicLeaf(this._featClasses[idx]);
                 }
+            }
+        });
+
+        // need to do a post ban-sweep on control arrays. dynamic groups are not allowed
+        // to have opacity. if we had removed above, children of groups would have also
+        // lost opacity.
+        // a lovely pyramid of doom.
+        Object.keys(this._proxies).forEach(sId => {
+            const proxy = this._proxies[sId];
+            if (!proxy.isPlaceholder) {
+                proxy.layerType.then(lt => {
+                    if (lt === clientLayerType.ESRI_GROUP) {
+                        const poIdx = proxy.availableControls.indexOf('opacity');
+                        if (poIdx > -1) {
+                            proxy.availableControls.splice(poIdx, 1);
+
+                            // TODO test if we need to adjust subconfigs, or if it's all the same pointer
+                            if (subConfigs[sId].config.controls.indexOf('opacity') > -1) {
+                                console.log('HEEEY HEYYY WE HAVE A CONFIG OPACITY GROUP, ADD CODE TO REMOVE IT');
+                            }
+                        }
+                    }
+                });
             }
         });
 
@@ -2200,9 +2243,6 @@ class DynamicRecord extends AttrRecord {
             initVis.push(-1); // esri code for set all to invisible
         }
         this._layer.setVisibleLayers(initVis);
-
-        // TODO possibly need to do something similar for opacity (if supported)
-
     }
 
     // override to add child index parameter
