@@ -1145,6 +1145,18 @@ function createWmsRecordBuilder(esriBundle, geoApi, classBundle) {
     };
 }
 
+function createFakeGroupRecordBuilder(classBundle) {
+    /**
+    * Creates an Fake Group Record class
+    * @param {Object} config         layer config values
+    * @param {Array} proxies         an optional list of proxies for immediate child layers
+    * @returns {Object}              instantited WmsRecord class
+    */
+    return (config, proxies) => {
+        return new classBundle.FakeGroupRecord(config, proxies);
+    };
+}
+
 /**
 * Given 2D array in column x row format, check if all entries in the two given columns are numeric.
 *
@@ -1181,6 +1193,7 @@ module.exports = function (esriBundle, geoApi) {
         createTileRecord: createTileRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createDynamicRecord: createDynamicRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createFeatureRecord: createFeatureRecordBuilder(esriBundle, geoApi, layerClassBundle),
+        createFakeGroupRecord: createFakeGroupRecordBuilder(layerClassBundle),
         LayerDrawingOptions: esriBundle.LayerDrawingOptions,
         getFeatureInfo: getFeatureInfoBuilder(esriBundle),
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
