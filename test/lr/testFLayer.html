@@ -47,6 +47,7 @@
             console.log('proxy PROOF ', proxy);
 
             console.log('loading state', proxy.state);
+            console.log('isRefreshing while loading? ', proxy.isRefreshing);
 
             // hack to wait for layer to load
 
@@ -74,7 +75,7 @@
                 
                 console.log('loaded state', proxy.state);
                 
-                // mock an identify
+                console.log('isRefreshing? ', proxy.isRefreshing);
 
             }
 

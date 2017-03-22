@@ -71,6 +71,7 @@
             // do early proxy attempts
             const early3 = layerRec.getChildProxy(3); // throw away result, make sure test below is good.
             console.log('leaf 3 proxy loading state ', early3.state);
+            console.log('leaf 3 proxy loading isRefreshing ', early3.isRefreshing);
             console.log('early proxy 11 - should be placeholder', layerRec.getChildProxy(11));
 
             // hack to wait for layer to load
@@ -136,6 +137,10 @@
 
                 console.log('leaf loaded state', leaf3proxy.state);
                 console.log('group loaded state', group1proxy.state);
+                console.log('leaf loaded isRefreshing', leaf3proxy.isRefreshing);
+                console.log('group loaded isRefreshing', group1proxy.isRefreshing);
+                console.log('layer loaded state', proxy.state);
+                console.log('layer loaded isRefreshing', proxy.isRefreshing);
 
             }
 

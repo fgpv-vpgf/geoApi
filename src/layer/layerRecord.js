@@ -198,6 +198,7 @@ class LayerInterface {
         // TODO name property
         newProp(this, 'symbology', dynamicLeafGetSymbology);
         newProp(this, 'state', dynamicLeafGetState);
+        newProp(this, 'isRefreshing', dynamicLeafGetIsRefreshing);
 
         newProp(this, 'visibility', dynamicLeafGetVisibility);
         newProp(this, 'opacity', dynamicLeafGetOpacity);
@@ -227,6 +228,7 @@ class LayerInterface {
         newProp(this, 'visibility', dynamicGroupGetVisibility);
         newProp(this, 'layerType', dynamicGroupGetLayerType);
         newProp(this, 'state', dynamicGroupGetState);
+        newProp(this, 'isRefreshing', dynamicGroupGetIsRefreshing);
 
         this.setVisibility = dynamicGroupSetVisibility;
     }
@@ -253,6 +255,7 @@ class LayerInterface {
         newProp(this, 'symbology', standardGetSymbology);
         newProp(this, 'name', standardGetName);
         newProp(this, 'state', standardGetState);
+        newProp(this, 'isRefreshing', standardGetIsRefreshing);
     }
 
 }
@@ -317,6 +320,20 @@ function dynamicGroupGetState() {
 }
 
 function standardGetIsRefreshing() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return this._source.state === states.REFRESH;
+}
+
+function dynamicLeafGetIsRefreshing() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return this._source.state === states.REFRESH;
+}
+
+function dynamicGroupGetIsRefreshing() {
     /* jshint validthis: true */
 
     // TEST STATUS none
