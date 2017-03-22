@@ -46,6 +46,8 @@
             var proxy = layerRec.getProxy();
             console.log('proxy PROOF ', proxy);
 
+            console.log('loading state', proxy.state);
+
             // hack to wait for layer to load
 
             var to = setTimeout(() => {
@@ -70,6 +72,7 @@
                 
                 console.log('symbology - sb 1 element', proxy.symbology);
                 
+                console.log('loaded state', proxy.state);
                 
                 // mock an identify
 

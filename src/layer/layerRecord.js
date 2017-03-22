@@ -197,6 +197,7 @@ class LayerInterface {
 
         // TODO name property
         newProp(this, 'symbology', dynamicLeafGetSymbology);
+        newProp(this, 'state', dynamicLeafGetState);
 
         newProp(this, 'visibility', dynamicLeafGetVisibility);
         newProp(this, 'opacity', dynamicLeafGetOpacity);
@@ -225,6 +226,7 @@ class LayerInterface {
         // TODO name property?
         newProp(this, 'visibility', dynamicGroupGetVisibility);
         newProp(this, 'layerType', dynamicGroupGetLayerType);
+        newProp(this, 'state', dynamicGroupGetState);
 
         this.setVisibility = dynamicGroupSetVisibility;
     }
@@ -250,6 +252,7 @@ class LayerInterface {
 
         newProp(this, 'symbology', standardGetSymbology);
         newProp(this, 'name', standardGetName);
+        newProp(this, 'state', standardGetState);
     }
 
 }
@@ -276,13 +279,10 @@ function newProp(target, propName, getter) {
 // we don't use arrow notation, as we want the `this` to point at the object
 // that these functions get smashed into.
 
-function standardGetState() {
-    /* jshint validthis: true */
-
-    // TEST STATUS none
+function stateCalculator(inputState) {
     // returns one of Loading, Loaded, Error
     // TODO verify what DEFAULT actually is
-    switch (this._source.state) {
+    switch (inputState) {
         case states.NEW:
         case states.LOADING:
             return states.LOADING;
@@ -293,6 +293,27 @@ function standardGetState() {
         case states.ERROR:
             return states.ERROR;
     }
+}
+
+function standardGetState() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return stateCalculator(this._source.state);
+}
+
+function dynamicLeafGetState() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return stateCalculator(this._source.state);
+}
+
+function dynamicGroupGetState() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return stateCalculator(this._source.state);
 }
 
 function standardGetIsRefreshing() {
@@ -623,6 +644,9 @@ class PlaceholderFC {
 
     get symbology () {  return this._symbolBundle; }
 
+    // TODO do we need to check if parent exists? Placeholder use-cases are not flushed out right now.
+    get state () { return this._parent._state; }
+
 }
 
 /**
@@ -634,6 +658,8 @@ class BasicFC {
     // TEST STATUS none
     get queryable () { return this._queryable; }
     set queryable (value) { this._queryable = value; }
+
+    get state () { return this._parent._state; }
 
     // TEST STATUS none
     // non-attributes have no geometry.

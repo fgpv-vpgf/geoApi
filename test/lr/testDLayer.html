@@ -69,7 +69,8 @@
             console.log('proxy PROOF ', proxy);
 
             // do early proxy attempts
-            layerRec.getChildProxy(3); // throw away result, make sure test below is good.
+            const early3 = layerRec.getChildProxy(3); // throw away result, make sure test below is good.
+            console.log('leaf 3 proxy loading state ', early3.state);
             console.log('early proxy 11 - should be placeholder', layerRec.getChildProxy(11));
 
             // hack to wait for layer to load
@@ -132,6 +133,9 @@
                 leaf3proxy.layerType.then(lt => {
                     console.log('leaf layer type - sb feature', lt);
                 });
+
+                console.log('leaf loaded state', leaf3proxy.state);
+                console.log('group loaded state', group1proxy.state);
 
             }
 
