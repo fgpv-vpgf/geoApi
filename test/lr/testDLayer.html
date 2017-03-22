@@ -98,9 +98,7 @@
                 var group0proxy = layerRec.getChildProxy(0);
                 var group1proxy = layerRec.getChildProxy(1);
 
-                leaf3proxy.symbology.then(sym => {
-                    console.log('symbology - sb one circle svg', sym);
-                });
+                console.log('symbology - sb one circle svg', leaf3proxy.symbology);
 
                 console.log('leaf 3 visible, should be true', leaf3proxy.visibility);
                 console.log('leaf 2 visible, should be false', leaf2proxy.visibility);

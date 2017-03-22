@@ -109,7 +109,7 @@ class LayerInterface {
     // these expose ui controls available on the interface and indicate which ones are disabled
     get availableControls () { return this._availableControls; } // returns Array
     get disabledControls () { return this._disabledControls; } // returns Array
-    get symbology () { this._iAmError(); } // returns Promise of Object
+    get symbology () { this._iAmError(); } // returns Object
 
     // can be group or node name
     get name () { this._iAmError(); } // returns String
@@ -423,7 +423,7 @@ function standardGetSymbology() {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    return this._source.getSymbology();
+    return this._source.symbology;
 }
 
 function dynamicLeafGetSymbology() {
@@ -433,7 +433,7 @@ function dynamicLeafGetSymbology() {
     // TODO code-wise this looks identical to standardGetSymbology.
     //      however in this case, ._source is a DynamicFC, not a LayerRecord.
     //      This is safer. Deleting this would avoid the duplication. Decide.
-    return this._source.getSymbology();
+    return this._source.symbology;
 }
 
 function standardGetGeometryType() {
@@ -551,21 +551,9 @@ function featureSetSnapshot() {
 // TODO implement infoType / infoContent for static entry.
 //      who supplies this? how does it get passed in.
 
-/* jshint validthis: false */
-
 // The FC classes are meant to be internal to this module. They help manage differences between single-type layers
 // like feature layers, image layers, and composite layers like dynamic layers.
 // Can toy with alternate approaches. E.g. have a convertToPlaceholder function in the interface.
-
-// simple object packager for client symbology package
-// TODO proper docs
-function makeSymbologyOutput(symbolArray, style) {
-    // TEST STATUS basic
-    return {
-        stack: symbolArray,
-        renderStyle: style
-    };
-}
 
 // legend data is our modified legend structure.
 // it is similar to esri's server output, but all individual
@@ -599,6 +587,12 @@ class PlaceholderFC {
         // TEST STATUS basic
         this._parent = parent;
         this._name = name;
+
+        // TODO random colours
+        this._symbolBundle = {
+            stack: [parent._apiRef.symbology.generatePlaceholderSymbology(name || '?', '#16bf27')],
+            renderStyle: 'icons'
+        };
     }
 
     // TODO probably need more stuff
@@ -614,17 +608,20 @@ class PlaceholderFC {
     //      property name to match.  Be sure to update LayerInterface.convertToPlaceholder
     get layerName () { return this._name; }
 
+    // TODO clean this up if we dont need it
+    /*
     getSymbology () {
         // TEST STATUS none
         if (!this._symbology) {
             // TODO deal with random colours
-            this._symbology = this._parent._apiRef.symbology.generatePlaceholderSymbology(this._name, '#16bf27')
-                .then(symbologyItem => {
-                    return makeSymbologyOutput([symbologyItem], 'icons');
-                });
+            this._symbology = Promise.resolve(
+                [this._parent._apiRef.symbology.generatePlaceholderSymbology(this._name || '?', '#16bf27')]);
         }
         return this._symbology;
     }
+    */
+
+    get symbology () {  return this._symbolBundle; }
 
 }
 
@@ -720,7 +717,7 @@ class BasicFC {
                 // fetch legend from server, convert to local format, process local format
                 this._symbology = this._parent._apiRef.symbology.mapServerToLocalLegend(url, this._idx)
                     .then(legendData => {
-                        return makeSymbologyOutput(makeSymbologyArray(legendData.layers[0]), 'icons');
+                        return makeSymbologyArray(legendData.layers[0]);
                     });
             } else {
                 // this shouldn't happen. non-url layers should be files, which are features,
@@ -789,7 +786,7 @@ class AttribFC extends BasicFC {
             this._symbology = this.getLayerData().then(lData => {
                 if (lData.layerType === 'Feature Layer') {
                     // feature always has a single item, so index 0
-                    return makeSymbologyOutput(makeSymbologyArray(lData.legend.layers[0].legend), 'icons');
+                    return makeSymbologyArray(lData.legend.layers[0].legend);
                 } else {
                     // non-feature source. use legend server
                     return super.getSymbology();
@@ -984,6 +981,13 @@ class DynamicFC extends AttribFC {
         // TODO put the config stuff into private properties
         this.opacity = config.state.opacity;
 
+        // TODO provide name support for DynamicFC
+        // TODO random colours
+        this._symbolBundle = {
+            stack: [parent._apiRef.symbology.generatePlaceholderSymbology('?', '#16bf27')],
+            renderStyle: 'icons'
+        };
+
         // visibility is kept stateful by the parent. keeping an internal property
         // just means we would need to keep it in synch.
         this.setVisibility(config.state.visible);
@@ -1004,6 +1008,8 @@ class DynamicFC extends AttribFC {
             layer.setLayerDrawingOptions(optionsArray);
         }
     }
+
+    get symbology () { return this._symbolBundle; }
 
     // returns an object with minScale and maxScale values for the feature class
     getScaleSet () {
@@ -1045,6 +1051,13 @@ class DynamicFC extends AttribFC {
         // TODO would we ever need to worry about _parent._layer.visible being false while
         //      the visibleLayers array still contains valid indexes?
         return this._parent._layer.visibleLayers.indexOf(parseInt(this._idx)) > -1;
+    }
+
+    loadSymbology () {
+        this.getSymbology().then(symbolArray => {
+            // remove anything from the stack, then add new symbols to the stack
+            this.symbology.stack.splice(0, this.symbology.stack.length, ...symbolArray);
+        });
     }
 
 }
@@ -1126,7 +1139,7 @@ class WmsFC extends BasicFC {
 
                     return symbologyItem;
                 });
-            this._symbology = Promise.resolve(makeSymbologyOutput(legendArray, 'images'));
+            this._symbology = Promise.resolve(legendArray);
         }
         return this._symbology;
     }
@@ -1191,6 +1204,7 @@ class LayerRecord {
     set userLayer (value) { this._user = value; }
     get layerName () { return this._name; } // the top level layer name
     set layerName (value) { this._name = value; }
+    get symbology () { return this._symbolBundle; }
 
     get visibility () {
         // TEST STATUS none
@@ -1679,6 +1693,8 @@ class LayerRecord {
         this._hoverListeners = [];
         this._user = false;
         this._epsgLookup = epsgLookup;
+
+        // TODO verify we still use passthrough bindings.
         this._layerPassthroughBindings.forEach(bindingName =>
             this[bindingName] = (...args) => this._layer[bindingName](...args));
         this._layerPassthroughProperties.forEach(propName => {
@@ -1688,6 +1704,14 @@ class LayerRecord {
             };
             Object.defineProperty(this, propName, descriptor);
         });
+
+        // default to placeholder symbol. real stuff will be inserted during loaded event
+        // TODO deal with lack of random colour library
+        this._symbolBundle = {
+            stack: [apiRef.symbology.generatePlaceholderSymbology(this._name || '?', '#16bf27')],
+            renderStyle: 'icons'
+        };
+
         if (esriLayer) {
             this.constructLayer = () => { throw new Error('Cannot construct pre-made layers'); };
             this._layer = esriLayer;
@@ -1908,6 +1932,11 @@ class ImageRecord extends LayerRecord {
         // TODO consider making this a function, as it is common across less-fancy layers
         this._defaultFC = '0';
         this._featClasses['0'] = new BasicFC(this, '0', this.config);
+
+        this.getSymbology().then(symbolArray => {
+            // remove anything from the stack, then add new symbols to the stack
+            this.symbology.stack.splice(0, this.symbology.stack.length, ...symbolArray);
+        });
     }
 }
 
@@ -2203,16 +2232,29 @@ class DynamicRecord extends AttrRecord {
             if (subC && subC.defaulted) {
                 // TODO need to worry about Raster Layers here.  DynamicFC is based off of
                 //      attribute things.
-                this._featClasses[idx] = new DynamicFC(this, idx, attributeBundle[idx], subC.config);
+                const dFC = new DynamicFC(this, idx, attributeBundle[idx], subC.config);
+                this._featClasses[idx] = dFC;
                 if (subC.config.state.visibility) {
                     initVis.push(parseInt(idx)); // store for initial visibility
                 }
 
                 // if we have a proxy watching this leaf, replace its placeholder with the real data
-                if (this._proxies[idx]) {
+                const leafProxy = this._proxies[idx];
+                if (leafProxy) {
                     // TODO update controls array?
-                    this._proxies[idx].convertToDynamicLeaf(this._featClasses[idx]);
+
+                    // trickery involving symbology.
+                    // the UI is binding to the object that was set up in the leaf placeholder.
+                    // so we cannot just make a new one.
+                    // we need to inject the placeholder symbology object into our new DynamicFC.
+                    // then we can aysnch update it with real symbols, and the UI is still
+                    // pointing at the same array in memory.
+                    dFC._symbolBundle = leafProxy.symbology;
+                    leafProxy.convertToDynamicLeaf(dFC);
                 }
+
+                // load real symbols into our source
+                dFC.loadSymbology();
             }
         });
 
@@ -2477,6 +2519,11 @@ class TileRecord extends LayerRecord {
         // TODO consider making this a function, as it is common across less-fancy layers
         this._defaultFC = '0';
         this._featClasses['0'] = new BasicFC(this, '0', this.config);
+
+        this.getSymbology().then(symbolArray => {
+            // remove anything from the stack, then add new symbols to the stack
+            this.symbology.stack.splice(0, this.symbology.stack.length, ...symbolArray);
+        });
     }
 
     get layerType () { return Promise.resolve(clientLayerType.ESRI_TILE); }
@@ -2524,7 +2571,13 @@ class WmsRecord extends LayerRecord {
 
         // TODO consider making this a function, as it is common across less-fancy layers
         this._defaultFC = '0';
-        this._featClasses['0'] = new BasicFC(this, '0', this.config);
+        this._featClasses['0'] = new WmsFC(this, '0', this.config);
+
+        this.getSymbology().then(symbolArray => {
+            // remove anything from the stack, then add new symbols to the stack
+            this.symbology.stack.splice(0, this.symbology.stack.length, ...symbolArray);
+            this.symbology.renderStyle = 'images';
+        });
     }
 
     /**
@@ -2654,6 +2707,11 @@ class FeatureRecord extends AttrRecord {
         aFC.nameField = this.config.nameField;
         this._defaultFC = idx;
         this._featClasses[idx] = aFC;
+
+        this.getSymbology().then(symbolArray => {
+            // remove anything from the stack, then add new symbols to the stack
+            this.symbology.stack.splice(0, this.symbology.stack.length, ...symbolArray);
+        });
 
     }
 
@@ -2895,6 +2953,5 @@ module.exports = () => ({
     TileRecord,
     WmsRecord,
     FakeGroupRecord,
-    WmsFC, // TODO compiler temp. remove once we are referencing it
     States: states // TODO should this get exposed on the geoApi as well? currently layer module is not re-exposing it
 });

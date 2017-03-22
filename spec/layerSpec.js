@@ -47,7 +47,7 @@ describe('Layer', () => {
             id: 'testFeature'
         }
 
-        const featRec = layer.createFeatureRecord({}, mockEsri.FeatureLayer);
+        // const featRec = layer.createFeatureRecord({}, mockEsri.FeatureLayer);
                 
         // expect(featRec.layerId).toEqual('testFeature');
         expect(true);

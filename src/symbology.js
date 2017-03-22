@@ -242,7 +242,7 @@ function generateWMSSymbology(name, imageUri) {
  * @private
  * @param  {String} name label symbology label
  * @param  {String} colour colour to use in the graphic
- * @return {Promise}       promise resolving with symbology svg code and its label
+ * @return {Object} symbology svg code and its label
  */
 function generatePlaceholderSymbology(name, colour = '#000') {
     const draw = svgjs(window.document.createElement('div'))
@@ -263,10 +263,10 @@ function generatePlaceholderSymbology(name, colour = '#000') {
         })
         .center(CONTAINER_CENTER, CONTAINER_CENTER);
 
-    return Promise.resolve({
+    return {
         name,
         svgcode: draw.svg()
-    });
+    };
 }
 
 /**
