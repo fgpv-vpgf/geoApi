@@ -344,7 +344,7 @@ function standardGetVisibility() {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    return this._source.visibile;
+    return this._source.visibility;
 }
 
 function dynamicLeafGetVisibility() {
@@ -506,7 +506,7 @@ function standardSetVisibility(value) {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    this._source.visible = value;
+    this._source.visibility = value;
 }
 
 function dynamicLeafSetVisibility(value) {
@@ -1252,7 +1252,7 @@ class LayerRecord {
     get visibility () {
         // TEST STATUS none
         if (this._layer) {
-            return this._layer.visibile;
+            return this._layer.visible;
         } else {
             return true; // TODO what should a proper default be? example of this situation??
         }
@@ -1260,7 +1260,7 @@ class LayerRecord {
     set visibility (value) {
         // TEST STATUS none
         if (this._layer) {
-            this._layer.visibility = value;
+            this._layer.visible = value;
         }
 
         // TODO do we need an ELSE case here?

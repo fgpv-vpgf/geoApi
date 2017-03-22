@@ -69,13 +69,18 @@
                 console.log('find zoom scale test - sb level 17', layerRec.findZoomScale(lods, layerRec._layer, false));
 
                 console.log('visible - sb true', layerRec.visible);
+                console.log('proxy visible - sb true', proxy.visibility);
 
+                proxy.setVisibility(false);
+                console.log('proxy visible - sb false', proxy.visibility);
                 
                 console.log('symbology - sb 1 element', proxy.symbology);
                 
                 console.log('loaded state', proxy.state);
                 
                 console.log('isRefreshing? ', proxy.isRefreshing);
+
+
 
             }
 

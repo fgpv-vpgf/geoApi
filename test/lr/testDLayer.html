@@ -142,6 +142,9 @@
                 console.log('layer loaded state', proxy.state);
                 console.log('layer loaded isRefreshing', proxy.isRefreshing);
 
+                console.log('layer proxy visible -- sb true', proxy.visibility);
+                proxy.setVisibility(false);
+                console.log('layer proxy visible -- sb false', proxy.visibility);
             }
 
 /*
