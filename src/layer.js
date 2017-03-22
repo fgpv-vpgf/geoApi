@@ -10,7 +10,7 @@ const Terraformer = require('terraformer');
 const shp = require('shpjs');
 const ogc = require('./layer/ogc.js');
 const bbox = require('./layer/bbox.js');
-const layerRecord = require('./layer/layerRecord.js');
+const layerRecord = require('./layer/layerRec/main.js');
 const defaultRenderers = require('./defaultRenderers.json');
 Terraformer.ArcGIS = require('terraformer-arcgis-parser');
 
