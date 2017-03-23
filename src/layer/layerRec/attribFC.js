@@ -48,9 +48,6 @@ class AttribFC extends basicFC.BasicFC {
         return this._layerPackage.layerData;
     }
 
-    // TEST STATUS basic
-    get geomType () { return this.getLayerData().then(ld => { return ld.geometryType; }); }
-
     getSymbology () {
         // TEST STATUS basic
         if (!this._symbology) {

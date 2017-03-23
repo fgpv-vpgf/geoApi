@@ -80,7 +80,13 @@
                 
                 console.log('isRefreshing? ', proxy.isRefreshing);
 
+                // wait for some promises to update
+                var toTo = setTimeout(() => {
+                    
+                    clearTimeout(toTo);
+                    console.log('geom type layer root - sb point', proxy.geometryType);
 
+                }, 2000);
 
             }
 

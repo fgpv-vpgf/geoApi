@@ -26,7 +26,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
     constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
         // TEST STATUS basic
         // TODO if we have nothing to add here, delete this constructor
+        // TODO might need to add a placeholder here with stuff like
+        //    this._defaultFC = '0';
+        //    this._featClasses['0'] = placeholder;
         super(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup);
+
+        this._geometryType = undefined;
     }
 
     // TODO ensure whoever is making layers from config fragments is also setting the feature index.
@@ -44,6 +49,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
         this._snapshot = this.config.state.snapshot;
 
         return cfg;
+    }
+
+    getGeomType () {
+        // TEST STATUS none
+        // standard case, layer has no geometry. This gets overridden in feature-based Record classes.
+        return this._geometryType;
     }
 
     // returns the proxy interface object for the root of the layer (i.e. main entry in legend, not nested child things)
@@ -82,6 +93,11 @@ class FeatureRecord extends attribRecord.AttribRecord {
         this.getSymbology().then(symbolArray => {
             // remove anything from the stack, then add new symbols to the stack
             this.symbology.stack.splice(0, this.symbology.stack.length, ...symbolArray);
+        });
+
+        // update asynch data
+        aFC.getLayerData().then(ld => {
+            this._geometryType = ld.geometryType;
         });
 
     }

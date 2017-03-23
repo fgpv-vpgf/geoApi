@@ -484,7 +484,8 @@ class LayerRecord {
 
     getGeomType () {
         // TEST STATUS none
-        return this._featClasses[this._defaultFC].geomType;
+        // standard case, layer has no geometry. This gets overridden in feature-based Record classes.
+        return undefined;
     }
 
     // returns the proxy interface object for the root of the layer (i.e. main entry in legend, not nested child things)

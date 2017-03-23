@@ -118,10 +118,6 @@
                     console.log('formatted attributes child 2', fa);
                 });
 
-                layerRec.getGeomType(2).then(gt => {
-                    console.log('geom type child 3 - sb point', gt);
-                });
-
                 console.log('child tree', layerRec.getChildTree());
                 
                 console.log('root layer type - sb dynamic', proxy.layerType);
@@ -143,6 +139,16 @@
                 console.log('leaf 2 name -- sb doggguts', leaf2proxy.name);
                 console.log('group 1 name -- sb Group2', group1proxy.name);
                 
+                // wait for some promises to update
+                var toTo = setTimeout(() => {
+                    
+                    clearTimeout(toTo);
+                        
+                    console.log('geom type child 3 - sb point', leaf3proxy.geometryType);
+                    console.log('geom type layer root - sb undefined', proxy.geometryType);
+
+                }, 2000);
+
             }
 
 /*

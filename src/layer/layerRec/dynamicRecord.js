@@ -338,8 +338,9 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 // update asynchronous values
                 dFC.getLayerData().then(ld => {
                     dFC.layerType = serverLayerTypeToClientLayerType(ld.layerType);
-
-                    // TODO geometry type here
+                    if (dFC.layerType === shared.clientLayerType.ESRI_FEATURE) {
+                        dFC.geomType = ld.geometryType;
+                    }
                 });
             }
         });
@@ -388,10 +389,18 @@ class DynamicRecord extends attribRecord.AttribRecord {
         return this._featClasses[childIdx].queryable;
     }
 
+    // TODO if we need this back, may need to implement as getChildGeomType.
+    //      appears this ovverrides the LayerRecord.getGeomType function, which returns
+    //      undefined, and that is what we want on the DynamicRecord level (as dynamic layer)
+    //      has no geometry.
+    //      Currently, all child requests for geometry go through the proxy,
+    //      so could be this child-targeting version is irrelevant.
+    /*
     getGeomType (childIdx) {
         // TEST STATUS none
         return this._featClasses[childIdx].geomType;
     }
+    */
 
     getChildTree () {
         if (this._childTree) {
