@@ -25,6 +25,7 @@ class DynamicFC extends attribFC.AttribFC {
         // we cannot know the type (e.g. Feature Layer, Raster Layer), so this object
         // is required.
         this._layerInfo = parent._layer.layerInfos[idx];
+        this._name = config.name || this._layerInfo.name || '';
 
         // TODO put the config stuff into private properties
         this.opacity = config.state.opacity;
@@ -40,6 +41,8 @@ class DynamicFC extends attribFC.AttribFC {
         // just means we would need to keep it in synch.
         this.setVisibility(config.state.visible);
     }
+
+    get name () { return this._name; }
 
     get opacity () { return this._opacity; }
     set opacity (value) {

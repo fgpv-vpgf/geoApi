@@ -1,6 +1,6 @@
 'use strict';
 
-const attrRecord = require('./attrRecord.js')();
+const attribRecord = require('./attribRecord.js')();
 const shared = require('./shared.js')();
 const placeholderFC = require('./placeholderFC.js')();
 const layerInterface = require('./layerInterface.js')();
@@ -10,7 +10,7 @@ const attribFC = require('./attribFC.js')();
 /**
  * @class DynamicRecord
  */
-class DynamicRecord extends attrRecord.AttrRecord {
+class DynamicRecord extends attribRecord.AttribRecord {
     // TODO are we still using passthrough stuff?
     get _layerPassthroughBindings () {
         // TEST STATUS none
@@ -228,7 +228,7 @@ class DynamicRecord extends attrRecord.AttrRecord {
                     this._proxies[sId] = group;
 
                 }
-                group.convertToDynamicGroup(this, sId);
+                group.convertToDynamicGroup(this, sId, subConfig.name || layerInfo.name || '');
 
                 const treeGroup = { id: layerInfo.id, childs: [] };
                 treeArray.push(treeGroup);

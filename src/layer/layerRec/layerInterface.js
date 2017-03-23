@@ -127,6 +127,8 @@ class LayerInterface {
         newProp(this, 'state', dynamicLeafGetState);
         newProp(this, 'isRefreshing', dynamicLeafGetIsRefreshing);
 
+        newProp(this, 'name', dynamicLeafGetName);
+
         newProp(this, 'visibility', dynamicLeafGetVisibility);
         newProp(this, 'opacity', dynamicLeafGetOpacity);
         newProp(this, 'query', dynamicLeafGetQuery);
@@ -141,21 +143,22 @@ class LayerInterface {
         this.setQuery = dynamicLeafSetQuery;
     }
 
-    convertToDynamicGroup (layerRecord, groupId) {
+    convertToDynamicGroup (layerRecord, groupId, name = '') {
         // TEST STATUS basic
         // Note: we do not support opacity on dynamic groups
         this._source = layerRecord;
         this._groupId = groupId;
         this._isPlaceholder = false;
+        this._name = name;
 
         // contains a list of all child leaves for fast access
         this._childLeafs = [];
 
-        // TODO name property?
         newProp(this, 'visibility', dynamicGroupGetVisibility);
         newProp(this, 'layerType', dynamicGroupGetLayerType);
         newProp(this, 'state', dynamicGroupGetState);
         newProp(this, 'isRefreshing', dynamicGroupGetIsRefreshing);
+        newProp(this, 'name', dynamicGroupGetName);
 
         this.setVisibility = dynamicGroupSetVisibility;
     }
@@ -297,6 +300,22 @@ function standardGetName() {
 
     // TEST STATUS none
     return this._source.layerName;
+}
+
+function dynamicLeafGetName() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return this._source.name;
+}
+
+function dynamicGroupGetName() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    // funny case here. dynamic groups source the parent record.
+    // so we just hold the name within the proxy.
+    return this._name;
 }
 
 function standardGetOpacity() {

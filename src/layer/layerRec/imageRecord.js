@@ -9,7 +9,7 @@ const shared = require('./shared.js')();
  */
 class ImageRecord extends layerRecord.LayerRecord {
     // NOTE: if we decide to support attributes from ImageServers,
-    //       we would extend from AttrRecord instead of LayerRecord
+    //       we would extend from AttribRecord instead of LayerRecord
     //       (and do a lot of testing!)
 
     /**

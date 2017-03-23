@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Feature Layer Test Page</title>
+    <title>Dynamic Layer Opacity Test Page</title>
     <style>
         .layerTile { position: absolute; }
     </style>
@@ -12,28 +12,30 @@
     <p id="mess" />
     <script src="../../dist/geoapi.js"></script>
     <script>
-        // http://localhost:6002/test/testClass.html
+        // http://localhost:6002/test/testDLayer.html
 
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
 
             var config1 = {
-                "id":"scaleDep",
-                "name":"Air Ozone Scale Dep",
-                "url":"http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_Ozone/MapServer/2",
-                "layerType":"esriFeature",
-                "disabledControls":["visibility"],
-                "state":{"opacity":1,"visibility":true,"boundingBox":false,"query":true,"snapshot":false},
-                "controls":["opacity","visibility","boundingBox","query","snapshot","metadata","boundaryZoom","refresh","reload","remove","settings","data"]
-            }
-        
-            var layerRec = api.layer.createFeatureRecord(config1);
+                id: 'guts',
+                name: 'Dynamic Test Child Opacity',
+                url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_Ozone/MapServer/',                
+                metadataUrl: 'http://www.github.com',
+                layerType: 'esriDynamic',
+                tolerance: 5,
+                extent: {},
+                controls: ['visibility', 'opacity'],
+                state: {"opacity":1,"visibility":true,"boundingBox":false,"query":true,"snapshot":false},
+                layerEntries: [
+                   {"index":0}                   
+                ]
+            };
+
+            var layerRec = api.layer.createDynamicRecord(config1);
             console.log('layer PROOF ', layerRec);
             var proxy = layerRec.getProxy();
             console.log('proxy PROOF ', proxy);
-            
-            console.log('early symbology - sb ?', proxy.symbology);
-            
 
             // hack to wait for layer to load
 
@@ -46,13 +48,14 @@
 
             function afterLoadTests() {
                 console.log('enhanced loaded')
+                
+                const proxyLeaf2 = layerRec.getChildProxy(2);
 
-                console.log('symbology - sb ?', proxy.symbology);
+                console.log('proxy leaf 2', proxyLeaf2);
 
-                proxy.featureCount.then(fc => {
+                proxyLeaf2.featureCount.then(fc => {
                     console.log('feature count - sb 247', fc);
                 });
-                // mock an identify
 
             }
 

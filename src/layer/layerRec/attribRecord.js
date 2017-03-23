@@ -4,12 +4,12 @@ const layerRecord = require('./layerRecord.js')();
 const attribFC = require('./attribFC.js')();
 
 /**
- * @class AttrRecord
+ * @class AttribRecord
  */
-class AttrRecord extends layerRecord.LayerRecord {
+class AttribRecord extends layerRecord.LayerRecord {
     // this class has functions common to layers that have attributes
 
-    // FIXME clickTolerance is not specific to AttrRecord but rather Feature and Dynamic
+    // FIXME clickTolerance is not specific to AttribRecord but rather Feature and Dynamic
     get clickTolerance () { return this.config.tolerance; }
 
     /**
@@ -168,5 +168,5 @@ class AttrRecord extends layerRecord.LayerRecord {
 }
 
 module.exports = () => ({
-    AttrRecord
+    AttribRecord
 });

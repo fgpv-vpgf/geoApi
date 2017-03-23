@@ -1,14 +1,14 @@
 'use strict';
 
 const attribFC = require('./attribFC.js')();
-const attrRecord = require('./attrRecord.js')();
+const attribRecord = require('./attribRecord.js')();
 const layerInterface = require('./layerInterface.js')();
 const shared = require('./shared.js')();
 
 /**
  * @class FeatureRecord
  */
-class FeatureRecord extends attrRecord.AttrRecord {
+class FeatureRecord extends attribRecord.AttribRecord {
 
     // TODO add flags for file based layers?
 
