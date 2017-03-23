@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>layer/layerRec/dynamicFC.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AttribFC.html">AttribFC</a><ul class='methods'><li data-type='method'><a href="AttribFC.html#.unAliasAttribs">unAliasAttribs</a></li><li data-type='method'><a href="AttribFC.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="AttribFC.html#checkDateType">checkDateType</a></li><li data-type='method'><a href="AttribFC.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="AttribRecord.html">AttribRecord</a><ul class='methods'><li data-type='method'><a href="AttribRecord.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="AttribRecord.html#attributesToDetails">attributesToDetails</a></li><li data-type='method'><a href="AttribRecord.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="BasicFC.html">BasicFC</a></li><li><a href="DynamicFC.html">DynamicFC</a></li><li><a href="DynamicRecord.html">DynamicRecord</a><ul class='methods'><li data-type='method'><a href="DynamicRecord.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="DynamicRecord.html#checkDateType">checkDateType</a></li><li data-type='method'><a href="DynamicRecord.html#getChildProxy">getChildProxy</a></li><li data-type='method'><a href="DynamicRecord.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="FakeGroupRecord.html">FakeGroupRecord</a></li><li><a href="FeatureRecord.html">FeatureRecord</a></li><li><a href="IdentifyResult.html">IdentifyResult</a></li><li><a href="ImageRecord.html">ImageRecord</a></li><li><a href="LayerInterface.html">LayerInterface</a></li><li><a href="LayerRecord.html">LayerRecord</a><ul class='methods'><li data-type='method'><a href="LayerRecord.html#_fireEvent">_fireEvent</a></li><li data-type='method'><a href="LayerRecord.html#_stateChange">_stateChange</a></li><li data-type='method'><a href="LayerRecord.html#_zoomToScaleSet">_zoomToScaleSet</a></li><li data-type='method'><a href="LayerRecord.html#addHoverListener">addHoverListener</a></li><li data-type='method'><a href="LayerRecord.html#addStateListener">addStateListener</a></li><li data-type='method'><a href="LayerRecord.html#bindEvents">bindEvents</a></li><li data-type='method'><a href="LayerRecord.html#constructLayer">constructLayer</a></li><li data-type='method'><a href="LayerRecord.html#createBbox">createBbox</a></li><li data-type='method'><a href="LayerRecord.html#destroyBbox">destroyBbox</a></li><li data-type='method'><a href="LayerRecord.html#findZoomScale">findZoomScale</a></li><li data-type='method'><a href="LayerRecord.html#getFeatureCount">getFeatureCount</a></li><li data-type='method'><a href="LayerRecord.html#getVisibleScales">getVisibleScales</a></li><li data-type='method'><a href="LayerRecord.html#isBBoxVisible">isBBoxVisible</a></li><li data-type='method'><a href="LayerRecord.html#makeClickBuffer">makeClickBuffer</a></li><li data-type='method'><a href="LayerRecord.html#makeLayerConfig">makeLayerConfig</a></li><li data-type='method'><a href="LayerRecord.html#onError">onError</a></li><li data-type='method'><a href="LayerRecord.html#onMouseOut">onMouseOut</a></li><li data-type='method'><a href="LayerRecord.html#onMouseOver">onMouseOver</a></li><li data-type='method'><a href="LayerRecord.html#onUpdateEnd">onUpdateEnd</a></li><li data-type='method'><a href="LayerRecord.html#onUpdateStart">onUpdateStart</a></li><li data-type='method'><a href="LayerRecord.html#removeHoverListener">removeHoverListener</a></li><li data-type='method'><a href="LayerRecord.html#removeStateListener">removeStateListener</a></li><li data-type='method'><a href="LayerRecord.html#setMapScale">setMapScale</a></li><li data-type='method'><a href="LayerRecord.html#zoomToBoundary">zoomToBoundary</a></li></ul></li><li><a href="TileRecord.html">TileRecord</a></li><li><a href="WmsFC.html">WmsFC</a></li><li><a href="WmsRecord.html">WmsRecord</a><ul class='methods'><li data-type='method'><a href="WmsRecord.html#identify">identify</a></li></ul></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-developer-guide.html">developer-guide</a></li><li><a href="tutorial-getting_started.html">getting_started</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addHilight">addHilight</a></li><li><a href="global.html#addPin">addPin</a></li><li><a href="global.html#allComb">allComb</a></li><li><a href="global.html#allocateLayersToSections">allocateLayersToSections</a></li><li><a href="global.html#arrayBufferToString">arrayBufferToString</a></li><li><a href="global.html#assignIds">assignIds</a></li><li><a href="global.html#assignLayerSplits">assignLayerSplits</a></li><li><a href="global.html#checkProj">checkProj</a></li><li><a href="global.html#clearHilight">clearHilight</a></li><li><a href="global.html#clipExtentCoords">clipExtentCoords</a></li><li><a href="global.html#cloneLayerGraphic">cloneLayerGraphic</a></li><li><a href="global.html#convertImageToCanvas">convertImageToCanvas</a></li><li><a href="global.html#convertImagetoDataURL">convertImagetoDataURL</a></li><li><a href="global.html#crawlLayerInfos">crawlLayerInfos</a></li><li><a href="global.html#createAttribSet">createAttribSet</a></li><li><a href="global.html#csvPeek">csvPeek</a></li><li><a href="global.html#enforceBoundary">enforceBoundary</a></li><li><a href="global.html#enhanceRenderer">enhanceRenderer</a></li><li><a href="global.html#extractFields">extractFields</a></li><li><a href="global.html#featureTypeToRenderer">featureTypeToRenderer</a></li><li><a href="global.html#findClosestLOD">findClosestLOD</a></li><li><a href="global.html#findOptimalSplit">findOptimalSplit</a></li><li><a href="global.html#generateLocalCanvas">generateLocalCanvas</a></li><li><a href="global.html#generatePlaceholderSymbology">generatePlaceholderSymbology</a></li><li><a href="global.html#generateServerImage">generateServerImage</a></li><li><a href="global.html#generateUUID">generateUUID</a></li><li><a href="global.html#generateWMSSymbology">generateWMSSymbology</a></li><li><a href="global.html#geomToGraphic">geomToGraphic</a></li><li><a href="global.html#getAttribs">getAttribs</a></li><li><a href="global.html#getExtentFromJson">getExtentFromJson</a></li><li><a href="global.html#getFeatureName">getFeatureName</a></li><li><a href="global.html#getGraphicIcon">getGraphicIcon</a></li><li><a href="global.html#getGraphicSymbol">getGraphicSymbol</a></li><li><a href="global.html#getLayerData">getLayerData</a></li><li><a href="global.html#getLayerType">getLayerType</a></li><li><a href="global.html#getLegendUrls">getLegendUrls</a></li><li><a href="global.html#getMapServerLegend">getMapServerLegend</a></li><li><a href="global.html#getNorthArrowAngle">getNorthArrowAngle</a></li><li><a href="global.html#getScaleRatio">getScaleRatio</a></li><li><a href="global.html#getUnboundGraphics">getUnboundGraphics</a></li><li><a href="global.html#getWMSLayerTitle">getWMSLayerTitle</a></li><li><a href="global.html#getZoomLevel">getZoomLevel</a></li><li><a href="global.html#guessCSVfields">guessCSVfields</a></li><li><a href="global.html#hideLayers">hideLayers</a></li><li><a href="global.html#identify">identify</a></li><li><a href="global.html">isSpatialRefEqual</a></li><li><a href="global.html#loadDataBatch">loadDataBatch</a></li><li><a href="global.html#loadFeatureAttribs">loadFeatureAttribs</a></li><li><a href="global.html#localProjectExtent">localProjectExtent</a></li><li><a href="global.html#localProjectGeometry">localProjectGeometry</a></li><li><a href="global.html#localProjectPoint">localProjectPoint</a></li><li><a href="global.html#makeBasemaps">makeBasemaps</a></li><li><a href="global.html#makeBoundingBox">makeBoundingBox</a></li><li><a href="global.html#makeGeoJsonLayer">makeGeoJsonLayer</a></li><li><a href="global.html#makeHilightLayer">makeHilightLayer</a></li><li><a href="global.html#makeLegend">makeLegend</a></li><li><a href="global.html#mapDefault">mapDefault</a></li><li><a href="global.html#mapServerLegendToRenderer">mapServerLegendToRenderer</a></li><li><a href="global.html#mapServerToLocalLegend">mapServerToLocalLegend</a></li><li><a href="global.html#newLayerBundle">newLayerBundle</a></li><li><a href="global.html#newLayerPackage">newLayerPackage</a></li><li><a href="global.html#newProp">newProp</a></li><li><a href="global.html#normalizeProj">normalizeProj</a></li><li><a href="global.html#onLoad">onLoad</a></li><li><a href="global.html#packLayersIntoExactSections">packLayersIntoExactSections</a></li><li><a href="global.html#packLayersIntoOptimalSections">packLayersIntoOptimalSections</a></li><li><a href="global.html#predictLayerUrl">predictLayerUrl</a></li><li><a href="global.html#processDynamicLayer">processDynamicLayer</a></li><li><a href="global.html#processFeatureLayer">processFeatureLayer</a></li><li><a href="global.html#projectGeojson">projectGeojson</a></li><li><a href="global.html#projectionLookup">projectionLookup</a></li><li><a href="global.html#resizeSVGElement">resizeSVGElement</a></li><li><a href="global.html#scrapeListRenderer">scrapeListRenderer</a></li><li><a href="global.html#searchRenderer">searchRenderer</a></li><li><a href="global.html#serverLayerIdentify">serverLayerIdentify</a></li><li><a href="global.html#serviceType">serviceType</a></li><li><a href="global.html#setProxy">setProxy</a></li><li><a href="global.html#setupMap">setupMap</a></li><li><a href="global.html#showLayers">showLayers</a></li><li><a href="global.html#splitLayer">splitLayer</a></li><li><a href="global.html#svgDrawImage">svgDrawImage</a></li><li><a href="global.html#symbolToLegend">symbolToLegend</a></li><li><a href="global.html#validateCSV">validateCSV</a></li><li><a href="global.html#validateFile">validateFile</a></li><li><a href="global.html#validateGeoJson">validateGeoJson</a></li><li><a href="global.html#validateLatLong">validateLatLong</a></li><li><a href="global.html#wrapEvents">wrapEvents</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">layer/layerRec/dynamicFC.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+const attribFC = require('./attribFC.js')();
+
+/**
+ * @class DynamicFC
+ */
+class DynamicFC extends attribFC.AttribFC {
+    // dynamic child variant for feature class object.
+    // deals with stuff specific to dynamic children (i.e. virtual layer on client)
+
+    /**
+     * Create an feature class object for a feature class that is a child of a dynamic layer
+     * @param {Object} parent        the Record object that this Feature Class belongs to
+     * @param {String} idx           the service index of this Feature Class. an integer in string format. use '0' for non-indexed sources.
+     * @param {Object} layerPackage  a layer package object from the attribute module for this feature class
+     * @param {Object} config        the config object for this sublayer
+     */
+    constructor (parent, idx, layerPackage, config) {
+        // TEST STATUS basic
+        super(parent, idx, layerPackage, config);
+
+        // store pointer to the layerinfo for this FC.
+        // while most information here can also be gleaned from the layer object,
+        // we cannot know the type (e.g. Feature Layer, Raster Layer), so this object
+        // is required.
+        this._layerInfo = parent._layer.layerInfos[idx];
+        this._name = config.name || this._layerInfo.name || '';
+
+        // TODO put the config stuff into private properties
+        this.opacity = config.state.opacity;
+
+        // TODO provide name support for DynamicFC
+        // TODO random colours
+        this._symbolBundle = {
+            stack: [parent._apiRef.symbology.generatePlaceholderSymbology('?', '#16bf27')],
+            renderStyle: 'icons'
+        };
+
+        // visibility is kept stateful by the parent. keeping an internal property
+        // just means we would need to keep it in synch.
+        this.setVisibility(config.state.visible);
+    }
+
+    get name () { return this._name; }
+
+    get opacity () { return this._opacity; }
+    set opacity (value) {
+        this._opacity = value;
+
+        const layer = this._parent._layer;
+        if (layer.supportsDynamicLayers) {
+            // only attempt to set the layer if we support that kind of magic.
+            // instead of being consistent, esri using value from 0 to 100 for sublayer transparency where 100 is fully transparent
+            const optionsArray = [];
+            const drawingOptions = new this._parent._apiRef.layer.LayerDrawingOptions();
+            drawingOptions.transparency = (value - 1) * -100;
+            optionsArray[this._idx] = drawingOptions;
+            layer.setLayerDrawingOptions(optionsArray);
+        }
+    }
+
+    get symbology () { return this._symbolBundle; }
+
+    // returns an object with minScale and maxScale values for the feature class
+    getScaleSet () {
+        // TEST STATUS none
+        // get the layerData promise for this FC, wait for it to load,
+        // then return the scale data
+        return this.getLayerData().then(lData => {
+            return {
+                minScale: lData.minScale,
+                maxScale: lData.maxScale
+            };
+        });
+    }
+
+    // TODO we may need to override some of the methods in AttribFC
+    //      and have logic like
+    //      if this._layerInfo.then(l.layerType === 'Feature Layer') then super(xxx) else non-attrib response
+    //
+    //      could be tricky, as it is promised based, thus wrecking the override of any synchronous function
+
+    setVisibility (val) {
+        // TEST STATUS none
+        // update visible layers array
+        const vLayers = this._parent._layer.visibleLayers;
+        const intIdx = parseInt(this._idx);
+        const vIdx = vLayers.indexOf(intIdx);
+        if (val &amp;&amp; vIdx === -1) {
+            // was invisible, now visible
+            vLayers.push(intIdx);
+        } else if (!val &amp;&amp; vIdx > -1) {
+            // was visible, now invisible
+            vLayers.splice(vIdx, 1);
+        }
+    }
+
+    // TODO extend this function to other FC's?  do they need it?
+    getVisibility () {
+        // TEST STATUS none
+        // TODO would we ever need to worry about _parent._layer.visible being false while
+        //      the visibleLayers array still contains valid indexes?
+        return this._parent._layer.visibleLayers.indexOf(parseInt(this._idx)) > -1;
+    }
+
+    loadSymbology () {
+        this.getSymbology().then(symbolArray => {
+            // remove anything from the stack, then add new symbols to the stack
+            this.symbology.stack.splice(0, this.symbology.stack.length, ...symbolArray);
+        });
+    }
+
+}
+
+module.exports = () => ({
+    DynamicFC
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Mar 23 2017 15:53:42 GMT+0000 (UTC) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
