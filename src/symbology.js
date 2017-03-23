@@ -771,9 +771,11 @@ function buildMapServerToLocalLegend(esriBundle, geoApi) {
      */
     return (mapServerUrl, layerIndex) => {
         // get esri legend from server
+        const intIndex = parseInt(layerIndex); // sometimes a stringified value comes in. careful now.
+
         return getMapServerLegend(mapServerUrl, esriBundle).then(serverLegendData => {
             // derive renderer for specified layer
-            const fakeRenderer = mapServerLegendToRenderer(serverLegendData, layerIndex);
+            const fakeRenderer = mapServerLegendToRenderer(serverLegendData, intIndex);
 
             // convert renderer to viewer specific legend
             return geoApi.symbology.rendererToLegend(fakeRenderer);

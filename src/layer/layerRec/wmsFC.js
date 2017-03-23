@@ -57,7 +57,7 @@ class WmsFC extends basicFC.BasicFC {
         // TEST STATUS none
         if (!this._symbology) {
             const configLayerEntries =  this._parent.config.layerEntries;
-            const gApi = this._parent._api;
+            const gApi = this._parent._apiRef;
             const legendArray = gApi.layer.ogc
                 .getLegendUrls(this._parent._layer, configLayerEntries.map(le => le.id))
                 .map((imageUri, idx) => {

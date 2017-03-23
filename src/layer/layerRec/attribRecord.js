@@ -82,11 +82,6 @@ class AttribRecord extends layerRecord.LayerRecord {
         return this._featClasses[this._defaultFC].getFeatureName(objId, attribs);
     }
 
-    getSymbology () {
-        // TEST STATUS basic
-        return this._featClasses[this._defaultFC].getSymbology();
-    }
-
     getFeatureCount (url) {
         // TEST STATUS basic
         if (url) {

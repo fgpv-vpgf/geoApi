@@ -96,7 +96,7 @@ class BasicFC {
                 // fetch legend from server, convert to local format, process local format
                 this._symbology = this._parent._apiRef.symbology.mapServerToLocalLegend(url, this._idx)
                     .then(legendData => {
-                        return shared.makeSymbologyArray(legendData.layers[0]);
+                        return shared.makeSymbologyArray(legendData.layers[0].legend);
                     });
             } else {
                 // this shouldn't happen. non-url layers should be files, which are features,

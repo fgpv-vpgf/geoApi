@@ -445,6 +445,12 @@ class LayerRecord {
         return Promise.resolve(0);
     }
 
+    // TODO docs
+    getSymbology () {
+        // TEST STATUS basic
+        return this._featClasses[this._defaultFC].getSymbology();
+    }
+
     /**
      * Create an extent centered around a point, that is appropriate for the current map scale.
      * @param {Object} point       point on the map for extent center
