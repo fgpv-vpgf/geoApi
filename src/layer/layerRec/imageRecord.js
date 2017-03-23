@@ -28,7 +28,7 @@ class ImageRecord extends layerRecord.LayerRecord {
         super(layerClass, apiRef, config, esriLayer, epsgLookup);
     }
 
-    get layerType () { return Promise.resolve(shared.clientLayerType.ESRI_IMAGE); }
+    get layerType () { return shared.clientLayerType.ESRI_IMAGE; }
 
     /**
     * Triggers when the layer loads.

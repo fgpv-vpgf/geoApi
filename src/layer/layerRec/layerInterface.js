@@ -42,9 +42,9 @@ class LayerInterface {
     get name () { this._iAmError(); } // returns String
 
     // these are needed for the type flag
-    get layerType () { this._iAmError(); } // returns Promise of String
-    get geometryType () { this._iAmError(); } // returns Promise of String
-    get featureCount () { this._iAmError(); } // returns Promise of Integer
+    get layerType () { this._iAmError(); } // returns String
+    get geometryType () { this._iAmError(); } // returns String
+    get featureCount () { this._iAmError(); } // returns Integer
 
     // layer states
     get state () { this._iAmError(); } // returns String
@@ -344,23 +344,14 @@ function dynamicGroupGetLayerType() {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    return Promise.resolve(shared.clientLayerType.ESRI_GROUP);
+    return shared.clientLayerType.ESRI_GROUP;
 }
 
 function dynamicLeafGetLayerType() {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    return this._source.layerType.then(lt => {
-        switch (lt) {
-            case 'Feature Layer':
-                return shared.clientLayerType.ESRI_FEATURE;
-            case 'Raster Layer':
-                return shared.clientLayerType.ESRI_RASTER;
-            default:
-                throw new Error('Unexpected layer type in dynamicLeafGetLayerType', lt);
-        }
-    });
+    return this._source.layerType;
 }
 
 function standardGetBoundingBox() {

@@ -25,7 +25,7 @@ class WmsRecord extends layerRecord.LayerRecord {
         super(layerClass, apiRef, config, esriLayer, epsgLookup);
     }
 
-    get layerType () { return Promise.resolve(shared.clientLayerType.OGC_WMS); }
+    get layerType () { return shared.clientLayerType.OGC_WMS; }
 
     makeLayerConfig () {
         // TEST STATUS none

@@ -26,14 +26,14 @@ class DynamicFC extends attribFC.AttribFC {
         // is required.
         this._layerInfo = parent._layer.layerInfos[idx];
         this._name = config.name || this._layerInfo.name || '';
+        this._layerType = undefined; // this indicates unknown to the ui.
 
         // TODO put the config stuff into private properties
         this.opacity = config.state.opacity;
 
-        // TODO provide name support for DynamicFC
         // TODO random colours
         this._symbolBundle = {
-            stack: [parent._apiRef.symbology.generatePlaceholderSymbology('?', '#16bf27')],
+            stack: [parent._apiRef.symbology.generatePlaceholderSymbology(this._name || '?', '#16bf27')],
             renderStyle: 'icons'
         };
 
@@ -75,11 +75,8 @@ class DynamicFC extends attribFC.AttribFC {
         });
     }
 
-    // TODO we may need to override some of the methods in AttribFC
-    //      and have logic like
-    //      if this._layerInfo.then(l.layerType === 'Feature Layer') then super(xxx) else non-attrib response
-    //
-    //      could be tricky, as it is promised based, thus wrecking the override of any synchronous function
+    get layerType () {return this._layerType; }
+    set layerType (value) { this._layerType = value; }
 
     setVisibility (val) {
         // TEST STATUS none

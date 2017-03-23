@@ -21,7 +21,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
         return ['visibleAtMapScale', 'visible', 'spatialReference', 'layerInfos', 'supportsDynamicLayers'];
     }
 
-    get layerType () { return Promise.resolve(shared.clientLayerType.ESRI_DYNAMIC); }
+    get layerType () { return shared.clientLayerType.ESRI_DYNAMIC; }
 
     /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
@@ -291,6 +291,18 @@ class DynamicRecord extends attribRecord.AttribRecord {
         const attributeBundle = this._apiRef.attribs.loadLayerAttribs(this._layer);
         const initVis = [];
 
+        // converts server type string to client type string
+        const serverLayerTypeToClientLayerType = serverType => {
+            switch (serverType) {
+                case 'Feature Layer':
+                    return shared.clientLayerType.ESRI_FEATURE;
+                case 'Raster Layer':
+                    return shared.clientLayerType.ESRI_RASTER;
+                default:
+                    throw new Error('Unexpected layer type in serverLayerTypeToClientLayerType', serverType);
+            }
+        };
+
         // idx is a string
         attributeBundle.indexes.forEach(idx => {
             // if we don't have a defaulted sub-config, it means the attribute leaf is not present
@@ -322,6 +334,13 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
                 // load real symbols into our source
                 dFC.loadSymbology();
+
+                // update asynchronous values
+                dFC.getLayerData().then(ld => {
+                    dFC.layerType = serverLayerTypeToClientLayerType(ld.layerType);
+
+                    // TODO geometry type here
+                });
             }
         });
 
@@ -331,20 +350,16 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // a lovely pyramid of doom.
         Object.keys(this._proxies).forEach(sId => {
             const proxy = this._proxies[sId];
-            if (!proxy.isPlaceholder) {
-                proxy.layerType.then(lt => {
-                    if (lt === shared.clientLayerType.ESRI_GROUP) {
-                        const poIdx = proxy.availableControls.indexOf('opacity');
-                        if (poIdx > -1) {
-                            proxy.availableControls.splice(poIdx, 1);
+            if (!proxy.isPlaceholder && proxy.layerType === shared.clientLayerType.ESRI_GROUP) {
+                const poIdx = proxy.availableControls.indexOf('opacity');
+                if (poIdx > -1) {
+                    proxy.availableControls.splice(poIdx, 1);
 
-                            // TODO test if we need to adjust subconfigs, or if it's all the same pointer
-                            if (subConfigs[sId].config.controls.indexOf('opacity') > -1) {
-                                console.log('HEEEY HEYYY WE HAVE A CONFIG OPACITY GROUP, ADD CODE TO REMOVE IT');
-                            }
-                        }
+                    // TODO test if we need to adjust subconfigs, or if it's all the same pointer
+                    if (subConfigs[sId].config.controls.indexOf('opacity') > -1) {
+                        console.log('HEEEY HEYYY WE HAVE A CONFIG OPACITY GROUP, ADD CODE TO REMOVE IT');
                     }
-                });
+                }
             }
         });
 

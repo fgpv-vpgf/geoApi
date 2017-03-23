@@ -72,6 +72,7 @@ this is a layer data object.  it contains information describing the server-side
     "oidField": "objectid",
     "renderer": {...},
     "geometryType": "esriGeometryPoint",
+    "layerType": "Feature Layer",
     "minScale": 0,
     "maxScale": 0
 }

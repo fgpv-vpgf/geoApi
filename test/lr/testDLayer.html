@@ -123,18 +123,10 @@
                 });
 
                 console.log('child tree', layerRec.getChildTree());
-
-                proxy.layerType.then(lt => {
-                    console.log('root layer type - sb dynamic', lt);
-                });
-
-                group0proxy.layerType.then(lt => {
-                    console.log('group layer type - sb group', lt);
-                });
-
-                leaf3proxy.layerType.then(lt => {
-                    console.log('leaf layer type - sb feature', lt);
-                });
+                
+                console.log('root layer type - sb dynamic', proxy.layerType);
+                console.log('group layer type - sb group', group0proxy.layerType);
+                console.log('leaf layer type - sb feature', leaf3proxy.layerType);
 
                 console.log('leaf loaded state', leaf3proxy.state);
                 console.log('group loaded state', group1proxy.state);

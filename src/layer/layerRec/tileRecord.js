@@ -44,7 +44,7 @@ class TileRecord extends layerRecord.LayerRecord {
         });
     }
 
-    get layerType () { return Promise.resolve(shared.clientLayerType.ESRI_TILE); }
+    get layerType () { return shared.clientLayerType.ESRI_TILE; }
 
 }
 

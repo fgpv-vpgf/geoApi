@@ -103,7 +103,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
     get isSnapshot () { return this._snapshot; }
     set isSnapshot (value) { this._snapshot = value; }
 
-    get layerType () { return Promise.resolve(shared.clientLayerType.ESRI_FEATURE); }
+    get layerType () { return shared.clientLayerType.ESRI_FEATURE; }
 
     onMouseOver (e) {
         // TEST STATUS none
