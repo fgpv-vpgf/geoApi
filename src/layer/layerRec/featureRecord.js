@@ -32,6 +32,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         super(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup);
 
         this._geometryType = undefined;
+        this._fcount = undefined;
     }
 
     // TODO ensure whoever is making layers from config fragments is also setting the feature index.
@@ -100,6 +101,10 @@ class FeatureRecord extends attribRecord.AttribRecord {
             this._geometryType = ld.geometryType;
         });
 
+        this.getFeatureCount().then(fc => {
+            this._fcount = fc;
+        });
+
     }
 
     getFeatureCount () {
@@ -120,6 +125,8 @@ class FeatureRecord extends attribRecord.AttribRecord {
     set isSnapshot (value) { this._snapshot = value; }
 
     get layerType () { return shared.clientLayerType.ESRI_FEATURE; }
+
+    get featureCount () { return this._fcount; }
 
     onMouseOver (e) {
         // TEST STATUS none

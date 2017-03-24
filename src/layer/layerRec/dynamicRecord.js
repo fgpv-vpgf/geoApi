@@ -342,6 +342,10 @@ class DynamicRecord extends attribRecord.AttribRecord {
                         dFC.geomType = ld.geometryType;
                     }
                 });
+
+                this.getFeatureCount(idx).then(fc => {
+                    dFC.featureCount = fc;
+                });
             }
         });
 

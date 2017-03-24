@@ -113,6 +113,8 @@ class LayerInterface {
 
         newProp(this, 'snapshot', featureGetSnapshot);
         newProp(this, 'formattedAttributes', standardGetFormattedAttributes);
+        newProp(this, 'geometryType', featureGetGeometryType);
+        newProp(this, 'featureCount', featureGetFeatureCount);
 
         this.setSnapshot = featureSetSnapshot;
     }
@@ -417,6 +419,13 @@ function standardGetGeometryType() {
     /* jshint validthis: true */
 
     // TEST STATUS none
+    return undefined;
+}
+
+function featureGetGeometryType() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
     return this._source.getGeomType();
 }
 
@@ -431,14 +440,21 @@ function standardGetFeatureCount() {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    return this._source.getFeatureCount();
+    return undefined;
+}
+
+function featureGetFeatureCount() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return this._source.featureCount;
 }
 
 function dynamicLeafGetFeatureCount() {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    return this._source._parent.getFeatureCount(this._source._idx);
+    return this._source.featureCount;
 }
 
 function standardSetVisibility(value) {

@@ -28,6 +28,7 @@ class DynamicFC extends attribFC.AttribFC {
         this._name = config.name || this._layerInfo.name || '';
         this._layerType = undefined; // this indicates unknown to the ui.
         this._geometryType = undefined; // this indicates unknown to the ui.
+        this._fcount = undefined;
 
         // TODO put the config stuff into private properties
         this.opacity = config.state.opacity;
@@ -81,6 +82,9 @@ class DynamicFC extends attribFC.AttribFC {
 
     get geomType () { return this._geometryType; }
     set geomType (value) { this._geometryType = value; }
+
+    get featureCount () { return this._fcount; }
+    set featureCount (value) { this._fcount = value; }
 
     setVisibility (val) {
         // TEST STATUS none
