@@ -84,6 +84,7 @@ class LayerRecord {
      */
     destroyBbox (map) {
         // TEST STATUS none
+        // TODO should we remove the map.remove step?  just drop the internal reference.
         map.removeLayer(this._bbox);
         this._bbox = undefined;
     }

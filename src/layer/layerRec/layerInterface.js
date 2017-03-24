@@ -187,7 +187,7 @@ class LayerInterface {
         newProp(this, 'symbology', standardGetSymbology);
         newProp(this, 'name', standardGetName);
         newProp(this, 'state', standardGetState);
-        newProp(this, 'isRefreshing', standardGetIsRefreshing);
+        newProp(this, 'isRefreshing', placeholderGetIsRefreshing);
     }
 
 }
@@ -258,6 +258,13 @@ function standardGetIsRefreshing() {
 
     // TEST STATUS none
     return this._source.state === shared.states.REFRESH;
+}
+
+function placeholderGetIsRefreshing() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return true;
 }
 
 function dynamicLeafGetIsRefreshing() {
