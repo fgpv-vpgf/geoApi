@@ -9,44 +9,40 @@ class FakeGroupRecord {
     // NOTE we don't inherit from LayerRecord, because we don't want all the layerish default behavior
     // Fake News.
 
+    // this object is friends with `entryGroup` config element
+
     // TODO verifiy layerId is useful / needed
     // get layerId () { return this.config.id; }
     get layerName () { return this._name; } // the top level layer name
     set layerName (value) { this._name = value; }
 
-    get visible () {
+    get visibility () {
         // cumulation of visiblity of all childs
         return this._childProxies.some(p => p.visibility);
     }
-    set visible (value) {
+    set visibility (value) {
         // set all the kids
         this._childProxies.forEach(p => { p.setVisibility(value); });
     }
 
     // TODO do we need a layer type?  e.g. `Fake`?
 
-    // TODO do groups need to propagate / summarize query status of children?
-    /*
     // TODO docs
     isQueryable () {
         // TEST STATUS none
-        return this._featClasses[this._defaultFC].queryable;
+        return this._childProxies.some(p => p.query);
     }
 
     // TODO docs
     setQueryable (value) {
         // TEST STATUS none
-        this._featClasses[this._defaultFC].queryable = value;
+        this._childProxies.forEach(p => { p.setQuery(value); });
     }
-    */
+
+    // TODO opacity? how do you summarize opacity over children?  average?? it would still look funny
 
     // TODO does fake news have symbols?
-    /*
-    getSymbology () {
-        // TEST STATUS none
-        return mystery;
-    }
-    */
+    //      according to schema, no
 
     // returns the proxy interface object for the root of the layer (i.e. main entry in legend, not nested child things)
     // TODO docs

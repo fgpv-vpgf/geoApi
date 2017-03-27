@@ -177,7 +177,12 @@ class LayerInterface {
         this._isPlaceholder = false; // TODO is fake considered placeholder?
 
         newProp(this, 'visibility', standardGetVisibility);
+        newProp(this, 'name', standardGetName);
+        newProp(this, 'query', standardGetQuery);
+
         this.setVisibility = standardSetVisibility;
+        this.setQuery = standardSetQuery;
+
     }
 
     convertToPlaceholder (placeholderFC) {

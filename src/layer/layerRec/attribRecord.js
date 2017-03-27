@@ -102,7 +102,7 @@ class AttribRecord extends layerRecord.LayerRecord {
                     handleAs: 'json',
                 });
 
-                return new Promise((resolve, reject) => {
+                return new Promise(resolve => {
                     defService.then(serviceResult => {
                         if (serviceResult && (typeof serviceResult.error === 'undefined') &&
                             (typeof serviceResult.count !== 'undefined')) {
@@ -112,8 +112,8 @@ class AttribRecord extends layerRecord.LayerRecord {
                             // do a second attempt
                             resolve(esriServerCount(layerUrl, true));
                         } else {
-                            // TODO different message? more verbose?
-                            reject('error getting feature count');
+                            // tells the app it failed
+                            resolve(-1);
                         }
                     }, error => {
                         // failed to load service info.
@@ -122,9 +122,9 @@ class AttribRecord extends layerRecord.LayerRecord {
                             // do a second attempt
                             resolve(esriServerCount(layerUrl, true));
                         } else {
-                            // TODO different message? more verbose?
+                            // tells the app it failed
                             console.warn(error);
-                            reject('error getting feature count');
+                            resolve(-1);
                         }
                     });
                 });
