@@ -1148,12 +1148,24 @@ function createWmsRecordBuilder(esriBundle, geoApi, classBundle) {
 function createFakeGroupRecordBuilder(classBundle) {
     /**
     * Creates an Fake Group Record class
-    * @param {Object} name           text content for fake group
+    * @param {String} name           text content for fake group
     * @param {Array} proxies         an optional list of proxies for immediate child layers
-    * @returns {Object}              instantited WmsRecord class
+    * @returns {Object}              instantited FakeGroupRecord class
     */
     return (name, proxies) => {
         return new classBundle.FakeGroupRecord(name, proxies);
+    };
+}
+
+function createBoundFakeGroupRecordBuilder(classBundle) {
+    /**
+    * Creates an Bound Fake Group Record class
+    * @param {Object} config         config object for bound fake group
+    * @param {Array} proxies         an optional list of proxies for immediate child layers
+    * @returns {Object}              instantited BoundFakeGroupRecord class
+    */
+    return (config, proxies) => {
+        return new classBundle.BoundFakeGroupRecord(config, proxies);
     };
 }
 
@@ -1194,6 +1206,7 @@ module.exports = function (esriBundle, geoApi) {
         createDynamicRecord: createDynamicRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createFeatureRecord: createFeatureRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createFakeGroupRecord: createFakeGroupRecordBuilder(layerClassBundle),
+        createBoundFakeGroupRecord: createBoundFakeGroupRecordBuilder(layerClassBundle),
         LayerDrawingOptions: esriBundle.LayerDrawingOptions,
         getFeatureInfo: getFeatureInfoBuilder(esriBundle),
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),

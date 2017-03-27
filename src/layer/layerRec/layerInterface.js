@@ -172,7 +172,6 @@ class LayerInterface {
     }
 
     convertToFakeGroup (fakeGroupRecord) {
-        // TODO name?
         this._source = fakeGroupRecord;
         this._isPlaceholder = false; // TODO is fake considered placeholder?
 
@@ -183,6 +182,21 @@ class LayerInterface {
         this.setVisibility = standardSetVisibility;
         this.setQuery = standardSetQuery;
 
+    }
+
+    convertToBoundFakeGroup (boundFakeGroupRecord) {
+        this._source = boundFakeGroupRecord;
+        this._isPlaceholder = false; // TODO is fake considered placeholder?
+
+        newProp(this, 'visibility', standardGetVisibility);
+        newProp(this, 'name', standardGetName);
+        newProp(this, 'query', standardGetQuery);
+        newProp(this, 'opacity', standardGetOpacity);
+        newProp(this, 'symbology', standardGetSymbology);
+
+        this.setVisibility = standardSetVisibility;
+        this.setQuery = standardSetQuery;
+        this.setOpacity = standardSetOpacity;
     }
 
     convertToPlaceholder (placeholderFC) {
@@ -501,7 +515,7 @@ function standardSetOpacity(value) {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    this._source._layer.opacity = value;
+    this._source.opacity = value;
 }
 
 function dynamicLeafSetOpacity(value) {
