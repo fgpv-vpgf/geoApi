@@ -353,7 +353,7 @@ function standardGetName() {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    return this._source.layerName;
+    return this._source.name;
 }
 
 function dynamicLeafGetName() {
@@ -589,11 +589,6 @@ function featureSetSnapshot() {
     //      will likely get nuked
     console.log('MOCKING THE SNAPSHOT PROCESS');
 }
-
-// TODO implement function to get .name
-//      where does it come from in single-layer? config? verify new schema
-//      group node?  a config entry? a layer property in auto-gen?
-//      deal with unbound information-only case (static entry)?
 
 // TODO implement infoType / infoContent for static entry.
 //      who supplies this? how does it get passed in.

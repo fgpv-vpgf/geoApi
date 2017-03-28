@@ -25,7 +25,7 @@ class DynamicFC extends attribFC.AttribFC {
         // we cannot know the type (e.g. Feature Layer, Raster Layer), so this object
         // is required.
         this._layerInfo = parent._layer.layerInfos[idx];
-        this._name = config.name || this._layerInfo.name || '';
+        this.name = config.name || this._layerInfo.name || '';
         this._layerType = undefined; // this indicates unknown to the ui.
         this._geometryType = undefined; // this indicates unknown to the ui.
         this._fcount = undefined;
@@ -35,7 +35,7 @@ class DynamicFC extends attribFC.AttribFC {
 
         // TODO random colours
         this._symbolBundle = {
-            stack: [parent._apiRef.symbology.generatePlaceholderSymbology(this._name || '?', '#16bf27')],
+            stack: [parent._apiRef.symbology.generatePlaceholderSymbology(this.name || '?', '#16bf27')],
             renderStyle: 'icons'
         };
 
@@ -43,8 +43,6 @@ class DynamicFC extends attribFC.AttribFC {
         // just means we would need to keep it in synch.
         this.setVisibility(config.state.visible);
     }
-
-    get name () { return this._name; }
 
     get opacity () { return this._opacity; }
     set opacity (value) {

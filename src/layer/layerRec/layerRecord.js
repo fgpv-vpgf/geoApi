@@ -2,11 +2,12 @@
 
 const layerInterface = require('./layerInterface.js')();
 const shared = require('./shared.js')();
+const root = require('./root.js')();
 
 /**
  * @class LayerRecord
  */
-class LayerRecord {
+class LayerRecord extends root.Root {
     // NOTE: we used to override layerClass in each specific class.
     //       since we require the class in the generic constructor,
     //       and since it was requested that the esri class be passed in
@@ -29,8 +30,6 @@ class LayerRecord {
     get _layerPassthroughProperties () { return ['visibleAtMapScale', 'visible', 'spatialReference']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
     get userLayer () { return this._user; } // indicates if layer was added by a user
     set userLayer (value) { this._user = value; }
-    get layerName () { return this._name; } // the top level layer name
-    set layerName (value) { this._name = value; }
     get symbology () { return this._symbolBundle; }
 
     get visibility () {
@@ -188,9 +187,9 @@ class LayerRecord {
         if (this.legendEntry && this.legendEntry.removed) { return; }
         console.info(`Layer loaded: ${this._layer.id}`);
 
-        if (!this._name) {
+        if (!this.name) {
             // no name from config. attempt layer name
-            this._name = this._layer.name;
+            this.name = this._layer.name;
         }
 
         let lookupPromise = Promise.resolve();
@@ -244,14 +243,6 @@ class LayerRecord {
      */
     onMouseOut () {
         // do nothing in baseclass
-    }
-
-    /**
-     * Utility for triggering an event and giving it to the listeners
-     */
-    _fireEvent (handlerArray, ...eventParams) {
-        // TEST STATUS none
-        handlerArray.slice(0).forEach(l => l(...eventParams));
     }
 
     /**
@@ -518,8 +509,9 @@ class LayerRecord {
      */
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
         // TEST STATUS basic
+        super();
         this._layerClass = layerClass;
-        this._name = config.name || '';
+        this.name = config.name || '';
         this._featClasses = {}; // TODO how to populate first one
         this._defaultFC = '0'; // TODO how to populate first one  TODO check if int or string
         this._apiRef = apiRef;
@@ -552,9 +544,9 @@ class LayerRecord {
             this._layer = esriLayer;
             this.bindEvents(this._layer);
             this._state = shared.states.LOADED;
-            if (!this._name) {
+            if (!this.name) {
                 // no name from config. attempt layer name
-                this._name = esriLayer.name;
+                this.name = esriLayer.name;
             }
 
             // TODO fire loaded event?

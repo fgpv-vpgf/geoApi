@@ -1,13 +1,15 @@
 'use strict';
+const root = require('./root.js')();
 
-class PlaceholderFC {
+class PlaceholderFC extends root.Root {
     // contains dummy stuff to stop placeholder states from freaking out
     // prior to a layer being loaded.
 
     constructor (parent, name) {
         // TEST STATUS basic
+        super();
         this._parent = parent;
-        this._name = name;
+        this.name = name;
 
         // TODO random colours
         this._symbolBundle = {
@@ -24,23 +26,6 @@ class PlaceholderFC {
         // TODO can a user toggle placeholders? does state need to be updated?
         return true;
     }
-
-    // TODO once we figure out names on LeafFC and GroupFC, might want to re-align this
-    //      property name to match.  Be sure to update LayerInterface.convertToPlaceholder
-    get layerName () { return this._name; }
-
-    // TODO clean this up if we dont need it
-    /*
-    getSymbology () {
-        // TEST STATUS none
-        if (!this._symbology) {
-            // TODO deal with random colours
-            this._symbology = Promise.resolve(
-                [this._parent._apiRef.symbology.generatePlaceholderSymbology(this._name || '?', '#16bf27')]);
-        }
-        return this._symbology;
-    }
-    */
 
     get symbology () {  return this._symbolBundle; }
 

@@ -2,11 +2,12 @@
 
 const layerInterface = require('./layerInterface.js')();
 const shared = require('./shared.js')();
+const root = require('./root.js')();
 
 /**
  * @class LegendGroupRecord
  */
-class LegendGroupRecord {
+class LegendGroupRecord extends root.Root {
     // NOTE we don't inherit from LayerRecord, because we don't want all the layerish default behavior
     // Fake News.
 
@@ -14,8 +15,6 @@ class LegendGroupRecord {
 
     // TODO verifiy layerId is useful / needed
     // get layerId () { return this.config.id; }
-    get layerName () { return this._name; } // the top level layer name
-    set layerName (value) { this._name = value; }
 
     get visibility () {
         // cumulation of visiblity of all childs
@@ -78,16 +77,17 @@ class LegendGroupRecord {
 
     /**
      * Create a legend record to support groups not tied to a layer.
-     * @param {Object} config        config object for the group
+     * @param {Object} name        config object for the group
      * @param {Array} childProxies   an optional array of proxies for immediate children of the group
      *
      */
-    constructor (config, childProxies) {
+    constructor (name, childProxies) {
         // TEST STATUS none
 
         // TODO will we have a config coming in?  if so, make that part of the constructor, do stuff with it.
+        super();
 
-        this._name = name;
+        this.name = name;
         this._childProxies = childProxies || [];
     }
 }

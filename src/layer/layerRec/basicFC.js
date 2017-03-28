@@ -1,11 +1,12 @@
 'use strict';
 
 const shared = require('./shared.js')();
+const root = require('./root.js')();
 
 /**
  * @class BasicFC
  */
-class BasicFC {
+class BasicFC extends root.Root {
     // base class for feature class object. deals with stuff specific to a feature class (or raster equivalent)
 
     // TEST STATUS none
@@ -26,6 +27,7 @@ class BasicFC {
      */
     constructor (parent, idx, config) {
         // TEST STATUS basic
+        super();
         this._parent = parent;
         this._idx = idx;
         this.queryable = config.state.query;

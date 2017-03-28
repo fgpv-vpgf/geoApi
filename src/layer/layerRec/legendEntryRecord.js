@@ -39,7 +39,7 @@ class LegendEntryRecord extends legendGroupRecord.LegendGroupRecord {
     // we will display the master layer setting for simplicity.
     get opacity () { return this._masterProxy.opacity; }
 
-    get layerName () { return this._masterProxy.name; }
+    get name () { return this._masterProxy.name; }
     get symbology () { return this._masterProxy.symbology; }
     getGeomType () { return this._masterProxy.geometryType; }
     get featureCount () { return this._masterProxy.featureCount; }
@@ -78,7 +78,6 @@ class LegendEntryRecord extends legendGroupRecord.LegendGroupRecord {
     // for now, we assume the proxy has already been added (via constructor or addChildProxy)
     setMasterProxy (proxy) {
         this._masterProxy = proxy;
-        this._name = proxy.name;
     }
 
     /**
