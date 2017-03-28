@@ -178,6 +178,8 @@ class LayerInterface {
         newProp(this, 'visibility', standardGetVisibility);
         newProp(this, 'name', standardGetName);
         newProp(this, 'query', standardGetQuery);
+        newProp(this, 'state', standardGetState);
+        newProp(this, 'isRefreshing', groupGetIsRefreshing);
 
         this.setVisibility = standardSetVisibility;
         this.setQuery = standardSetQuery;
@@ -188,15 +190,32 @@ class LayerInterface {
         this._source = legendEntryRecord;
         this._isPlaceholder = false; // TODO is fake considered placeholder?
 
-        newProp(this, 'visibility', standardGetVisibility);
-        newProp(this, 'name', standardGetName);
-        newProp(this, 'query', standardGetQuery);
-        newProp(this, 'opacity', standardGetOpacity);
+        // NOTE: while we could just call this.convertToFeatureLayer(),
+        //       it is risky because if something special changes for feature layer,
+        //       we might not want it affecting legend entry.
         newProp(this, 'symbology', standardGetSymbology);
+        newProp(this, 'state', standardGetState);
+        newProp(this, 'isRefreshing', standardGetIsRefreshing);
+
+        newProp(this, 'visibility', standardGetVisibility);
+        newProp(this, 'opacity', standardGetOpacity);
+        newProp(this, 'boundingBox', standardGetBoundingBox);
+        newProp(this, 'query', standardGetQuery);
+
+        newProp(this, 'name', standardGetName);
+
+        newProp(this, 'geometryType', standardGetGeometryType);
+        newProp(this, 'layerType', standardGetLayerType);
+
+        newProp(this, 'snapshot', featureGetSnapshot);
+        newProp(this, 'formattedAttributes', standardGetFormattedAttributes);
+        newProp(this, 'geometryType', featureGetGeometryType);
+        newProp(this, 'featureCount', featureGetFeatureCount);
 
         this.setVisibility = standardSetVisibility;
-        this.setQuery = standardSetQuery;
         this.setOpacity = standardSetOpacity;
+        this.setBoundingBox = standardSetBoundingBox;
+        this.setQuery = standardSetQuery;
     }
 
     convertToPlaceholder (placeholderFC) {
@@ -276,7 +295,7 @@ function standardGetIsRefreshing() {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    return this._source.state === shared.states.REFRESH;
+    return this._source.state === shared.states.REFRESH || this._source.state === shared.states.LOADING;
 }
 
 function placeholderGetIsRefreshing() {
@@ -286,18 +305,25 @@ function placeholderGetIsRefreshing() {
     return true;
 }
 
+function groupGetIsRefreshing() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return false;
+}
+
 function dynamicLeafGetIsRefreshing() {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    return this._source.state === shared.states.REFRESH;
+    return this._source.state === shared.states.REFRESH || this._source.state === shared.states.LOADING;
 }
 
 function dynamicGroupGetIsRefreshing() {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    return this._source.state === shared.states.REFRESH;
+    return this._source.state === shared.states.REFRESH || this._source.state === shared.states.LOADING;
 }
 
 function standardGetVisibility() {
@@ -529,8 +555,10 @@ function standardSetBoundingBox(value) {
     /* jshint validthis: true */
 
     // TEST STATUS none
-    // TODO test if object exists? Is it possible to have control without bbox layer?
-    this._source.bbox.visible = value;
+    // TODO Is it possible to have control without bbox layer?
+    if (this._source.bbox) {
+        this._source.bbox.visible = value;
+    }
 }
 
 function standardSetQuery(value) {

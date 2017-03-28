@@ -1,6 +1,7 @@
 'use strict';
 
 const layerInterface = require('./layerInterface.js')();
+const shared = require('./shared.js')();
 
 /**
  * @class LegendGroupRecord
@@ -39,6 +40,8 @@ class LegendGroupRecord {
         this._childProxies.forEach(p => { p.setQuery(value); });
     }
 
+    get state () { return shared.states.LOADED; }
+
     // TODO opacity? how do you summarize opacity over children?  average?? it would still look funny
 
     // TODO does fake news have symbols?
@@ -75,11 +78,11 @@ class LegendGroupRecord {
 
     /**
      * Create a legend record to support groups not tied to a layer.
-     * @param {String} name          the text to show for the group
+     * @param {Object} config        config object for the group
      * @param {Array} childProxies   an optional array of proxies for immediate children of the group
      *
      */
-    constructor (name, childProxies) {
+    constructor (config, childProxies) {
         // TEST STATUS none
 
         // TODO will we have a config coming in?  if so, make that part of the constructor, do stuff with it.
