@@ -171,8 +171,8 @@ class LayerInterface {
         this._isPlaceholder = false;
     }
 
-    convertToFakeGroup (fakeGroupRecord) {
-        this._source = fakeGroupRecord;
+    convertToLegendGroup (legendGroupRecord) {
+        this._source = legendGroupRecord;
         this._isPlaceholder = false; // TODO is fake considered placeholder?
 
         newProp(this, 'visibility', standardGetVisibility);
@@ -184,8 +184,8 @@ class LayerInterface {
 
     }
 
-    convertToBoundFakeGroup (boundFakeGroupRecord) {
-        this._source = boundFakeGroupRecord;
+    convertToLegendEntry (legendEntryRecord) {
+        this._source = legendEntryRecord;
         this._isPlaceholder = false; // TODO is fake considered placeholder?
 
         newProp(this, 'visibility', standardGetVisibility);

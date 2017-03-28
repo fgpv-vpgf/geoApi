@@ -12,8 +12,8 @@ const featureRecord = require('./featureRecord.js')();
 const imageRecord = require('./imageRecord.js')();
 const tileRecord = require('./tileRecord.js')();
 const wmsRecord = require('./wmsRecord.js')();
-const fakeGroupRecord = require('./fakeGroupRecord.js')();
-const boundFakeGroupRecord = require('./boundFakeGroupRecord.js')();
+const legendGroupRecord = require('./legendGroupRecord.js')();
+const legendEntryRecord = require('./legendEntryRecord.js')();
 
 /*
 Class heirarchy overview:
@@ -73,6 +73,6 @@ module.exports = () => ({
     ImageRecord: imageRecord.ImageRecord,
     TileRecord: tileRecord.TileRecord,
     WmsRecord: wmsRecord.WmsRecord,
-    FakeGroupRecord: fakeGroupRecord.FakeGroupRecord,
-    BoundFakeGroupRecord: boundFakeGroupRecord.BoundFakeGroupRecord
+    LegendGroupRecord: legendGroupRecord.LegendGroupRecord,
+    LegendEntryRecord: legendEntryRecord.LegendEntryRecord
 });

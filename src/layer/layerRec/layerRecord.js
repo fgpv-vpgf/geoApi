@@ -23,6 +23,8 @@ class LayerRecord {
     get state () { return this._state; }
     set state (value) { this._state = value; }
     get layerId () { return this.config.id; }
+
+    // TODO should probably remove passthrough bindings?
     get _layerPassthroughBindings () { return ['setOpacity', 'setVisibility']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
     get _layerPassthroughProperties () { return ['visibleAtMapScale', 'visible', 'spatialReference']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
     get userLayer () { return this._user; } // indicates if layer was added by a user

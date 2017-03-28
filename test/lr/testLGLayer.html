@@ -28,7 +28,7 @@
                 extent: {},
                 controls: ['snapshot', 'visibility', 'opacity', 'boundingBox', 'query', 'data'],
                 state: {
-                    opacity: 0.5,
+                    opacity: 1,
                     visibility: true,
                     boundingBox: false,
                     query: true,
@@ -65,10 +65,10 @@
             var proxy2 = layerRec2.getProxy();
             console.log('proxy 2 PROOF ', proxy2);
 
-           var fakeGroup = api.layer.createBoundFakeGroupRecord({}, [proxy1]);
+           var fakeGroup = api.layer.createLegendGroupRecord('fake news', [proxy1]);
            fakeGroup.addChildProxy(proxy2);
-           fakeGroup.setMasterProxy(proxy1);
            fakeProxy = fakeGroup.getProxy();
+
 
             // hack to wait for layer to load
 
@@ -82,27 +82,27 @@
             function afterLoadTests() {
                 console.log('enhanced loaded')
 
-                console.log('group name - sb FakeNews', fakeProxy.name);
+                console.log('group name - sb fake news', fakeProxy.name);
 
                 console.log('group init visibility - sb true', fakeProxy.visibility);
 
+                proxy1.setVisibility(false);
+                console.log('layer 1 visibility - sb false', proxy1.visibility);
+                console.log('group half visibility - sb true', fakeProxy.visibility);
+
                 fakeProxy.setVisibility(false);
                 console.log('layer 2 visibility - sb false', proxy2.visibility);
-                console.log('group off visibility - sb false', fakeProxy.visibility);
+                console.log('group no visibility - sb false', fakeProxy.visibility);
 
-                console.log('group init opacity - sb 0.5', fakeProxy.opacity);
+                console.log('group init query - sb true', fakeProxy.query);
 
-                fakeProxy.setOpacity(0.75);
-                console.log('layer 2 opacity - sb 0.75', proxy2.opacity);
-                console.log('group 3/4 opacity - sb 0.75', fakeProxy.opacity);
+                proxy1.setQuery(false);
+                console.log('layer 1 query - sb false', proxy1.query);
+                console.log('group half query - sb true', fakeProxy.query);
 
-                // wait for some promises to update
-                var toTo = setTimeout(() => {
-                    
-                    clearTimeout(toTo);
-                    console.log('symbology - sb one jsom base64', fakeProxy.symbology);
-
-                }, 2000);
+                fakeProxy.setQuery(false);
+                console.log('layer 2 query - sb false', proxy2.query);
+                console.log('group no query - sb false', fakeProxy.query);
 
             }
 

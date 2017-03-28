@@ -1,12 +1,12 @@
 'use strict';
 
 const layerInterface = require('./layerInterface.js')();
-const fakeGroupRecord = require('./fakeGroupRecord.js')();
+const legendGroupRecord = require('./legendGroupRecord.js')();
 
 /**
- * @class FakeGroupRecord
+ * @class LegendEntryRecord
  */
-class BoundFakeGroupRecord extends fakeGroupRecord.FakeGroupRecord {
+class LegendEntryRecord extends legendGroupRecord.LegendGroupRecord {
     // NOTE we don't inherit from LayerRecord, because we don't want all the layerish default behavior
     // Fake News.
 
@@ -64,7 +64,7 @@ class BoundFakeGroupRecord extends fakeGroupRecord.FakeGroupRecord {
 
         if (!this._rootProxy) {
             this._rootProxy = new layerInterface.LayerInterface(this);
-            this._rootProxy.convertToBoundFakeGroup(this);
+            this._rootProxy.convertToLegendEntry(this);
         }
         return this._rootProxy;
     }
@@ -92,5 +92,5 @@ class BoundFakeGroupRecord extends fakeGroupRecord.FakeGroupRecord {
 }
 
 module.exports = () => ({
-    BoundFakeGroupRecord
+    LegendEntryRecord
 });

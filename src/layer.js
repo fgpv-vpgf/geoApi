@@ -1145,7 +1145,7 @@ function createWmsRecordBuilder(esriBundle, geoApi, classBundle) {
     };
 }
 
-function createFakeGroupRecordBuilder(classBundle) {
+function createLegendGroupRecordBuilder(classBundle) {
     /**
     * Creates an Fake Group Record class
     * @param {String} name           text content for fake group
@@ -1153,19 +1153,19 @@ function createFakeGroupRecordBuilder(classBundle) {
     * @returns {Object}              instantited FakeGroupRecord class
     */
     return (name, proxies) => {
-        return new classBundle.FakeGroupRecord(name, proxies);
+        return new classBundle.LegendGroupRecord(name, proxies);
     };
 }
 
-function createBoundFakeGroupRecordBuilder(classBundle) {
+function createLegendEntryRecordBuilder(classBundle) {
     /**
-    * Creates an Bound Fake Group Record class
-    * @param {Object} config         config object for bound fake group
+    * Creates a Legend Entry Record class
+    * @param {Object} config         config object for entry
     * @param {Array} proxies         an optional list of proxies for immediate child layers
-    * @returns {Object}              instantited BoundFakeGroupRecord class
+    * @returns {Object}              instantited LegendEntryRecord class
     */
     return (config, proxies) => {
-        return new classBundle.BoundFakeGroupRecord(config, proxies);
+        return new classBundle.LegendEntryRecord(config, proxies);
     };
 }
 
@@ -1205,8 +1205,8 @@ module.exports = function (esriBundle, geoApi) {
         createTileRecord: createTileRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createDynamicRecord: createDynamicRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createFeatureRecord: createFeatureRecordBuilder(esriBundle, geoApi, layerClassBundle),
-        createFakeGroupRecord: createFakeGroupRecordBuilder(layerClassBundle),
-        createBoundFakeGroupRecord: createBoundFakeGroupRecordBuilder(layerClassBundle),
+        createLegendGroupRecord: createLegendGroupRecordBuilder(layerClassBundle),
+        createLegendEntryRecord: createLegendEntryRecordBuilder(layerClassBundle),
         LayerDrawingOptions: esriBundle.LayerDrawingOptions,
         getFeatureInfo: getFeatureInfoBuilder(esriBundle),
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),

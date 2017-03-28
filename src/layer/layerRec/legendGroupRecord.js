@@ -3,9 +3,9 @@
 const layerInterface = require('./layerInterface.js')();
 
 /**
- * @class FakeGroupRecord
+ * @class LegendGroupRecord
  */
-class FakeGroupRecord {
+class LegendGroupRecord {
     // NOTE we don't inherit from LayerRecord, because we don't want all the layerish default behavior
     // Fake News.
 
@@ -52,7 +52,7 @@ class FakeGroupRecord {
 
         if (!this._rootProxy) {
             this._rootProxy = new layerInterface.LayerInterface(this);
-            this._rootProxy.convertToFakeGroup(this);
+            this._rootProxy.convertToLegendGroup(this);
         }
         return this._rootProxy;
     }
@@ -74,7 +74,7 @@ class FakeGroupRecord {
     }
 
     /**
-     * Create a fake record to support groups not tied to a layer.
+     * Create a legend record to support groups not tied to a layer.
      * @param {String} name          the text to show for the group
      * @param {Array} childProxies   an optional array of proxies for immediate children of the group
      *
@@ -90,5 +90,5 @@ class FakeGroupRecord {
 }
 
 module.exports = () => ({
-    FakeGroupRecord
+    LegendGroupRecord
 });
