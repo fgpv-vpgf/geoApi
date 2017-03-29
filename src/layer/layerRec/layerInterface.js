@@ -180,6 +180,7 @@ class LayerInterface {
         newProp(this, 'query', standardGetQuery);
         newProp(this, 'state', standardGetState);
         newProp(this, 'isRefreshing', groupGetIsRefreshing);
+        newProp(this, 'layerType', standardGetLayerType);
 
         this.setVisibility = standardSetVisibility;
         this.setQuery = standardSetQuery;

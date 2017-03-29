@@ -1,12 +1,12 @@
 'use strict';
 
 const layerInterface = require('./layerInterface.js')();
-const legendGroupRecord = require('./legendGroupRecord.js')();
+const legendBaseRecord = require('./legendBaseRecord.js')();
 
 /**
  * @class LegendEntryRecord
  */
-class LegendEntryRecord extends legendGroupRecord.LegendGroupRecord {
+class LegendEntryRecord extends legendBaseRecord.LegendBaseRecord {
     // NOTE we don't inherit from LayerRecord, because we don't want all the layerish default behavior
     // Fake News.
 
@@ -57,7 +57,6 @@ class LegendEntryRecord extends legendGroupRecord.LegendGroupRecord {
     // which this class eats.
 
     set opacity (value) {
-        // TEST STATUS none
         // TODO do we need to worry about a layers that dont support opacity being registered as children?
         this._childProxies.forEach(p => { p.setOpacity(value); });
     }
@@ -65,11 +64,14 @@ class LegendEntryRecord extends legendGroupRecord.LegendGroupRecord {
     // returns the proxy interface object for the root of the layer (i.e. main entry in legend, not nested child things)
     // TODO docs
     getProxy () {
-        // TEST STATUS none
         // TODO figure out control name arrays, if they apply at all for fake groups, and where they come from
+        // TODO may need a better way to handle control arrays.  E.g. if master proxy is set, update them if _rootProxy
+        //      exists
 
         if (!this._rootProxy) {
-            this._rootProxy = new layerInterface.LayerInterface(this);
+            this._rootProxy = new layerInterface.LayerInterface(this,
+                this._masterProxy._availableControls,
+                this._masterProxy._disabledControls);
             this._rootProxy.convertToLegendEntry(this);
         }
         return this._rootProxy;
@@ -87,8 +89,7 @@ class LegendEntryRecord extends legendGroupRecord.LegendGroupRecord {
      *
      */
     constructor (config, childProxies) {
-        // TEST STATUS none
-        super('', childProxies);
+        super(childProxies);
 
         // TODO do we need anything from the config? if not, remove from constructor parameter.
         console.log(config);
