@@ -44,6 +44,7 @@ class LayerRecord extends root.Root {
         // TEST STATUS none
         if (this._layer) {
             this._layer.visible = value;
+            this.visibleChanged(value);
         }
 
         // TODO do we need an ELSE case here?

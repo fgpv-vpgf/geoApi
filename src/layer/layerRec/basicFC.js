@@ -81,10 +81,11 @@ class BasicFC extends root.Root {
     }
 
     // TODO docs
-    setVisibility (val) {
+    setVisibility (value) {
         // TEST STATUS none
         // basic case - set layer visibility
-        this._parent._layer.visible = val;
+        this._parent._layer.visible = value;
+        this.visibleChanged(value);
     }
 
     getSymbology () {

@@ -84,19 +84,20 @@ class DynamicFC extends attribFC.AttribFC {
     get featureCount () { return this._fcount; }
     set featureCount (value) { this._fcount = value; }
 
-    setVisibility (val) {
+    setVisibility (value) {
         // TEST STATUS none
         // update visible layers array
         const vLayers = this._parent._layer.visibleLayers;
         const intIdx = parseInt(this._idx);
         const vIdx = vLayers.indexOf(intIdx);
-        if (val && vIdx === -1) {
+        if (value && vIdx === -1) {
             // was invisible, now visible
             vLayers.push(intIdx);
-        } else if (!val && vIdx > -1) {
+        } else if (!value && vIdx > -1) {
             // was visible, now invisible
             vLayers.splice(vIdx, 1);
         }
+        this.visibleChanged(value);
     }
 
     // TODO extend this function to other FC's?  do they need it?

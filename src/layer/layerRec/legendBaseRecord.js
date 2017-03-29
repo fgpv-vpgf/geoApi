@@ -31,6 +31,7 @@ class LegendBaseRecord extends root.Root {
     set visibility (value) {
         // set all the kids
         this._childProxies.forEach(p => { p.setVisibility(value); });
+        this.visibleChanged(value);
     }
 
     // TODO docs
