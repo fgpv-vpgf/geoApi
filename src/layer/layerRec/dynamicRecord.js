@@ -22,31 +22,41 @@ class DynamicRecord extends attribRecord.AttribRecord {
     }
 
     get layerType () { return shared.clientLayerType.ESRI_DYNAMIC; }
+    get isTrueDynamic () { return this._isTrueDynamic; }
 
     /**
-     * Create a layer record with the appropriate geoApi layer type.  Layer config
-     * should be fully merged with all layer options defined (i.e. this constructor
-     * will not apply any defaults).
-     * @param {Object} layerClass    the ESRI api object for dynamic layers
-     * @param {Object} esriRequest   the ESRI api object for making web requests with proxy support
-     * @param {Object} apiRef        object pointing to the geoApi. allows us to call other geoApi functions
-     * @param {Object} config        layer config values
-     * @param {Object} esriLayer     an optional pre-constructed layer
-     * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
+     * Create a layer record with the appropriate geoApi layer type.
+     * Regarding configuration -- in the standard case, the incoming config object
+     * will be incomplete with regards to child state. It may not even have entries for all possible
+     * child sub-layers.  Given our config defaulting for children happens AFTER the layer loads,
+     * it means what is passed in at the constructor is generally unreliable except for any child names,
+     * and the class will treat that information as unreliable (the UI will set values after config defaulting
+     * happens). In the rare case where the config is fully formed and we want to take advantage of that,
+     * set the configIsComplete param to true.  Be aware that if the config is not actually complete you may
+     * get a layer in an undesired initial state.
+     *
+     * @param {Object} layerClass         the ESRI api object for dynamic layers
+     * @param {Object} esriRequest        the ESRI api object for making web requests with proxy support
+     * @param {Object} apiRef             object pointing to the geoApi. allows us to call other geoApi functions
+     * @param {Object} config             layer config values
+     * @param {Object} esriLayer          an optional pre-constructed layer
+     * @param {Function} epsgLookup       an optional lookup function for EPSG codes (see geoService for signature)
+     * @param {Boolean} configIsComplete  an optional flag to indicate if the config is fully flushed out (i.e. things defined for all children). Defaults to false.
      */
-    constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
+    constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup, configIsComplete = false) {
         // TEST STATUS basic
         super(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup);
         this.ArcGISDynamicMapServiceLayer = layerClass;
+        this._configIsComplete = configIsComplete;
 
         // TODO what is the case where we have dynamic layer already prepared
         //      and passed in? Generally this only applies to file layers (which
         //      are feature layers).
 
-        // TODO figure out controls on config
-        // TODO worry about placeholders. WORRY. how does that even work here?
-
         this._proxies = {};
+
+        // marks if layer supports dynamic capabilities, like child opacity, renderer change, layer reorder
+        this._isTrueDynamic = false;
 
     }
 
@@ -57,11 +67,15 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @return {Object}               proxy interface for given child
      */
     getChildProxy (featureIdx) {
-        // TEST STATUS basic
         // TODO verify we have integer coming in and not a string
-        // in this case, featureIdx can also be a group index
-        if (this._proxies[featureIdx.toString()]) {
-            return this._proxies[featureIdx.toString()];
+        // NOTE we no longer have group proxies. Since it is possible for a proxy to
+        //      be requested prior to a dynamic layer being loaded (and thus have no
+        //      idea of the index is valid or the index is a group), we always give
+        //      a proxy and depend on the caller to be smart about it.
+
+        const strIdx = featureIdx.toString();
+        if (this._proxies[strIdx]) {
+            return this._proxies[strIdx];
         } else {
             // throw new Error(`attempt to get non-existing child proxy. Index ${featureIdx}`);
 
@@ -70,21 +84,16 @@ class DynamicRecord extends attribRecord.AttribRecord {
             // a proxy loaded with a placeholder.
             // TODO how to pass in a name? add an optional second parameter? expose a "set name" on the proxy?
             const pfc = new placeholderFC.PlaceholderFC(this, '');
-            const tProxy = new layerInterface.LayerInterface(pfc); // specificially no controls at this point.
+            const tProxy = new layerInterface.LayerInterface(pfc);
             tProxy.convertToPlaceholder(pfc);
-            this._proxies[featureIdx.toString()] = tProxy;
+            this._proxies[strIdx] = tProxy;
             return tProxy;
 
         }
     }
 
-    // TODO I think we need to override getProxy to return a special Dynamic proxy.
-    //      Need to figure out how visibility works (i.e. layer is invisible or just empty visibleChildren array)
-    //      Might also need to manage the root children somehow (i.e. the layerEntries from the config)
-
     // TODO docs
     getFeatureCount (featureIdx) {
-        // TEST STATUS basic
         // point url to sub-index we want
         // TODO might change how we manage index and url
         return super.getFeatureCount(this._layer.url + '/' + featureIdx);
@@ -96,27 +105,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
     * @function onLoad
     */
     onLoad () {
-        // TEST STATUS basic
         super.onLoad();
-        const supportsDynamic = this._layer.supportsDynamicLayers;
-        const controlBanlist = ['reload', 'snapshot', 'boundingBox'];
-        if (!supportsDynamic) {
-            controlBanlist.push('opacity');
-        }
-
-        // strip any banned controls from a controls array
-        // array is modified
-        const banControls = controls => {
-            controlBanlist.forEach(bc => {
-                const idx = controls.indexOf(bc);
-                if (idx > -1) {
-                    controls.splice(idx, 1);
-                }
-            });
-
-            // a bit redundant. useful if we are passing in an anonymous array.
-            return controls;
-        };
+        this._isTrueDynamic = this._layer.supportsDynamicLayers;
 
         // don't worry about structured legend. the legend part is separate from
         // the layers part. we just load what we are told to. the legend module
@@ -128,72 +118,59 @@ class DynamicRecord extends attribRecord.AttribRecord {
         //      We assume the objects at the layer level (index -1) are fully defaulted.
         //      All other missing items assigned from parent item.
 
-        // subconfig lookup. initialize with the layer root (-1), then add
-        // in anything provided in the initial config.
-        const subConfigs = {
-            '-1': {
-                config: {
-                    state: this.config.state,
-                    controls: banControls(this.config.controls.concat())
-                },
-                defaulted: true
-            }
-        };
+        // collate any relevant overrides from the config.
+        const subConfigs = {};
 
         this.config.layerEntries.forEach(le => {
             subConfigs[le.index.toString()] = {
-                config: le,
-                defaulted: false
+                config: JSON.parse(JSON.stringify(le)),
+                defaulted: this._configIsComplete
             };
         });
 
-        // subfunction to either return a stored sub-config, or
-        // derive a new subconfig from the parent config.
-        // both params integers in string format.
-        const fetchSubConfig = (id, parentId) => {
+        // subfunction to return a subconfig object.
+        // if it does not exist or is not defaulted, will do that first
+        // id param is an integer in string format
+        const fetchSubConfig = (id, serverName = '')  => {
+            // snapshot and bounding box don't apply to child layers
+            const dummyState = {
+                opacity: 1,
+                visibility: false,
+                query: false
+            };
+
             if (subConfigs[id]) {
                 const subC = subConfigs[id];
                 if (!subC.defaulted) {
-                    // get any missing properties from parent
-                    const parent = subConfigs[parentId].config;
+                    // config is incomplete, fill in blanks
+                    // we will never hit this code block a complete config was passed in
+                    // (because it will already have defaulted === true).
+                    // that means our state is unreliable and will be overwritten with a default
 
-                    // TODO verify if we need to check for controls array of .length === 0.
-                    //      I am assuming an empty array a valid setting (i.e. no controls should be shown)
-                    if (!subC.config.controls) {
-                        // we can assume parent.controls has already been ban-scraped
-                        subC.config.controls = parent.controls.concat();
-                    } else {
-                        // ensure we dont have any bad controls lurking
-                        banControls(subC.config.controls);
-                    }
+                    subC.config.state = Object.assign({}, dummyState);
 
-                    if (!subC.config.state) {
-                        // copy all
-                        subC.config.state = Object.assign({}, parent.state);
-                    } else {
-                        // selective inheritance
-                        Object.keys(parent.state).forEach(stateKey => {
-                            // be aware of falsey logic here.
-                            if (!subC.config.state.hasOwnProperty(stateKey)) {
-                                subC.config.state[stateKey] = parent.state[stateKey];
-                            }
-                        });
-                    }
-
+                    // default outfields if not already there
                     if (!subC.config.hasOwnProperty('outfields')) {
                         subC.config.outfields = '*';
                     }
 
+                    // apply a server name if no name exists
+                    if (!subC.config.name) {
+                        subC.config.name = serverName;
+                    }
+
+                    // mark as defaulted so we don't do this again
                     subC.defaulted = true;
                 }
                 return subC.config;
             } else {
-                // no config at all. direct copy properties from parent
-                // we can assume parent.controls has already been ban-scraped
+                // no config at all. we apply defaults, and a name from the server if available
                 const newConfig = {
-                    state: Object.assign({}, subConfigs[parentId].config.state),
-                    controls: subConfigs[parentId].config.controls.concat(),
-                    outfields: '*'
+                    name: serverName,
+                    state: Object.assign({}, dummyState),
+                    outfields: '*',
+                    index: parseInt(id),
+                    stateOnly: true
                 };
                 subConfigs[id] = {
                     config: newConfig,
@@ -206,92 +183,68 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // this subfunction will recursively crawl a dynamic layerInfo structure.
         // it will generate proxy objects for all groups and leafs under the
         // input layerInfo.
-        // it also collects and returns an array of leaf nodes so each group
-        // can store it and have fast access to all leaves under it.
-        const processLayerInfo = (layerInfo, treeArray, parentId) => {
+        // we also generate a tree structure of layerInfos that is in a format
+        // that makes the client happy
+        const processLayerInfo = (layerInfo, treeArray) => {
             const sId = layerInfo.id.toString();
-            const subConfig = fetchSubConfig(sId, parentId.toString());
+            const subC = fetchSubConfig(sId, layerInfo.name);
+
             if (layerInfo.subLayerIds && layerInfo.subLayerIds.length > 0) {
-                // group
-                // TODO probably need some placeholder magic going on here too
-                // TODO do we need to apply any config state?
-                // TODO figure out control lists, whats available, whats disabled.
-                //      supply on second and third parameters
-                let group;
-                if (this._proxies[sId]) {
-                    // we have a pre-made proxy (structured legend)
-                    // TODO might need to pass controls array into group proxy
-                    group = this._proxies[sId];
-                } else {
-                    // set up new proxy
-                    group = new layerInterface.LayerInterface(this, subConfig.controls);
-                    this._proxies[sId] = group;
-
-                }
-                group.convertToDynamicGroup(this, sId, subConfig.name || layerInfo.name || '');
-
-                const treeGroup = { id: layerInfo.id, childs: [] };
+                // group sublayer
+                const treeGroup = {
+                    id: layerInfo.id,
+                    name: subC.name,
+                    childs: []
+                };
                 treeArray.push(treeGroup);
 
                 // process the kids in the group.
                 // store the child leaves in the internal variable
                 layerInfo.subLayerIds.forEach(slid => {
-                    group._childLeafs = group._childLeafs.concat(
-                        processLayerInfo(this._layer.layerInfos[slid], treeGroup.childs, sId));
+                    processLayerInfo(this._layer.layerInfos[slid], treeGroup.childs);
                 });
 
-                return group._childLeafs;
             } else {
                 // leaf
-                // TODO figure out control lists, whats available, whats disabled.
-                //      supply on second and third parameters.
-                //      might need to steal from parent, since auto-gen may not have explicit
-                //      config settings.
-                // TODO since we are doing placeholder, might want to not provide controls array yet.
-                let leaf;
-                const pfc = new placeholderFC.PlaceholderFC(this, layerInfo.name);
+
+                const pfc = new placeholderFC.PlaceholderFC(this, subC.name);
                 if (this._proxies[sId]) {
-                    // we have a pre-made proxy (structured legend)
-                    // TODO might need to pass controls array into leaf proxy
-                    leaf = this._proxies[sId];
-                    leaf.updateSource(pfc);
+                    // we have a pre-made proxy (structured legend). update it.
+                    this._proxies[sId].updateSource(pfc);
                 } else {
                     // set up new proxy
-                    leaf = new layerInterface.LayerInterface(null, subConfig.controls);
-                    leaf.convertToPlaceholder(pfc);
-                    this._proxies[sId] = leaf;
+                    const leafProxy = new layerInterface.LayerInterface(null);
+                    leafProxy.convertToPlaceholder(pfc);
+                    this._proxies[sId] = leafProxy;
                 }
 
                 treeArray.push({ id: layerInfo.id });
-                return [leaf];
             }
         };
 
         this._childTree = []; // public structure describing the tree
+
+        // process the child layers our config is interested in, and all their children.
         if (this.config.layerEntries) {
             this.config.layerEntries.forEach(le => {
                 if (!le.stateOnly) {
-                    processLayerInfo(this._layer.layerInfos[le.index], this._childTree, -1);
+                    processLayerInfo(this._layer.layerInfos[le.index], this._childTree);
                 }
             });
         }
 
         // trigger attribute load and set up children bundles.
-        // TODO do we need an options object, with .skip set for sub-layers we are not dealing with?
-        //      we currently (sort-of) have the list of things included -- the keys of the
-        //      subConfigs object. we would need to iterate layerInfos again and find keys
-        //      not in subConfigs.
+        //      do we need an options object, with .skip set for sub-layers we are not dealing with?
         //      Alternate: add new option that is opposite of .skip.  Will be more of a
         //                 .only, and we won't have to derive a "skip" set from our inclusive
         //                 list
         //      Furthermore: skipping / being effecient might not really matter here anymore.
         //                   back in the day, loadLayerAttribs would actually load everything.
         //                   now it just sets up promises that dont trigger until someone asks for
-        //                   the information.
+        //                   the information. <-- for now we are doing this approach.
         const attributeBundle = this._apiRef.attribs.loadLayerAttribs(this._layer);
-        const initVis = [];
 
-        // converts server type string to client type string
+        // converts server layer type string to client layer type string
         const serverLayerTypeToClientLayerType = serverType => {
             switch (serverType) {
                 case 'Feature Layer':
@@ -299,7 +252,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 case 'Raster Layer':
                     return shared.clientLayerType.ESRI_RASTER;
                 default:
-                    throw new Error('Unexpected layer type in serverLayerTypeToClientLayerType', serverType);
+                    console.warn('Unexpected layer type in serverLayerTypeToClientLayerType', serverType);
+                    return shared.clientLayerType.UNKNOWN;
             }
         };
 
@@ -313,22 +267,10 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 //      attribute things.
                 const dFC = new dynamicFC.DynamicFC(this, idx, attributeBundle[idx], subC.config);
                 this._featClasses[idx] = dFC;
-                if (subC.config.state.visibility) {
-                    initVis.push(parseInt(idx)); // store for initial visibility
-                }
 
                 // if we have a proxy watching this leaf, replace its placeholder with the real data
                 const leafProxy = this._proxies[idx];
                 if (leafProxy) {
-                    // TODO update controls array?
-
-                    // trickery involving symbology.
-                    // the UI is binding to the object that was set up in the leaf placeholder.
-                    // so we cannot just make a new one.
-                    // we need to inject the placeholder symbology object into our new DynamicFC.
-                    // then we can aysnch update it with real symbols, and the UI is still
-                    // pointing at the same array in memory.
-                    dFC._symbolBundle = leafProxy.symbology;
                     leafProxy.convertToDynamicLeaf(dFC);
                 }
 
@@ -349,34 +291,26 @@ class DynamicRecord extends attribRecord.AttribRecord {
             }
         });
 
-        // need to do a post ban-sweep on control arrays. dynamic groups are not allowed
-        // to have opacity. if we had removed above, children of groups would have also
-        // lost opacity.
-        // a lovely pyramid of doom.
-        Object.keys(this._proxies).forEach(sId => {
-            const proxy = this._proxies[sId];
-            if (!proxy.isPlaceholder && proxy.layerType === shared.clientLayerType.ESRI_GROUP) {
-                const poIdx = proxy.availableControls.indexOf('opacity');
-                if (poIdx > -1) {
-                    proxy.availableControls.splice(poIdx, 1);
+        // TODO careful now, as the dynamicFC.DynamicFC constructor also appears to be setting visibility on the parent.
+        if (this._configIsComplete) {
+            // if we have a complete config, want to set layer visibility
+            // get an array of leaf ids that are visible.
+            // use _featClasses as it contains keys that exist on the server and are
+            // potentially visible in the client.
+            const initVis = Object.keys(this._featClasses)
+                .filter(fcId => {return fetchSubConfig(fcId).config.state.visibility; })
+                .map(fcId => { return parseInt(fcId); });
 
-                    // TODO test if we need to adjust subconfigs, or if it's all the same pointer
-                    if (subConfigs[sId].config.controls.indexOf('opacity') > -1) {
-                        console.log('HEEEY HEYYY WE HAVE A CONFIG OPACITY GROUP, ADD CODE TO REMOVE IT');
-                    }
-                }
+            if (initVis.length === 0) {
+                initVis.push(-1); // esri code for set all to invisible
             }
-        });
-
-        if (initVis.length === 0) {
-            initVis.push(-1); // esri code for set all to invisible
+            this._layer.setVisibleLayers(initVis);
         }
-        this._layer.setVisibleLayers(initVis);
+
     }
 
     // override to add child index parameter
     zoomToScale (childIdx, map, lods, zoomIn, zoomGraphic = false) {
-        // TEST STATUS none
         // get scale set from child, then execute zoom
         return this._featClasses[childIdx].getScaleSet().then(scaleSet => {
             return this._zoomToScaleSet(map, lods, zoomIn, scaleSet, zoomGraphic);
@@ -384,12 +318,10 @@ class DynamicRecord extends attribRecord.AttribRecord {
     }
 
     isOffScale (childIdx, mapScale) {
-        // TEST STATUS none
         return this._featClasses[childIdx].isOffScale(mapScale);
     }
 
     isQueryable (childIdx) {
-        // TEST STATUS none
         return this._featClasses[childIdx].queryable;
     }
 
@@ -468,18 +400,15 @@ class DynamicRecord extends attribRecord.AttribRecord {
     * @returns {Promise}          resolves with a layer data object
     */
     getLayerData (childIndex) {
-        // TEST STATUS none
         return this._featClasses[childIndex].getLayerData();
     }
 
     getFeatureName (childIndex, objId, attribs) {
-        // TEST STATUS none
         return this._featClasses[childIndex].getFeatureName(objId, attribs);
     }
 
     getSymbology (childIndex) {
-        // TEST STATUS basic
-        return this._featClasses[childIndex].getSymbology();
+        return this._featClasses[childIndex].symbology;
     }
 
     /**

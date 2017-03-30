@@ -51,15 +51,14 @@
 
             function afterLoadTests() {
                 console.log('enhanced loaded')
+                
+                // THIS entire test is kind of useless now that geoAPI no longer does parent-child defaulting
 
-                const proxyGroup0 = layerRec.getChildProxy(0);
                 const proxyLeaf3 = layerRec.getChildProxy(3);
 
                 console.log('proxy leaf 3', proxyLeaf3);
                 console.log('child tree', layerRec.getChildTree());
 
-                console.log('leaf 3 available controls, should be visible, opacity', proxyLeaf3.availableControls);
-                console.log('group available controls, should be visible', proxyGroup0.availableControls);
                 console.log('leaf 3 opacity, should be 0.5', proxyLeaf3.opacity);
 
                 console.log('layer opacity, should be 1', layerRec.opacity);

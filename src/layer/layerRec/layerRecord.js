@@ -30,7 +30,6 @@ class LayerRecord extends root.Root {
     get _layerPassthroughProperties () { return ['visibleAtMapScale', 'visible', 'spatialReference']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
     get userLayer () { return this._user; } // indicates if layer was added by a user
     set userLayer (value) { this._user = value; }
-    get symbology () { return this._symbolBundle; }
 
     get visibility () {
         // TEST STATUS none
@@ -183,9 +182,7 @@ class LayerRecord extends root.Root {
     * @function onLoad
     */
     onLoad () {
-        // TEST STATUS basic
-        // TODO is legend entry valid anymore? will it be a different system?
-        if (this.legendEntry && this.legendEntry.removed) { return; }
+        // only super-general stuff in here, that all layers should run.
         console.info(`Layer loaded: ${this._layer.id}`);
 
         if (!this.name) {
@@ -434,16 +431,10 @@ class LayerRecord extends root.Root {
     * @returns {Promise} resolves feature count
     */
     getFeatureCount () {
-        // TEST STATUS basic
         // TODO determine best result to indicate that layer does not have features
-        //      we may want a null so that UI can display a different message (or suppress the message)
+        //      we may want a null so that UI can display a different message (or suppress the message).
+        //      of note, the proxy is currently returning undefined for non-feature things
         return Promise.resolve(0);
-    }
-
-    // TODO docs
-    getSymbology () {
-        // TEST STATUS basic
-        return this._featClasses[this._defaultFC].getSymbology();
     }
 
     /**
@@ -464,6 +455,9 @@ class LayerRecord extends root.Root {
         // move the envelope so it is centered around the point
         return cBuff.centerAt(point);
     }
+
+    // TODO docs
+    get symbology () { return this._featClasses[this._defaultFC].symbology; }
 
     // TODO docs
     isQueryable () {
@@ -532,13 +526,6 @@ class LayerRecord extends root.Root {
             };
             Object.defineProperty(this, propName, descriptor);
         });
-
-        // default to placeholder symbol. real stuff will be inserted during loaded event
-        // TODO deal with lack of random colour library
-        this._symbolBundle = {
-            stack: [apiRef.symbology.generatePlaceholderSymbology(this._name || '?', '#16bf27')],
-            renderStyle: 'icons'
-        };
 
         if (esriLayer) {
             this.constructLayer = () => { throw new Error('Cannot construct pre-made layers'); };

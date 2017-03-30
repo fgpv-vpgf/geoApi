@@ -17,27 +17,16 @@ class DynamicFC extends attribFC.AttribFC {
      * @param {Object} config        the config object for this sublayer
      */
     constructor (parent, idx, layerPackage, config) {
-        // TEST STATUS basic
         super(parent, idx, layerPackage, config);
 
         // store pointer to the layerinfo for this FC.
         // while most information here can also be gleaned from the layer object,
         // we cannot know the type (e.g. Feature Layer, Raster Layer), so this object
         // is required.
+        // TODO revist _layerInfo and how it is used.
         this._layerInfo = parent._layer.layerInfos[idx];
-        this.name = config.name || this._layerInfo.name || '';
-        this._layerType = undefined; // this indicates unknown to the ui.
-        this._geometryType = undefined; // this indicates unknown to the ui.
-        this._fcount = undefined;
 
-        // TODO put the config stuff into private properties
         this.opacity = config.state.opacity;
-
-        // TODO random colours
-        this._symbolBundle = {
-            stack: [parent._apiRef.symbology.generatePlaceholderSymbology(this.name || '?', '#16bf27')],
-            renderStyle: 'icons'
-        };
 
         // visibility is kept stateful by the parent. keeping an internal property
         // just means we would need to keep it in synch.
@@ -60,11 +49,8 @@ class DynamicFC extends attribFC.AttribFC {
         }
     }
 
-    get symbology () { return this._symbolBundle; }
-
     // returns an object with minScale and maxScale values for the feature class
     getScaleSet () {
-        // TEST STATUS none
         // get the layerData promise for this FC, wait for it to load,
         // then return the scale data
         return this.getLayerData().then(lData => {
@@ -85,7 +71,6 @@ class DynamicFC extends attribFC.AttribFC {
     set featureCount (value) { this._fcount = value; }
 
     setVisibility (value) {
-        // TEST STATUS none
         // update visible layers array
         const vLayers = this._parent._layer.visibleLayers;
         const intIdx = parseInt(this._idx);
@@ -106,13 +91,6 @@ class DynamicFC extends attribFC.AttribFC {
         // TODO would we ever need to worry about _parent._layer.visible being false while
         //      the visibleLayers array still contains valid indexes?
         return this._parent._layer.visibleLayers.indexOf(parseInt(this._idx)) > -1;
-    }
-
-    loadSymbology () {
-        this.getSymbology().then(symbolArray => {
-            // remove anything from the stack, then add new symbols to the stack
-            this.symbology.stack.splice(0, this.symbology.stack.length, ...symbolArray);
-        });
     }
 
 }

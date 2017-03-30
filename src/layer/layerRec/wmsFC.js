@@ -53,37 +53,33 @@ function getWMSLayerTitle(wmsLayer, wmsLayerId) {
  */
 class WmsFC extends basicFC.BasicFC {
 
-    getSymbology () {
-        // TEST STATUS none
-        if (!this._symbology) {
-            const configLayerEntries =  this._parent.config.layerEntries;
-            const gApi = this._parent._apiRef;
-            const legendArray = gApi.layer.ogc
-                .getLegendUrls(this._parent._layer, configLayerEntries.map(le => le.id))
-                .map((imageUri, idx) => {
+    // this will actively download / refresh the internal symbology
+    loadSymbology () {
+        const configLayerEntries =  this._parent.config.layerEntries;
+        const gApi = this._parent._apiRef;
+        const legendArray = gApi.layer.ogc
+            .getLegendUrls(this._parent._layer, configLayerEntries.map(le => le.id))
+            .map((imageUri, idx) => {
 
-                    const symbologyItem = {
-                        name: null,
-                        svgcode: null
-                    };
+                const symbologyItem = {
+                    name: null,
+                    svgcode: null
+                };
 
-                    // config specified name || server specified name || config id
-                    const name = configLayerEntries[idx].name ||
-                        getWMSLayerTitle(this._parent._layer, configLayerEntries[idx].id) ||
-                        configLayerEntries[idx].id;
+                // config specified name || server specified name || config id
+                const name = configLayerEntries[idx].name ||
+                    getWMSLayerTitle(this._parent._layer, configLayerEntries[idx].id) ||
+                    configLayerEntries[idx].id;
 
-                    gApi.symbology.generateWMSSymbology(name, imageUri).then(data => {
-                        symbologyItem.name = data.name;
-                        symbologyItem.svgcode = data.svgcode;
-                    });
-
-                    return symbologyItem;
+                gApi.symbology.generateWMSSymbology(name, imageUri).then(data => {
+                    symbologyItem.name = data.name;
+                    symbologyItem.svgcode = data.svgcode;
                 });
-            this._symbology = Promise.resolve(legendArray);
-        }
-        return this._symbology;
-    }
 
+                return symbologyItem;
+            });
+        this.symbology = legendArray;
+    }
 }
 
 module.exports = () => ({

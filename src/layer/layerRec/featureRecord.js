@@ -1,6 +1,7 @@
 'use strict';
 
 const attribFC = require('./attribFC.js')();
+const placeholderFC = require('./placeholderFC.js')();
 const attribRecord = require('./attribRecord.js')();
 const layerInterface = require('./layerInterface.js')();
 const shared = require('./shared.js')();
@@ -30,6 +31,10 @@ class FeatureRecord extends attribRecord.AttribRecord {
         //    this._defaultFC = '0';
         //    this._featClasses['0'] = placeholder;
         super(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup);
+
+        // handles placeholder symbol, possibly other things
+        this._defaultFC = '0';
+        this._featClasses['0'] = new placeholderFC.PlaceholderFC(this, this.name);
 
         this._geometryType = undefined;
         this._fcount = undefined;
@@ -91,10 +96,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         this._defaultFC = idx;
         this._featClasses[idx] = aFC;
 
-        this.getSymbology().then(symbolArray => {
-            // remove anything from the stack, then add new symbols to the stack
-            this.symbology.stack.splice(0, this.symbology.stack.length, ...symbolArray);
-        });
+        aFC.loadSymbology();
 
         // update asynch data
         aFC.getLayerData().then(ld => {

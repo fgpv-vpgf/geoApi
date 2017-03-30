@@ -12,22 +12,16 @@ class PlaceholderFC extends root.Root {
         this.name = name;
 
         // TODO random colours
-        this._symbolBundle = {
-            stack: [parent._apiRef.symbology.generatePlaceholderSymbology(name || '?', '#16bf27')],
-            renderStyle: 'icons'
-        };
+        this.symbology = [parent._apiRef.symbology.generatePlaceholderSymbology(name || '?', '#16bf27')];
     }
 
     // TODO probably need more stuff
 
     getVisibility () {
-        // TEST STATUS none
         // TODO enhance to have some default value, assigned in constructor?
         // TODO can a user toggle placeholders? does state need to be updated?
         return true;
     }
-
-    get symbology () {  return this._symbolBundle; }
 
     // TODO do we need to check if parent exists? Placeholder use-cases are not flushed out right now.
     get state () { return this._parent._state; }

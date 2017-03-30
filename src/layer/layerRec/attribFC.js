@@ -22,6 +22,9 @@ class AttribFC extends basicFC.BasicFC {
         super(parent, idx, config);
 
         this._layerPackage = layerPackage;
+        this._layerType = undefined; // this indicates unknown to the ui.
+        this._geometryType = undefined; // this indicates unknown to the ui.
+        this._fcount = undefined;
 
         // moar?
     }
@@ -48,20 +51,17 @@ class AttribFC extends basicFC.BasicFC {
         return this._layerPackage.layerData;
     }
 
-    getSymbology () {
-        // TEST STATUS basic
-        if (!this._symbology) {
-            this._symbology = this.getLayerData().then(lData => {
-                if (lData.layerType === 'Feature Layer') {
-                    // feature always has a single item, so index 0
-                    return shared.makeSymbologyArray(lData.legend.layers[0].legend);
-                } else {
-                    // non-feature source. use legend server
-                    return super.getSymbology();
-                }
-            });
-        }
-        return this._symbology;
+    // this will actively download / refresh the internal symbology
+    loadSymbology () {
+        this.getLayerData().then(lData => {
+            if (lData.layerType === 'Feature Layer') {
+                // feature always has a single item, so index 0
+                this.symbology = shared.makeSymbologyArray(lData.legend.layers[0].legend);
+            } else {
+                // non-feature source. use legend server
+                super.loadSymbology();
+            }
+        });
     }
 
     /**

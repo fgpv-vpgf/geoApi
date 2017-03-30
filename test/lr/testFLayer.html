@@ -47,7 +47,7 @@
             console.log('proxy PROOF ', proxy);
 
             console.log('loading state', proxy.state);
-            console.log('isRefreshing while loading? ', proxy.isRefreshing);
+            console.log('symbology while loading -- should be placeholder ', proxy.symbology);
 
             // hack to wait for layer to load
 
@@ -73,16 +73,13 @@
 
                 proxy.setVisibility(false);
                 console.log('proxy visible - sb false', proxy.visibility);
-                
+
                 console.log('symbology - sb 1 element', proxy.symbology);
-                
+
                 console.log('loaded state', proxy.state);
-                
-                console.log('isRefreshing? ', proxy.isRefreshing);
 
                 // wait for some promises to update
                 var toTo = setTimeout(() => {
-                    
                     clearTimeout(toTo);
                     console.log('geom type layer root - sb point', proxy.geometryType);
                     console.log('feature count - sb 27', proxy.featureCount);
@@ -92,8 +89,6 @@
             }
 
 /*
-           
-
             var formAttr = layerRec.getFormattedAttributes();
             formAttr.then(a => {
                 console.log('attrib PROOF ', a);

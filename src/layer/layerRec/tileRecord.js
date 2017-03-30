@@ -1,6 +1,7 @@
 'use strict';
 
 const basicFC = require('./basicFC.js')();
+const placeholderFC = require('./placeholderFC.js')();
 const layerRecord = require('./layerRecord.js')();
 const shared = require('./shared.js')();
 
@@ -20,9 +21,11 @@ class TileRecord extends layerRecord.LayerRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
-        // TEST STATUS none
-        // TODO if we have nothing to add here, delete this constructor
         super(layerClass, apiRef, config, esriLayer, epsgLookup);
+
+        // handles placeholder symbol, possibly other things
+        this._defaultFC = '0';
+        this._featClasses['0'] = new placeholderFC.PlaceholderFC(this, this.name);
     }
 
     /**
@@ -31,17 +34,12 @@ class TileRecord extends layerRecord.LayerRecord {
     * @function onLoad
     */
     onLoad () {
-        // TEST STATUS none
         super.onLoad();
 
-        // TODO consider making this a function, as it is common across less-fancy layers
-        this._defaultFC = '0';
-        this._featClasses['0'] = new basicFC.BasicFC(this, '0', this.config);
+        const fc = new basicFC.BasicFC(this, '0', this.config);
+        this._featClasses['0'] = fc;
 
-        this.getSymbology().then(symbolArray => {
-            // remove anything from the stack, then add new symbols to the stack
-            this.symbology.stack.splice(0, this.symbology.stack.length, ...symbolArray);
-        });
+        fc.loadSymbology();
     }
 
     get layerType () { return shared.clientLayerType.ESRI_TILE; }

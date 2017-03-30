@@ -18,7 +18,9 @@ const clientLayerType = {
     ESRI_TILE: 'esriTile',
     ESRI_GROUP: 'esriGroup',
     ESRI_RASTER: 'esriRaster',
-    OGC_WMS: 'ogcWms'
+    OGC_WMS: 'ogcWms',
+    UNRESOLVED: 'unresolved',
+    UNKNOWN: 'unknown'
 };
 
 // legend data is our modified legend structure.
@@ -26,7 +28,6 @@ const clientLayerType = {
 // items are promises.
 // TODO proper docs
 function makeSymbologyArray(legendData) {
-    // TEST STATUS basic
     return legendData.map(item => {
 
         const symbologyItem = {

@@ -60,11 +60,9 @@
                     console.log('visible scale set - sb 0,0', vs);
                 });
 
-                layerRec.getFeatureCount().then(fc => {
-                    console.log('feature count - sb 0', fc);
-                });
+                console.log('feature count - sb undefined', proxy.featureCount);
 
-                console.log('queryable, should be true', layerRec.isQueryable());
+                console.log('queryable, should be true', proxy.query);
                 console.log('root layer type - sb image', proxy.layerType);
 
 /*

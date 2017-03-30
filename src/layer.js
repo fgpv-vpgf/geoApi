@@ -1106,15 +1106,18 @@ function createFeatureRecordBuilder(esriBundle, geoApi, classBundle) {
 
 function createDynamicRecordBuilder(esriBundle, geoApi, classBundle) {
     /**
-    * Creates an Dynamic Layer Record class
-    * @param {Object} config         layer config values
-    * @param {Object} esriLayer      an optional pre-constructed layer
-    * @param {Function} epsgLookup   an optional lookup function for EPSG codes (see geoService for signature)
-    * @returns {Object}              instantited DynamicRecord class
-    */
-    return (config, esriLayer, epsgLookup) => {
+     * Creates an Dynamic Layer Record class
+     * See DynamicRecord constructor for more detailed info on configIsComplete.
+     *
+     * @param {Object} config              layer config values
+     * @param {Object} esriLayer           an optional pre-constructed layer
+     * @param {Function} epsgLookup        an optional lookup function for EPSG codes (see geoService for signature)
+     * @param {Boolean} configIsComplete   an optional flag to indicate all child state values are provided in the config and should be used.
+     * @returns {Object}                   instantited DynamicRecord class
+     */
+    return (config, esriLayer, epsgLookup, configIsComplete = false) => {
         return new classBundle.DynamicRecord(esriBundle.ArcGISDynamicMapServiceLayer, esriBundle.esriRequest,
-            geoApi, config, esriLayer, epsgLookup);
+            geoApi, config, esriLayer, epsgLookup, configIsComplete);
     };
 }
 
@@ -1142,30 +1145,6 @@ function createWmsRecordBuilder(esriBundle, geoApi, classBundle) {
     */
     return (config, esriLayer, epsgLookup) => {
         return new classBundle.WmsRecord(esriBundle.WmsLayer, geoApi, config, esriLayer, epsgLookup);
-    };
-}
-
-function createLegendGroupRecordBuilder(classBundle) {
-    /**
-    * Creates an Fake Group Record class
-    * @param {String} name           text content for fake group
-    * @param {Array} proxies         an optional list of proxies for immediate child layers
-    * @returns {Object}              instantited FakeGroupRecord class
-    */
-    return (name, proxies) => {
-        return new classBundle.LegendGroupRecord(name, proxies);
-    };
-}
-
-function createLegendEntryRecordBuilder(classBundle) {
-    /**
-    * Creates a Legend Entry Record class
-    * @param {Object} config         config object for entry
-    * @param {Array} proxies         an optional list of proxies for immediate child layers
-    * @returns {Object}              instantited LegendEntryRecord class
-    */
-    return (config, proxies) => {
-        return new classBundle.LegendEntryRecord(config, proxies);
     };
 }
 
@@ -1205,8 +1184,6 @@ module.exports = function (esriBundle, geoApi) {
         createTileRecord: createTileRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createDynamicRecord: createDynamicRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createFeatureRecord: createFeatureRecordBuilder(esriBundle, geoApi, layerClassBundle),
-        createLegendGroupRecord: createLegendGroupRecordBuilder(layerClassBundle),
-        createLegendEntryRecord: createLegendEntryRecordBuilder(layerClassBundle),
         LayerDrawingOptions: esriBundle.LayerDrawingOptions,
         getFeatureInfo: getFeatureInfoBuilder(esriBundle),
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),

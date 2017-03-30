@@ -60,11 +60,7 @@
                     console.log('visible scale set - sb 0,0', vs);
                 });
 
-                layerRec.getFeatureCount().then(fc => {
-                    console.log('feature count - sb 0', fc);
-                });
-
-                console.log('queryable, should be false', layerRec.isQueryable());
+                console.log('queryable, should be false', proxy.query);
 
 
 /*

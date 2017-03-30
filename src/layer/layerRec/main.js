@@ -12,8 +12,6 @@ const featureRecord = require('./featureRecord.js')();
 const imageRecord = require('./imageRecord.js')();
 const tileRecord = require('./tileRecord.js')();
 const wmsRecord = require('./wmsRecord.js')();
-const legendGroupRecord = require('./legendGroupRecord.js')();
-const legendEntryRecord = require('./legendEntryRecord.js')();
 
 /*
 Class heirarchy overview:
@@ -48,8 +46,6 @@ group items, which don't have FC objects. Tricky, eh!
 
 */
 
-// TODO remove all TEST STATUS tags once things are stable
-
 // TODO crazy idea. instead of having attribute .layerInfo as a promise,
 //      we pair that promise with the layer's load event.  Essentially, don't
 //      change our state to loaded until both the layer is loaded AND the .layerInfo
@@ -72,7 +68,5 @@ module.exports = () => ({
     FeatureRecord: featureRecord.FeatureRecord,
     ImageRecord: imageRecord.ImageRecord,
     TileRecord: tileRecord.TileRecord,
-    WmsRecord: wmsRecord.WmsRecord,
-    LegendGroupRecord: legendGroupRecord.LegendGroupRecord,
-    LegendEntryRecord: legendEntryRecord.LegendEntryRecord
+    WmsRecord: wmsRecord.WmsRecord
 });

@@ -1,19 +1,17 @@
 'use strict';
 
 const shared = require('./shared.js')();
-const root = require('./root.js')();
+const placeholderFC = require('./placeholderFC.js')();
 
 /**
  * @class BasicFC
  */
-class BasicFC extends root.Root {
+class BasicFC extends placeholderFC.PlaceholderFC {
     // base class for feature class object. deals with stuff specific to a feature class (or raster equivalent)
 
     // TEST STATUS none
     get queryable () { return this._queryable; }
     set queryable (value) { this._queryable = value; }
-
-    get state () { return this._parent._state; }
 
     // TEST STATUS none
     // non-attributes have no geometry.
@@ -27,8 +25,7 @@ class BasicFC extends root.Root {
      */
     constructor (parent, idx, config) {
         // TEST STATUS basic
-        super();
-        this._parent = parent;
+        super(parent, config.name || '');
         this._idx = idx;
         this.queryable = config.state.query;
 
@@ -76,38 +73,33 @@ class BasicFC extends root.Root {
 
     // TODO docs
     getVisibility () {
-        // TEST STATUS none
         return this._parent._layer.visible;
     }
 
     // TODO docs
     setVisibility (value) {
-        // TEST STATUS none
         // basic case - set layer visibility
         this._parent._layer.visible = value;
         this.visibleChanged(value);
     }
 
-    getSymbology () {
-        // TEST STATUS none
-        if (!this._symbology) {
-            // get symbology from service legend.
-            // this is used for non-feature based sources (tiles, image, raster).
-            // wms will override with own special logic.
-            const url = this._parent._layer.url;
-            if (url) {
-                // fetch legend from server, convert to local format, process local format
-                this._symbology = this._parent._apiRef.symbology.mapServerToLocalLegend(url, this._idx)
-                    .then(legendData => {
-                        return shared.makeSymbologyArray(legendData.layers[0].legend);
-                    });
-            } else {
-                // this shouldn't happen. non-url layers should be files, which are features,
-                // which will have a basic renderer and will use FeatureFC override.
-                throw new Error('encountered layer with no renderer and no url');
-            }
+    // this will actively download / refresh the internal symbology
+    loadSymbology () {
+        // get symbology from service legend.
+        // this is used for non-feature based sources (tiles, image, raster).
+        // wms will override with own special logic.
+        const url = this._parent._layer.url;
+        if (url) {
+            // fetch legend from server, convert to local format, process local format
+            this._parent._apiRef.symbology.mapServerToLocalLegend(url, this._idx)
+                .then(legendData => {
+                    this.symbology = shared.makeSymbologyArray(legendData.layers[0].legend);
+                });
+        } else {
+            // this shouldn't happen. non-url layers should be files, which are features,
+            // which will have a basic renderer and will use FeatureFC override.
+            throw new Error('encountered layer with no renderer and no url');
         }
-        return this._symbology;
     }
 
 }

@@ -8,6 +8,10 @@ class Root {
     // thing in here should be applicable to both layer-ish classes (including FCs),
     // and legend-ish classes.
 
+    // TODO there is a chance we will not be using visibility trigger on geoApi anymore.
+    //      if it happens that the UI starts listening, then we will probably drop this class,
+    //      or make it so it only has the name and _fireEvent properties
+
     constructor () {
         // TODO maybe pass in config, store it?
 
@@ -18,6 +22,9 @@ class Root {
     // everyone needs a name
     get name () { return this._name; }
     set name (value) { this._name = value; }
+
+    get symbology () { return this._symbology; }
+    set symbology (value) { this._symbology = value; }
 
     /**
      * Utility for triggering an event and giving it to the listeners

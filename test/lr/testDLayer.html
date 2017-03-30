@@ -44,7 +44,8 @@
                             boundingBox: false,
                             query: true
                         },
-                        stateOnly: false
+                        stateOnly: false,
+                        name: 'Hamhocks'
                     },
                     { 
                         index: 2,
@@ -72,7 +73,6 @@
             // do early proxy attempts
             const early3 = layerRec.getChildProxy(3); // throw away result, make sure test below is good.
             console.log('leaf 3 proxy loading state ', early3.state);
-            console.log('leaf 3 proxy loading isRefreshing ', early3.isRefreshing);
             console.log('early proxy 11 - should be placeholder', layerRec.getChildProxy(11));
 
             // hack to wait for layer to load
@@ -98,17 +98,12 @@
 */
                 var leaf2proxy = layerRec.getChildProxy(2);
                 var leaf3proxy = layerRec.getChildProxy(3);
-                var group0proxy = layerRec.getChildProxy(0);
-                var group1proxy = layerRec.getChildProxy(1);
 
                 console.log('symbology - sb one circle svg', leaf3proxy.symbology);
 
-                console.log('leaf 3 visible, should be true', leaf3proxy.visibility);
+                // remember, we are not using completeConfig swtich, so things get defaulted
+                console.log('leaf 3 visible, should be false', leaf3proxy.visibility);
                 console.log('leaf 2 visible, should be false', leaf2proxy.visibility);
-                console.log('group 0 visible, should be true', group0proxy.visibility);
-                console.log('group 1 visible, should be false', group1proxy.visibility);
-                
-                console.log('leaf 2 available controls, should be visible, query', leaf2proxy.availableControls);
 
                 layerRec.getFormattedAttributes(2).then(fa => {
                     console.log('formatted attributes child 2', fa);
@@ -117,23 +112,18 @@
                 console.log('child tree', layerRec.getChildTree());
                 
                 console.log('root layer type - sb dynamic', proxy.layerType);
-                console.log('group layer type - sb group', group0proxy.layerType);
                 console.log('leaf layer type - sb feature', leaf3proxy.layerType);
 
                 console.log('leaf loaded state', leaf3proxy.state);
-                console.log('group loaded state', group1proxy.state);
-                console.log('leaf loaded isRefreshing', leaf3proxy.isRefreshing);
-                console.log('group loaded isRefreshing', group1proxy.isRefreshing);
-                console.log('layer loaded state', proxy.state);
-                console.log('layer loaded isRefreshing', proxy.isRefreshing);
+                console.log('layer loaded state', proxy.state);                
 
                 console.log('layer proxy visible -- sb true', proxy.visibility);
                 proxy.setVisibility(false);
                 console.log('layer proxy visible -- sb false', proxy.visibility);
+                console.log('layer visible -- sb false', layerRec.visibility);
 
                 console.log('leaf 3 name -- sb prov_point_l1', leaf3proxy.name);
                 console.log('leaf 2 name -- sb doggguts', leaf2proxy.name);
-                console.log('group 1 name -- sb Group2', group1proxy.name);
                 
                 // wait for some promises to update
                 var toTo = setTimeout(() => {
@@ -148,32 +138,6 @@
                 }, 2000);
 
             }
-
-/*
-           
-
-            var formAttr = layerRec.getFormattedAttributes();
-            formAttr.then(a => {
-                console.log('attrib PROOF ', a);
-            });
-            
-            var countProm = layerRec.getFeatureCount();
-            countProm.then(c => {
-                console.log('the count ', c);
-            });
-
-            var aliasProm = layerRec.aliasedFieldName('siteNotes_en');
-            aliasProm.then(a => {
-                console.log('the alias of siteNotes_en ', a);
-            });
-
-
-            var dateProm = layerRec.checkDateType('siteNotes_en');
-            dateProm.then(d => {
-                console.log('is siteNotes_en a date ', d);
-            });
-
-*/
 
         });
     </script>
