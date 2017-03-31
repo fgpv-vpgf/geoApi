@@ -79,7 +79,7 @@ class BasicFC extends placeholderFC.PlaceholderFC {
     // TODO docs
     setVisibility (value) {
         // basic case - set layer visibility
-        this._parent._layer.visible = value;
+        this._parent._layer.setVisibility(value);
         this.visibleChanged(value);
     }
 

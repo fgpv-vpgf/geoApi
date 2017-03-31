@@ -192,7 +192,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
             if (layerInfo.subLayerIds && layerInfo.subLayerIds.length > 0) {
                 // group sublayer
                 const treeGroup = {
-                    id: layerInfo.id,
+                    entryIndex: layerInfo.id,
                     name: subC.name,
                     childs: []
                 };
@@ -218,7 +218,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
                     this._proxies[sId] = leafProxy;
                 }
 
-                treeArray.push({ id: layerInfo.id });
+                treeArray.push({ entryIndex: layerInfo.id });
             }
         };
 

@@ -32,7 +32,6 @@ class LayerRecord extends root.Root {
     set userLayer (value) { this._user = value; }
 
     get visibility () {
-        // TEST STATUS none
         if (this._layer) {
             return this._layer.visible;
         } else {
@@ -40,9 +39,8 @@ class LayerRecord extends root.Root {
         }
     }
     set visibility (value) {
-        // TEST STATUS none
         if (this._layer) {
-            this._layer.visible = value;
+            this._layer.setVisibility(value);
             this.visibleChanged(value);
         }
 
@@ -50,7 +48,6 @@ class LayerRecord extends root.Root {
     }
 
     get opacity () {
-        // TEST STATUS none
         if (this._layer) {
             return this._layer.opacity;
         } else {
@@ -58,9 +55,8 @@ class LayerRecord extends root.Root {
         }
     }
     set opacity (value) {
-        // TEST STATUS none
         if (this._layer) {
-            this._layer.opacity = value;
+            this._layer.setOpacity(value);
         }
 
         // TODO do we need an ELSE case here?
@@ -70,7 +66,6 @@ class LayerRecord extends root.Root {
      * Generate a bounding box for the layer on the given map.
      */
     createBbox (spatialReference) {
-        // TEST STATUS none
         if (!this._bbox) {
             // TODO possibly adjust extent parameter to use a config-based override
             this._bbox = this._apiRef.layer.bbox.makeBoundingBox(`bbox_${this._layer.id}`,
@@ -84,7 +79,6 @@ class LayerRecord extends root.Root {
      * Destroy bounding box
      */
     destroyBbox (map) {
-        // TEST STATUS none
         // TODO should we remove the map.remove step?  just drop the internal reference.
         map.removeLayer(this._bbox);
         this._bbox = undefined;

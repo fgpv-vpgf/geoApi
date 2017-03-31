@@ -316,46 +316,35 @@ function dynamicLeafSetVisibility(value) {
 
 function standardSetOpacity(value) {
     /* jshint validthis: true */
-
-    // TEST STATUS none
     this._source.opacity = value;
 }
 
 function dynamicLeafSetOpacity(value) {
     /* jshint validthis: true */
-
-    // TEST STATUS none
-    this._source.opacity = value;
+    this._source.setOpacity = value;
 }
 
 function standardSetBoundingBox(value) {
     /* jshint validthis: true */
 
-    // TEST STATUS none
     // TODO Is it possible to have control without bbox layer?
     if (this._source.bbox) {
-        this._source.bbox.visible = value;
+        this._source.bbox.setVisibility(value);
     }
 }
 
 function standardSetQuery(value) {
     /* jshint validthis: true */
-
-    // TEST STATUS none
     this._source.setQueryable(value);
 }
 
 function dynamicLeafSetQuery(value) {
     /* jshint validthis: true */
-
-    // TEST STATUS none
     this._source.queryable = value;
 }
 
 function featureGetSnapshot() {
     /* jshint validthis: true */
-
-    // TEST STATUS none
     return this._source.isSnapshot;
 }
 
