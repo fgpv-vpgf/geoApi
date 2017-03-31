@@ -41,7 +41,10 @@ class LayerRecord extends root.Root {
     set visibility (value) {
         if (this._layer) {
             this._layer.setVisibility(value);
-            this.visibleChanged(value);
+            if (!value && this.bbox && this.bbox.visible) {
+                // our layer is now invisible, but bounding box is visible. turn it off too.
+                this.bbox.setVisibility(false);
+            }
         }
 
         // TODO do we need an ELSE case here?
@@ -241,7 +244,6 @@ class LayerRecord extends root.Root {
      * Creates an options object for the physical layer
      */
     makeLayerConfig () {
-        // TEST STATUS none
         return {
             id: this.config.id,
             opacity: this.config.state.opacity,
@@ -255,7 +257,6 @@ class LayerRecord extends root.Root {
      * @returns {Boolean} indicates if the bounding box is visible
      */
     isBBoxVisible () {
-        // TEST STATUS none
         if (this._bbox) {
             return this._bbox.visible;
         } else {
@@ -275,7 +276,6 @@ class LayerRecord extends root.Root {
      * @returns {Object} a level of detail (lod) object for the appropriate scale to zoom to
      */
     findZoomScale (lods, scaleSet, zoomIn, zoomGraphic = false) {
-        // TEST STATUS none
         // TODO rename function to getZoomScale?
         // TODO take a second look at parameters zoomIn and zoomGraphic. how are they derived (in the caller code)?
         //      seems weird to me to do it this way

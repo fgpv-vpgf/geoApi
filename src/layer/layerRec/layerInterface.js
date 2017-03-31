@@ -315,15 +315,11 @@ function placeholderGetSupportsOpacity() {
 
 function standardSetVisibility(value) {
     /* jshint validthis: true */
-
-    // TEST STATUS none
     this._source.visibility = value;
 }
 
 function dynamicLeafSetVisibility(value) {
     /* jshint validthis: true */
-
-    // TEST STATUS none
     this._source.setVisibility(value);
 
     // TODO see if we need to trigger any refresh of parents.
@@ -342,8 +338,6 @@ function dynamicLeafSetOpacity(value) {
 
 function standardSetBoundingBox(value) {
     /* jshint validthis: true */
-
-    // TODO Is it possible to have control without bbox layer?
     if (this._source.bbox) {
         this._source.bbox.setVisibility(value);
     }

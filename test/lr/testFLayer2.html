@@ -49,7 +49,10 @@
                 console.log('symbology - sb ?', proxy.symbology);
                 console.log('feature count - sb 247', proxy.featureCount);
                 
-                // mock an identify
+                layerRec.createBbox(layerRec._layer.spatialReference);
+                console.log('bbox visible - sb true', proxy.boundingBox);
+                proxy.setVisibility(false);
+                console.log('bbox visible - sb false', proxy.boundingBox);
 
             }
 
