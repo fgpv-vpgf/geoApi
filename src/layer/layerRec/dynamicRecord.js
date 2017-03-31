@@ -44,7 +44,11 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {Boolean} configIsComplete  an optional flag to indicate if the config is fully flushed out (i.e. things defined for all children). Defaults to false.
      */
     constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup, configIsComplete = false) {
-        // TEST STATUS basic
+        // TODO might need some nonsense here. if not configIsComplete, and layer is set to visible in config,
+        //      we may need to hack the process so that the esri layer object is initialized as invisible,
+        //      but the config is still marked as visible so the UI knows to do the proper defaulting.
+        //      As is right now, the layer might start to pull an image from the server while our onLoad
+        //      event handler is running and shutting off visibilities.
         super(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup);
         this.ArcGISDynamicMapServiceLayer = layerClass;
         this._configIsComplete = configIsComplete;
@@ -56,6 +60,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
         this._proxies = {};
 
         // marks if layer supports dynamic capabilities, like child opacity, renderer change, layer reorder
+        // TODO ensure false is best default (what is better for UI)
         this._isTrueDynamic = false;
 
     }

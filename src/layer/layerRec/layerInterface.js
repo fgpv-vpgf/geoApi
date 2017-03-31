@@ -38,6 +38,7 @@ class LayerInterface {
     get layerType () { this._iAmError(); } // returns String
     get geometryType () { this._iAmError(); } // returns String
     get featureCount () { this._iAmError(); } // returns Integer
+    get supportsOpacity () { this._iAmError(); } // returns Boolean
 
     // layer states
     get state () { this._iAmError(); } // returns String
@@ -85,6 +86,7 @@ class LayerInterface {
         newProp(this, 'geometryType', standardGetGeometryType);
         newProp(this, 'layerType', standardGetLayerType);
         newProp(this, 'featureCount', standardGetFeatureCount);
+        newProp(this, 'supportsOpacity', standardGetSupportsOpacity);
 
         this.setVisibility = standardSetVisibility;
         this.setOpacity = standardSetOpacity;
@@ -120,6 +122,7 @@ class LayerInterface {
         newProp(this, 'geometryType', dynamicLeafGetGeometryType);
         newProp(this, 'layerType', dynamicLeafGetLayerType);
         newProp(this, 'featureCount', dynamicLeafGetFeatureCount);
+        newProp(this, 'supportsOpacity', dynamicLeafGetSupportsOpacity);
 
         this.setVisibility = dynamicLeafSetVisibility;
         this.setOpacity = dynamicLeafSetOpacity;
@@ -134,6 +137,7 @@ class LayerInterface {
         newProp(this, 'name', standardGetName);
         newProp(this, 'state', standardGetState);
         newProp(this, 'layerType', standardGetLayerType);
+        newProp(this, 'supportsOpacity', placeholderGetSupportsOpacity);
     }
 
 }
@@ -275,23 +279,38 @@ function dynamicLeafGetGeometryType() {
 
 function standardGetFeatureCount() {
     /* jshint validthis: true */
-
-    // TEST STATUS none
     return undefined;
 }
 
 function featureGetFeatureCount() {
     /* jshint validthis: true */
-
-    // TEST STATUS none
     return this._source.featureCount;
 }
 
 function dynamicLeafGetFeatureCount() {
     /* jshint validthis: true */
-
-    // TEST STATUS none
     return this._source.featureCount;
+}
+
+function standardGetSupportsOpacity() {
+    /* jshint validthis: true */
+
+    // at top level, layers support opacity.
+    return true;
+}
+
+function dynamicLeafGetSupportsOpacity() {
+    /* jshint validthis: true */
+
+    // leaves are the weird case. it depends on the service they live in.
+    return this._source.supportsOpacity;
+}
+
+function placeholderGetSupportsOpacity() {
+    /* jshint validthis: true */
+
+    // TODO UI might need something more useful?
+    return false;
 }
 
 function standardSetVisibility(value) {
@@ -318,7 +337,7 @@ function standardSetOpacity(value) {
 
 function dynamicLeafSetOpacity(value) {
     /* jshint validthis: true */
-    this._source.setOpacity = value;
+    this._source.opacity = value;
 }
 
 function standardSetBoundingBox(value) {

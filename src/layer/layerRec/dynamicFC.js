@@ -33,19 +33,20 @@ class DynamicFC extends attribFC.AttribFC {
         // the DynamicRecord onLoad handler will set the initial state, so don't do it here.
     }
 
+    get supportsOpacity () { return this._parent._isTrueDynamic; }
+
     get opacity () { return this._opacity; }
     set opacity (value) {
         this._opacity = value;
 
-        const layer = this._parent._layer;
-        if (layer.supportsDynamicLayers) {
+        if (this.supportsOpacity) {
             // only attempt to set the layer if we support that kind of magic.
             // instead of being consistent, esri using value from 0 to 100 for sublayer transparency where 100 is fully transparent
             const optionsArray = [];
             const drawingOptions = new this._parent._apiRef.layer.LayerDrawingOptions();
             drawingOptions.transparency = (value - 1) * -100;
             optionsArray[this._idx] = drawingOptions;
-            layer.setLayerDrawingOptions(optionsArray);
+            this._parent._layer.setLayerDrawingOptions(optionsArray);
         }
     }
 
