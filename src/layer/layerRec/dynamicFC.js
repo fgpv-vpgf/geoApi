@@ -61,9 +61,6 @@ class DynamicFC extends attribFC.AttribFC {
         });
     }
 
-    get layerType () {return this._layerType; }
-    set layerType (value) { this._layerType = value; }
-
     get geomType () { return this._geometryType; }
     set geomType (value) { this._geometryType = value; }
 

@@ -22,7 +22,6 @@ class AttribFC extends basicFC.BasicFC {
         super(parent, idx, config);
 
         this._layerPackage = layerPackage;
-        this._layerType = undefined; // this indicates unknown to the ui.
         this._geometryType = undefined; // this indicates unknown to the ui.
         this._fcount = undefined;
 

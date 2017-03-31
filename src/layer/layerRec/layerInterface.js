@@ -52,10 +52,6 @@ class LayerInterface {
     // fetches attributes for use in the datatable
     get formattedAttributes () { this._iAmError(); } // returns Promise of Object
 
-    // content for static legend entires (non-layer/non-group)
-    get infoType () { this._iAmError(); } // returns ?
-    get infoContent () { this._iAmError(); } // returns ?
-
     // these set values to the corresponding controls
     setVisibility () { this._iAmError(); }
     setOpacity () { this._iAmError(); }
@@ -137,6 +133,7 @@ class LayerInterface {
         newProp(this, 'symbology', standardGetSymbology);
         newProp(this, 'name', standardGetName);
         newProp(this, 'state', standardGetState);
+        newProp(this, 'layerType', standardGetLayerType);
     }
 
 }

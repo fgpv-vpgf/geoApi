@@ -73,6 +73,7 @@
             // do early proxy attempts
             const early3 = layerRec.getChildProxy(3); // throw away result, make sure test below is good.
             console.log('leaf 3 proxy loading state ', early3.state);
+            console.log('leaf 3 proxy type ', early3.layerType);
             console.log('early proxy 11 - should be placeholder', layerRec.getChildProxy(11));
 
             // hack to wait for layer to load
@@ -86,18 +87,11 @@
 
             function afterLoadTests() {
                 console.log('enhanced loaded')
-/*
-                layerRec.isOffScale(20000).then(offscale => {
-                    console.log('offscale test - sb false, flase', offscale);
-                });
 
-                // note using hack of layerRec._layer for zoom scales, as that thing is private
-                console.log('find zoom scale test - sb level 17', layerRec.findZoomScale(lods, layerRec._layer, false));
-
-                console.log('visible - sb true', layerRec.visible);
-*/
                 var leaf2proxy = layerRec.getChildProxy(2);
                 var leaf3proxy = layerRec.getChildProxy(3);
+
+                console.log('leaf layer type eee - sb feature', leaf3proxy.layerType);
 
                 console.log('symbology - sb one circle svg', leaf3proxy.symbology);
 
@@ -110,7 +104,7 @@
                 });
 
                 console.log('child tree', layerRec.getChildTree());
-                
+
                 console.log('root layer type - sb dynamic', proxy.layerType);
                 console.log('leaf layer type - sb feature', leaf3proxy.layerType);
 
@@ -134,6 +128,9 @@
                     console.log('geom type layer root - sb undefined', proxy.geometryType);
 
                     console.log('feature count child 2 - sb 13', leaf2proxy.featureCount);
+
+                    console.log('root layer type - sb dynamic', proxy.layerType);
+                    console.log('leaf layer type - sb feature', leaf3proxy.layerType);
 
                 }, 2000);
 

@@ -278,12 +278,16 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 dFC.loadSymbology();
 
                 // update asynchronous values
-                dFC.getLayerData().then(ld => {
-                    dFC.layerType = serverLayerTypeToClientLayerType(ld.layerType);
-                    if (dFC.layerType === shared.clientLayerType.ESRI_FEATURE) {
-                        dFC.geomType = ld.geometryType;
-                    }
-                });
+                dFC.getLayerData()
+                    .then(ld => {
+                        dFC.layerType = serverLayerTypeToClientLayerType(ld.layerType);
+                        if (dFC.layerType === shared.clientLayerType.ESRI_FEATURE) {
+                            dFC.geomType = ld.geometryType;
+                        }
+                    })
+                    .catch(() => {
+                        dFC.layerType = shared.clientLayerType.UNRESOLVED;
+                    });
 
                 this.getFeatureCount(idx).then(fc => {
                     dFC.featureCount = fc;
