@@ -309,6 +309,10 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 initVis.push(-1); // esri code for set all to invisible
             }
             this._layer.setVisibleLayers(initVis);
+        } else {
+            // default configuration for non-complete config.
+            this._layer.setVisibility(false);
+            this._layer.setVisibleLayers([-1]);
         }
 
     }

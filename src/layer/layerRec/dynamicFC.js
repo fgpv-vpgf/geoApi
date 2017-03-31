@@ -30,7 +30,7 @@ class DynamicFC extends attribFC.AttribFC {
 
         // visibility is kept stateful by the parent. keeping an internal property
         // just means we would need to keep it in synch.
-        this.setVisibility(config.state.visible);
+        // the DynamicRecord onLoad handler will set the initial state, so don't do it here.
     }
 
     get opacity () { return this._opacity; }
@@ -69,17 +69,40 @@ class DynamicFC extends attribFC.AttribFC {
 
     setVisibility (value) {
         // update visible layers array
-        const vLayers = this._parent._layer.visibleLayers;
+        const vLayers = this._parent._layer.visibleLayers.concat();
         const intIdx = parseInt(this._idx);
         const vIdx = vLayers.indexOf(intIdx);
+        let dirty = false;
         if (value && vIdx === -1) {
+            // check for first added case
+            if (vLayers.length === 1 && vLayers[0] === -1) {
+                vLayers.pop();
+            }
+
             // was invisible, now visible
             vLayers.push(intIdx);
+            dirty = true;
         } else if (!value && vIdx > -1) {
             // was visible, now invisible
             vLayers.splice(vIdx, 1);
+            if (vLayers.length === 0) {
+                vLayers.push(-1); // code for no layers
+            }
+            dirty = true;
         }
-        this.visibleChanged(value);
+
+        if (dirty) {
+            this._parent._layer.setVisibleLayers(vLayers);
+            this._parent._layer.setVisibility(value);
+        }
+
+        // TODO add a timer or something to cache requests.
+        //      use setVisibileLayers(arry, true) to stall the redraw
+        //      then when timer runs out, call layer.refresh
+
+        // TODO maybe alert the parent that we changed?
+
+        // this.visibleChanged(value);
     }
 
     // TODO extend this function to other FC's?  do they need it?
