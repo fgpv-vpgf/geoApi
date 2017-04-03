@@ -62,7 +62,6 @@ class AttribRecord extends layerRecord.LayerRecord {
     * @returns {Promise}         resolves with a layer attribute data object
     */
     getAttribs () {
-        // TEST STATUS basic
         return this._featClasses[this._defaultFC].getAttribs();
     }
 
@@ -73,17 +72,14 @@ class AttribRecord extends layerRecord.LayerRecord {
     * @returns {Promise}         resolves with a layer data object
     */
     getLayerData () {
-        // TEST STATUS none
         return this._featClasses[this._defaultFC].getLayerData();
     }
 
     getFeatureName (objId, attribs) {
-        // TEST STATUS basic
         return this._featClasses[this._defaultFC].getFeatureName(objId, attribs);
     }
 
     getFeatureCount (url) {
-        // TEST STATUS basic
         if (url) {
             // wrapping server call in a function, as we regularly encounter sillyness
             // where we need to execute the count request twice.

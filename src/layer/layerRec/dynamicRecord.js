@@ -286,17 +286,19 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 dFC.getLayerData()
                     .then(ld => {
                         dFC.layerType = serverLayerTypeToClientLayerType(ld.layerType);
+
+                        // skip a number of things if it is a raster layer
                         if (dFC.layerType === shared.clientLayerType.ESRI_FEATURE) {
                             dFC.geomType = ld.geometryType;
+
+                            this.getFeatureCount(idx).then(fc => {
+                                dFC.featureCount = fc;
+                            });
                         }
                     })
                     .catch(() => {
                         dFC.layerType = shared.clientLayerType.UNRESOLVED;
                     });
-
-                this.getFeatureCount(idx).then(fc => {
-                    dFC.featureCount = fc;
-                });
             }
         });
 
