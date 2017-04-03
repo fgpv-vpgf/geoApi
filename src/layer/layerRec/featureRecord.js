@@ -154,21 +154,23 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
                 // get name via attribs and name field
                 const featAttribs = aInfo.features[aInfo.oidIndex[oid]].attributes;
-                const featName = this.getFeatureName(oid, featAttribs);
+                const featNamePromise = this.getFeatureName(oid, featAttribs);
 
                 // get icon via renderer and geoApi call
                 const svgcode = this._apiRef.symbology.getGraphicIcon(featAttribs, lInfo.renderer);
 
-                // duplicate the position so listener can verify this event is same as mouseOver event above
-                const loadBundle = {
-                    type: 'tipLoaded',
-                    name: featName,
-                    target: e.target,
-                    svgcode
-                };
+                featNamePromise.then(featName => {
+                    // duplicate the position so listener can verify this event is same as mouseOver event above
+                    const loadBundle = {
+                        type: 'tipLoaded',
+                        name: featName,
+                        target: e.target,
+                        svgcode
+                    };
 
-                // tell anyone listening we moused into something
-                this._fireEvent(this._hoverListeners, loadBundle);
+                    // tell anyone listening we moused into something
+                    this._fireEvent(this._hoverListeners, loadBundle);
+                });
             });
         }
     }
