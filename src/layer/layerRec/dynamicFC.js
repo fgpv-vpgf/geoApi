@@ -19,13 +19,6 @@ class DynamicFC extends attribFC.AttribFC {
     constructor (parent, idx, layerPackage, config) {
         super(parent, idx, layerPackage, config);
 
-        // store pointer to the layerinfo for this FC.
-        // while most information here can also be gleaned from the layer object,
-        // we cannot know the type (e.g. Feature Layer, Raster Layer), so this object
-        // is required.
-        // TODO revist _layerInfo and how it is used.
-        this._layerInfo = parent._layer.layerInfos[idx];
-
         this.opacity = config.state.opacity;
 
         // visibility is kept stateful by the parent. keeping an internal property
@@ -74,10 +67,12 @@ class DynamicFC extends attribFC.AttribFC {
         const intIdx = parseInt(this._idx);
         const vIdx = vLayers.indexOf(intIdx);
         let dirty = false;
+        let layerVisChange = false;
         if (value && vIdx === -1) {
             // check for first added case
             if (vLayers.length === 1 && vLayers[0] === -1) {
                 vLayers.pop();
+                layerVisChange = true;
             }
 
             // was invisible, now visible
@@ -88,13 +83,16 @@ class DynamicFC extends attribFC.AttribFC {
             vLayers.splice(vIdx, 1);
             if (vLayers.length === 0) {
                 vLayers.push(-1); // code for no layers
+                layerVisChange = true;
             }
             dirty = true;
         }
 
         if (dirty) {
             this._parent._layer.setVisibleLayers(vLayers);
-            this._parent._layer.setVisibility(value);
+            if (layerVisChange) {
+                this._parent._layer.setVisibility(value);
+            }
         }
 
         // TODO add a timer or something to cache requests.
@@ -108,9 +106,6 @@ class DynamicFC extends attribFC.AttribFC {
 
     // TODO extend this function to other FC's?  do they need it?
     getVisibility () {
-        // TEST STATUS none
-        // TODO would we ever need to worry about _parent._layer.visible being false while
-        //      the visibleLayers array still contains valid indexes?
         return this._parent._layer.visibleLayers.indexOf(parseInt(this._idx)) > -1;
     }
 
