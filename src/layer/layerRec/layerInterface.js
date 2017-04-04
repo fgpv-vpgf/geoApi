@@ -228,7 +228,7 @@ function standardGetQuery() {
 
 function dynamicLeafGetQuery() {
     /* jshint validthis: true */
-    return this._source.queryable();
+    return this._source.queryable;
 }
 
 function standardGetFormattedAttributes() {

@@ -433,15 +433,33 @@ class DynamicRecord extends attribRecord.AttribRecord {
     * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
     */
     identify (opts) {
-        // TEST STATUS none
-        // TODO caller must pass in layer ids to interrogate.  geoApi wont know what is toggled in the legend.
-        //      param is opts.layerIds, array of integer for every leaf to interrogate.
         // TODO add full documentation for options parameter
 
         // bundles results from all leaf layers
         const identifyResults = [];
 
-        // create an results object for every leaf layer we are inspecting
+        // TODO add scale check to our filterting logic.  might require a scale to be included on the opts param
+        opts.layerIds = this._layer.visibleLayers
+            .filter(leafIndex => {
+                if (leafIndex === -1) {
+                    // this is marker for nothing is visible. get rid of it
+                    return false;
+                } else {
+                    const fc = this._featClasses[leafIndex];
+                    if (fc) {
+                        return fc.queryable;
+                    } else {
+                        // we dont have a feature class for this id.
+                        //  it is likely a a group or something visible but not active
+                        return false;
+                    }
+                }
+            });
+
+        if (opts.layerIds.length === 0) {
+            return {};
+        }
+
         opts.layerIds.forEach(leafIndex => {
 
             // TODO fix these params
@@ -455,6 +473,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
             identifyResults[leafIndex] = identifyResult;
         });
+
+        console.log('CHecking -- layerids', opts.layerIds);
 
         opts.tolerance = this.clickTolerance;
 

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Feature Layer Identify Test Page</title>
+    <title>Dynamic Layer Identify Test Page</title>
     <style>
         .layerTile { position: absolute; }
     </style>
@@ -11,12 +11,13 @@
 <body>
     <div id="map" style="height: 700px; width: 900px; margin: 0; overflow: hidden;"></div>
     <p id="mess" />
+    <button type="button" oncanplay="" ></button>
     <script src="../../dist/geoapi.js"></script>
     <script>
-        // http://localhost:6002/test/testClass.html
+        // http://localhost:6002/test/testDLayer.html
 
-        var map;
         var layerRec;
+        var map;
 
         function clickHandler(clickBundle) {
             console.log('MOUSE CLICK EVENT', clickBundle);
@@ -41,41 +42,60 @@
             // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
 
             var config1 = {
-                id: 'dog',
-                name: 'Feature Test',
-                url: 'http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/2',
-                nameField: 'siteShortName_en',
+                id: 'guts',
+                name: 'Dynamic Test',
+                url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer',                
                 metadataUrl: 'http://www.github.com',
-                layerType: 'esriFeature',
+                layerType: 'esriDynamic',
                 tolerance: 5,
-                extent: {},
-                controls: ['snapshot', 'visibility', 'opacity', 'boundingBox', 'query', 'data'],
+                extent: {},                
                 state: {
                     opacity: 1,
                     visibility: true,
                     boundingBox: false,
-                    query: true,
-                    snapshot: false
-                }
+                    query: true
+                },
+                layerEntries: [                   
+                    {
+                        index: 3,
+                        outfields: '*',                       
+                        state: {
+                            opacity: 1,
+                            visibility: true,
+                            boundingBox: false,
+                            query: true
+                        },
+                        stateOnly: false,
+                        name: 'Hamhocks Three'
+                    },
+                    {
+                        index: 4,
+                        outfields: '*',                       
+                        state: {
+                            opacity: 1,
+                            visibility: true,
+                            boundingBox: false,
+                            query: true
+                        },
+                        stateOnly: false,
+                        name: 'Hamhocks Four'
+                    },
+                ]
             };
-
-            layerRec = api.layer.createFeatureRecord(config1);
+           
+            layerRec = api.layer.createDynamicRecord(config1);
             console.log('layer PROOF ', layerRec);
             var proxy = layerRec.getProxy();
             console.log('proxy PROOF ', proxy);
 
-            console.log('loading state', proxy.state);
-            
-            map = new api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-110, 55] });
+            map = new api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 7, center: [-110, 55] });
             map.addLayer(layerRec._layer);
             console.log('mah map', map);
-            
-            // add identify handler
-            // layerRec.addHoverListener(hoverOverHandler);
 
             map.on('click', clickHandler);
 
             // hack to wait for layer to load
+
             var to = setTimeout(() => {
                 if (layerRec.state === 'rv-loaded') {
                     clearTimeout(to);
@@ -84,9 +104,15 @@
             }, 1000);
 
             function afterLoadTests() {
-                console.log('enhanced loaded');
+                console.log('enhanced loaded')
+
+                var leaf4proxy = layerRec.getChildProxy(4);
+                var leaf3proxy = layerRec.getChildProxy(3);
+                leaf3proxy.setVisibility(true);
+                leaf4proxy.setVisibility(true);
+                leaf3proxy.setQuery(true);
+                leaf4proxy.setQuery(true);
                
-                // proxy.setOpacity(0.5);
             }
 
         });
