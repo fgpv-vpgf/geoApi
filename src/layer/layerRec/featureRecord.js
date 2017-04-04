@@ -218,7 +218,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         }
 
         const identifyPromise = Promise.all([
-                this.getAttributes(),
+                this.getAttribs(),
                 Promise.resolve(this._layer.queryFeatures(qry)),
                 this.getLayerData()
             ])
@@ -232,7 +232,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
                 identifyResult.data = queryResult.features.map(
                     feat => {
                         // grab the object id of the feature we clicked on.
-                        const objId = feat.attributes[attributes.oidField];
+                        const objId = feat.attributes[layerData.oidField];
                         const objIdStr = objId.toString();
 
                         // use object id find location of our feature in the feature array, and grab its attributes

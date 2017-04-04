@@ -108,9 +108,13 @@ class AttribFC extends basicFC.BasicFC {
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
     getFormattedAttributes () {
-        // TEST STATUS basic
         if (this._formattedAttributes) {
             return this._formattedAttributes;
+        }
+
+        // TODO after refactor, consider changing this to a warning and just return some dummy value
+        if (this.layerType === shared.clientLayerType.ESRI_RASTER) {
+            throw new Error('Attempting to get attributes on a raster layer.');
         }
 
         this._formattedAttributes = Promise.all([this.getAttribs(), this.getLayerData()])
