@@ -104,6 +104,27 @@ class DynamicRecord extends attribRecord.AttribRecord {
         return super.getFeatureCount(this._layer.url + '/' + featureIdx);
     }
 
+    // TODO docs
+    synchOpacity (opacity) {
+        // in the case where a dynamic layer does not support child opacity, if a user
+        // changes the opacity of a child, it actually just adjusts the opacity of the layer.
+        // this means that all other children of the layer need to have their opacity set
+        // to the same value. but we dont want to trigger a number of opacity change requests,
+        // so we do some trickery here.
+
+        Object.keys(this._featClasses).forEach(idx => {
+            const fc = this._featClasses[idx];
+            if (fc) {
+                // important: must use the private ._opacity property here,
+                // as we want to avoid the logic on the .opacity setter.
+                fc._opacity = opacity;
+            }
+        });
+
+        // update the layer itself.
+        this.opacity = opacity;
+    }
+
     /**
     * Triggers when the layer loads.
     *
@@ -473,8 +494,6 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
             identifyResults[leafIndex] = identifyResult;
         });
-
-        console.log('CHecking -- layerids', opts.layerIds);
 
         opts.tolerance = this.clickTolerance;
 

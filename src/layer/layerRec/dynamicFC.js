@@ -30,16 +30,22 @@ class DynamicFC extends attribFC.AttribFC {
 
     get opacity () { return this._opacity; }
     set opacity (value) {
-        this._opacity = value;
+        // avoid parent/child update loops by only doing work if value changed
+        if (this._opacity !== value) {
+            this._opacity = value;
 
-        if (this.supportsOpacity) {
-            // only attempt to set the layer if we support that kind of magic.
-            // instead of being consistent, esri using value from 0 to 100 for sublayer transparency where 100 is fully transparent
-            const optionsArray = [];
-            const drawingOptions = new this._parent._apiRef.layer.LayerDrawingOptions();
-            drawingOptions.transparency = (value - 1) * -100;
-            optionsArray[this._idx] = drawingOptions;
-            this._parent._layer.setLayerDrawingOptions(optionsArray);
+            if (this.supportsOpacity) {
+                // only attempt to set the layer if we support that kind of magic.
+                // instead of being consistent, esri using value from 0 to 100 for sublayer transparency where 100 is fully transparent
+                const optionsArray = [];
+                const drawingOptions = new this._parent._apiRef.layer.LayerDrawingOptions();
+                drawingOptions.transparency = (value - 1) * -100;
+                optionsArray[this._idx] = drawingOptions;
+                this._parent._layer.setLayerDrawingOptions(optionsArray);
+            } else {
+                // update the opacity on the parent and any sibling children
+                this._parent.synchOpacity(value);
+            }
         }
     }
 
