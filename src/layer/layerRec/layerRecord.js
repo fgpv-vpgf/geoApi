@@ -135,7 +135,6 @@ class LayerRecord extends root.Root {
      * Wire up state change listener
      */
     addStateListener (listenerCallback) {
-        // TEST STATUS none
         this._stateListeners.push(listenerCallback);
         return listenerCallback;
     }
@@ -144,7 +143,6 @@ class LayerRecord extends root.Root {
      * Remove a state change listener
      */
     removeStateListener (listenerCallback) {
-        // TEST STATUS none
         const idx = this._stateListeners.indexOf(listenerCallback);
         if (idx < 0) {
             throw new Error('Attempting to remove a listener which is not registered.');
@@ -156,7 +154,6 @@ class LayerRecord extends root.Root {
      * Wire up mouse hover listener
      */
     addHoverListener (listenerCallback) {
-        // TEST STATUS none
         this._hoverListeners.push(listenerCallback);
         return listenerCallback;
     }
@@ -165,7 +162,6 @@ class LayerRecord extends root.Root {
      * Remove a mouse hover listener
      */
     removeHoverListener (listenerCallback) {
-        // TEST STATUS none
         const idx = this._hoverListeners.indexOf(listenerCallback);
         if (idx < 0) {
             throw new Error('Attempting to remove a listener which is not registered.');
