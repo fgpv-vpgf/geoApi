@@ -24,10 +24,10 @@ class BasicFC extends placeholderFC.PlaceholderFC {
      * @param {Object} config        the config object for this sublayer
      */
     constructor (parent, idx, config) {
-        // TEST STATUS basic
         super(parent, config.name || '');
         this._idx = idx;
         this.queryable = config.state.query;
+        this.extent = config.extent;  // if missing, will fill more values after layer loads
 
         // TODO do we need to store a copy of the config? for the memories?
 
@@ -80,7 +80,6 @@ class BasicFC extends placeholderFC.PlaceholderFC {
     setVisibility (value) {
         // basic case - set layer visibility
         this._parent._layer.setVisibility(value);
-        this.visibleChanged(value);
     }
 
     // this will actively download / refresh the internal symbology

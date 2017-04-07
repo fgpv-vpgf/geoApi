@@ -25,7 +25,6 @@
                 metadataUrl: 'http://www.github.com',
                 layerType: 'esriFeature',
                 tolerance: 5,
-                extent: {},
                 controls: ['snapshot', 'visibility', 'opacity', 'boundingBox', 'query', 'data'],
                 state: {
                     opacity: 1,
@@ -83,6 +82,7 @@
                     clearTimeout(toTo);
                     console.log('geom type layer root - sb point', proxy.geometryType);
                     console.log('feature count - sb 27', proxy.featureCount);
+                    console.log('root layer extent - sb {}', proxy.extent);
 
                 }, 2000);
 

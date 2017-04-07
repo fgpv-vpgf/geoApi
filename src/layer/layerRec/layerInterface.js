@@ -38,6 +38,7 @@ class LayerInterface {
     get layerType () { this._iAmError(); } // returns String
     get geometryType () { this._iAmError(); } // returns String
     get featureCount () { this._iAmError(); } // returns Integer
+    get extent () { this._iAmError(); } // returns Object (Esri Extent)
 
     // layer states
     get state () { this._iAmError(); } // returns String
@@ -45,7 +46,6 @@ class LayerInterface {
     // these return the current values of the corresponding controls
     get visibility () { this._iAmError(); } // returns Boolean
     get opacity () { this._iAmError(); } // returns Decimal
-    get boundingBox () { this._iAmError(); } // returns Boolean
     get query () { this._iAmError(); } // returns Boolean
     get snapshot () { this._iAmError(); } // returns Boolean
 
@@ -55,7 +55,6 @@ class LayerInterface {
     // these set values to the corresponding controls
     setVisibility () { this._iAmError(); }
     setOpacity () { this._iAmError(); }
-    setBoundingBox () { this._iAmError(); }
     setQuery () { this._iAmError(); }
     setSnapshot () { this._iAmError(); }
 
@@ -77,7 +76,6 @@ class LayerInterface {
 
         newProp(this, 'visibility', standardGetVisibility);
         newProp(this, 'opacity', standardGetOpacity);
-        newProp(this, 'boundingBox', standardGetBoundingBox);
         newProp(this, 'query', standardGetQuery);
 
         newProp(this, 'name', standardGetName);
@@ -85,10 +83,10 @@ class LayerInterface {
         newProp(this, 'geometryType', standardGetGeometryType);
         newProp(this, 'layerType', standardGetLayerType);
         newProp(this, 'featureCount', standardGetFeatureCount);
+        newProp(this, 'extent', standardGetExtent);
 
         this.setVisibility = standardSetVisibility;
         this.setOpacity = standardSetOpacity;
-        this.setBoundingBox = standardSetBoundingBox;
         this.setQuery = standardSetQuery;
     }
 
@@ -120,6 +118,7 @@ class LayerInterface {
         newProp(this, 'geometryType', dynamicLeafGetGeometryType);
         newProp(this, 'layerType', dynamicLeafGetLayerType);
         newProp(this, 'featureCount', dynamicLeafGetFeatureCount);
+        newProp(this, 'extent', dynamicLeafGetExtent);
 
         this.setVisibility = dynamicLeafSetVisibility;
         this.setOpacity = dynamicLeafSetOpacity;
@@ -209,12 +208,14 @@ function dynamicLeafGetLayerType() {
     return this._source.layerType;
 }
 
-function standardGetBoundingBox() {
+function standardGetExtent() {
     /* jshint validthis: true */
+    return this._source.extent;
+}
 
-    // dont be fooled by function/prop name, we are returning bbox visibility,
-    // not the box itself
-    return this._source.isBBoxVisible();
+function dynamicLeafGetExtent() {
+    /* jshint validthis: true */
+    return this._source.extent;
 }
 
 function standardGetQuery() {
@@ -309,13 +310,6 @@ function standardSetOpacity(value) {
 function dynamicLeafSetOpacity(value) {
     /* jshint validthis: true */
     this._source.opacity = value;
-}
-
-function standardSetBoundingBox(value) {
-    /* jshint validthis: true */
-    if (this._source.bbox) {
-        this._source.bbox.setVisibility(value);
-    }
 }
 
 function standardSetQuery(value) {

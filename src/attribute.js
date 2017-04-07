@@ -74,7 +74,8 @@ this is a layer data object.  it contains information describing the server-side
     "geometryType": "esriGeometryPoint",
     "layerType": "Feature Layer",
     "minScale": 0,
-    "maxScale": 0
+    "maxScale": 0,
+    "extent": {...}
 }
 
 */
@@ -320,6 +321,7 @@ function loadFeatureAttribs(layerUrl, featureIdx, attribs, esriBundle, geoApi) {
                 layerData.minScale = serviceResult.minScale;
                 layerData.maxScale = serviceResult.maxScale;
                 layerData.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
+                layerData.extent = serviceResult.extent;
 
                 if (serviceResult.type === 'Feature Layer') {
                     layerData.supportsFeatures = true;

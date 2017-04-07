@@ -20,7 +20,6 @@ class LayerRecord extends root.Root {
     get config () { return this.initialConfig; } // TODO: add a live config reference if needed
     get legendEntry () { return this._legendEntry; } // legend entry class corresponding to those defined in legend entry service
     set legendEntry (value) { this._legendEntry = value; } // TODO: determine if we still link legends inside this class
-    get bbox () { return this._bbox; } // bounding box layer
     get state () { return this._state; }
     set state (value) { this._state = value; }
     get layerId () { return this.config.id; }
@@ -41,10 +40,6 @@ class LayerRecord extends root.Root {
     set visibility (value) {
         if (this._layer) {
             this._layer.setVisibility(value);
-            if (!value && this.bbox && this.bbox.visible) {
-                // our layer is now invisible, but bounding box is visible. turn it off too.
-                this.bbox.setVisibility(false);
-            }
         }
 
         // TODO do we need an ELSE case here?
@@ -63,28 +58,6 @@ class LayerRecord extends root.Root {
         }
 
         // TODO do we need an ELSE case here?
-    }
-
-    /**
-     * Generate a bounding box for the layer on the given map.
-     */
-    createBbox (spatialReference) {
-        if (!this._bbox) {
-            // TODO possibly adjust extent parameter to use a config-based override
-            this._bbox = this._apiRef.layer.bbox.makeBoundingBox(`bbox_${this._layer.id}`,
-                                                                this._layer.fullExtent,
-                                                                spatialReference);
-        }
-        return this._bbox;
-    }
-
-    /**
-     * Destroy bounding box
-     */
-    destroyBbox (map) {
-        // TODO should we remove the map.remove step?  just drop the internal reference.
-        map.removeLayer(this._bbox);
-        this._bbox = undefined;
     }
 
     /**
@@ -183,6 +156,13 @@ class LayerRecord extends root.Root {
             this.name = this._layer.name;
         }
 
+        // TODO check if we are file based. if so, use the graphic box calculator
+        //      (see zoomToBoundary in old client)
+        if (!this.extent) {
+            // no extent from config. attempt layer extent
+            this.extent = this._layer.fullExtent;
+        }
+
         let lookupPromise = Promise.resolve();
         if (this._epsgLookup) {
             const check = this._apiRef.proj.checkProj(this.spatialReference, this._epsgLookup);
@@ -245,19 +225,6 @@ class LayerRecord extends root.Root {
             opacity: this.config.state.opacity,
             visible: this.config.state.visibility
         };
-    }
-
-    /**
-     * Indicates if the bounding box is visible
-     *
-     * @returns {Boolean} indicates if the bounding box is visible
-     */
-    isBBoxVisible () {
-        if (this._bbox) {
-            return this._bbox.visible;
-        } else {
-            return false;
-        }
     }
 
     /**
@@ -360,7 +327,6 @@ class LayerRecord extends root.Root {
 
     // TODO docs
     zoomToScale (map, lods, zoomIn, zoomGraphic = false) {
-        // TEST STATUS none
         // get scale set from child, then execute zoom
         return this._featClasses[this._defaultFC].getScaleSet().then(scaleSet => {
             return this._zoomToScaleSet(map, lods, zoomIn, scaleSet, zoomGraphic);
@@ -369,7 +335,6 @@ class LayerRecord extends root.Root {
 
     // TODO docs
     isOffScale (mapScale) {
-        // TEST STATUS none
         return this._featClasses[this._defaultFC].isOffScale(mapScale);
     }
 
@@ -379,28 +344,15 @@ class LayerRecord extends root.Root {
     * @return {Promise} resolves when map is done zooming
     */
     zoomToBoundary (map) {
-        // TEST STATUS none
         // TODO add some caching? make sure it will get wiped if we end up changing projections
         //                        or use wkid as caching key?
-        // NOTE this function uses the full extent property of the layer object.  it does not
-        //      drill into extents of sub-layers of dynamic layers
 
-        const l = this._layer;
-        let gextent;
+        const projRawExtent = this._apiRef.proj.localProjectExtent(this.extent, map.spatialReference);
 
-        // some user added layers have the fullExtent field, but the properties in it are undefined. Check to see if the fullExtent properties are present
-        if (!l.fullExtent.xmin) {
-            // TODO make this code block more robust? check that we have graphics?
-            gextent = this._apiRef.proj.localProjectExtent(
-                this._apiRef.proj.graphicsUtils.graphicsExtent(l.graphics), map.spatialReference);
-        } else {
-            gextent = this._apiRef.proj.localProjectExtent(l.fullExtent, map.spatialReference);
-        }
+        const projFancyExtent = this._apiRef.mapManager.Extent(projRawExtent.x0, projRawExtent.y0,
+            projRawExtent.x1, projRawExtent.y1, projRawExtent.sr);
 
-        const reprojLayerFullExt = this._apiRef.mapManager.Extent(gextent.x0, gextent.y0,
-            gextent.x1, gextent.y1, gextent.sr);
-
-        return map.setExtent(reprojLayerFullExt);
+        return map.setExtent(projFancyExtent);
     }
 
     /**
@@ -408,7 +360,6 @@ class LayerRecord extends root.Root {
     * @returns {Promise} resolves in object properties .minScale and .maxScale
     */
     getVisibleScales () {
-        // TEST STATUS basic
         // default layer, take from layer object
         return Promise.resolve({
             minScale: this._layer.minScale,
@@ -497,14 +448,15 @@ class LayerRecord extends root.Root {
         super();
         this._layerClass = layerClass;
         this.name = config.name || '';
-        this._featClasses = {}; // TODO how to populate first one
-        this._defaultFC = '0'; // TODO how to populate first one  TODO check if int or string
+        this._featClasses = {};
+        this._defaultFC = '0';
         this._apiRef = apiRef;
         this.initialConfig = config;
         this._stateListeners = [];
         this._hoverListeners = [];
         this._user = false;
         this._epsgLookup = epsgLookup;
+        this.extent = config.extent; // if missing, will fill more values after layer loads
 
         // TODO verify we still use passthrough bindings.
         this._layerPassthroughBindings.forEach(bindingName =>

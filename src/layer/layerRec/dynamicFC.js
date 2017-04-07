@@ -105,9 +105,6 @@ class DynamicFC extends attribFC.AttribFC {
         //      use setVisibileLayers(arry, true) to stall the redraw
         //      then when timer runs out, call layer.refresh
 
-        // TODO maybe alert the parent that we changed?
-
-        // this.visibleChanged(value);
     }
 
     // TODO extend this function to other FC's?  do they need it?

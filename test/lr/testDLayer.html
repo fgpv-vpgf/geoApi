@@ -25,7 +25,7 @@
                 metadataUrl: 'http://www.github.com',
                 layerType: 'esriDynamic',
                 tolerance: 5,
-                extent: {},
+                extent: { pigdog: true},
                 controls: ['visibility', 'opacity', 'boundingBox', 'query', 'data'],
                 state: {
                     opacity: 1,
@@ -55,7 +55,7 @@
                             visibility: false,                            
                             query: false
                         },
-                        stateOnly: true
+                        stateOnly: true                       
                     }
                 ]
             };
@@ -132,8 +132,8 @@
                     console.log('root layer type - sb dynamic', proxy.layerType);
                     console.log('leaf layer type - sb feature', leaf3proxy.layerType);
 
-                    console.log('root layer supports opac - sb true', proxy.supportsOpacity);
-                    console.log('leaf layer supports opac - sb false', leaf3proxy.supportsOpacity);
+                    console.log('root layer extent - sb {}', proxy.extent);
+                    console.log('leaf layer extent - sb {}', leaf2proxy.extent);
 
                 }, 2000);
 

@@ -158,7 +158,9 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // if it does not exist or is not defaulted, will do that first
         // id param is an integer in string format
         const fetchSubConfig = (id, serverName = '')  => {
-            // snapshot and bounding box don't apply to child layers
+            // snapshot doesn't apply to child layers
+            // we don't include bounding box / extent, as we are inheriting it.
+            // a lack of the property means we use the layer definition
             const dummyState = {
                 opacity: 1,
                 visibility: false,
@@ -307,6 +309,11 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 dFC.getLayerData()
                     .then(ld => {
                         dFC.layerType = serverLayerTypeToClientLayerType(ld.layerType);
+
+                        // if we didn't have an extent defined on the config, use the layer extent
+                        if (!dFC.extent) {
+                            dFC.extent = ld.extent;
+                        }
 
                         // skip a number of things if it is a raster layer
                         if (dFC.layerType === shared.clientLayerType.ESRI_FEATURE) {
@@ -561,6 +568,9 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // will not use FC classes, as we also need group names
         return this._layer.layerInfos[index].name;
     }
+
+    // TODO we may want version of layerRecord.zoomToBoundary that targets a child index.
+    //      alternately this might go on the proxy and then we go direct from there.
 
 }
 
