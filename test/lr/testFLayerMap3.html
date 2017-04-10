@@ -48,7 +48,6 @@
                 metadataUrl: 'http://www.github.com',
                 layerType: 'esriFeature',
                 tolerance: 5,
-                extent: {},
                 controls: ['snapshot', 'visibility', 'opacity', 'boundingBox', 'query', 'data'],
                 state: {
                     opacity: 1,
@@ -86,6 +85,7 @@
             function afterLoadTests() {
                 console.log('enhanced loaded');
                
+                proxy.zoomToBoundary(map);
                 // proxy.setOpacity(0.5);
             }
 

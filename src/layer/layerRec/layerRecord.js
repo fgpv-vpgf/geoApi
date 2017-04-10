@@ -344,10 +344,23 @@ class LayerRecord extends root.Root {
     * @return {Promise} resolves when map is done zooming
     */
     zoomToBoundary (map) {
-        // TODO add some caching? make sure it will get wiped if we end up changing projections
-        //                        or use wkid as caching key?
+        return this.zoomToExtent(map, this.extent);
+    }
 
-        const projRawExtent = this._apiRef.proj.localProjectExtent(this.extent, map.spatialReference);
+    /**
+     * Worker function to zoom the map to an extent of possibly
+     * @param {Object} map        map object we want to execute the zoom on
+     * @param {Object} extent     map object we want to execute the zoom on
+     * @private
+     * @return {Promise} resolves when map is done zooming
+     */
+    zoomToExtent (map, extent) {
+        // TODO add some caching? make sure it will get wiped if we end up changing projections
+        //      or use wkid as caching key?
+        //      trickyier now that we are in shared function.
+        //      maybe return an object {promise, projected extent}, and caller can cache it?
+
+        const projRawExtent = this._apiRef.proj.localProjectExtent(extent, map.spatialReference);
 
         const projFancyExtent = this._apiRef.mapManager.Extent(projRawExtent.x0, projRawExtent.y0,
             projRawExtent.x1, projRawExtent.y1, projRawExtent.sr);

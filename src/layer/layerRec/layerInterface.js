@@ -58,6 +58,8 @@ class LayerInterface {
     setQuery () { this._iAmError(); }
     setSnapshot () { this._iAmError(); }
 
+    zoomToBoundary () { this._iAmError(); } // returns promise that resolves after zoom completes
+
     // updates what this interface is pointing to, in terms of layer data source.
     // often, the interface starts with a placeholder to avoid errors and return
     // defaults. This update happens after a layer has loaded, and new now want
@@ -88,6 +90,7 @@ class LayerInterface {
         this.setVisibility = standardSetVisibility;
         this.setOpacity = standardSetOpacity;
         this.setQuery = standardSetQuery;
+        this.zoomToBoundary = standardZoomToBoundary;
     }
 
     convertToFeatureLayer (layerRecord) {
@@ -123,6 +126,7 @@ class LayerInterface {
         this.setVisibility = dynamicLeafSetVisibility;
         this.setOpacity = dynamicLeafSetOpacity;
         this.setQuery = dynamicLeafSetQuery;
+        this.zoomToBoundary = dynamicLeafZoomToBoundary;
     }
 
     convertToPlaceholder (placeholderFC) {
@@ -297,9 +301,6 @@ function standardSetVisibility(value) {
 function dynamicLeafSetVisibility(value) {
     /* jshint validthis: true */
     this._source.setVisibility(value);
-
-    // TODO see if we need to trigger any refresh of parents.
-    //      it may be that the bindings automatically work.
 }
 
 function standardSetOpacity(value) {
@@ -328,15 +329,21 @@ function featureGetSnapshot() {
 }
 
 function featureSetSnapshot() {
-    // TEST STATUS none
     // TODO trigger the snapshot process.  need the big picture on how this orchestrates.
     //      it involves a layer reload so possible this function is irrelevant, as the record
     //      will likely get nuked
     console.log('MOCKING THE SNAPSHOT PROCESS');
 }
 
-// TODO implement infoType / infoContent for static entry.
-//      who supplies this? how does it get passed in.
+function standardZoomToBoundary(map) {
+    /* jshint validthis: true */
+    this._source.zoomToBoundary(map);
+}
+
+function dynamicLeafZoomToBoundary(map) {
+    /* jshint validthis: true */
+    this._source.zoomToBoundary(map);
+}
 
 module.exports = () => ({
     LayerInterface
