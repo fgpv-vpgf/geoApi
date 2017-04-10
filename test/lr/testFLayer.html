@@ -64,6 +64,10 @@
                     console.log('offscale test - sb false, flase', offscale);
                 });
 
+                proxy.formattedAttributes.then(treats => {
+                    console.log('formatted attribs test - sb ? ', treats);
+                });
+
                 // note using hack of layerRec._layer for zoom scales, as that thing is private
                 console.log('find zoom scale test - sb level 17', layerRec.findZoomScale(lods, layerRec._layer, false));
 

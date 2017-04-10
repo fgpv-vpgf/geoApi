@@ -138,18 +138,71 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // the layers part. we just load what we are told to. the legend module
         // will handle the structured part.
 
-        // NOTE for now, the only relevant properties to be propagated
-        //      from parent to child are .state and .controls .
-        //      .outfields does not make sense as chilren can have different fields.
-        //      We assume the objects at the layer level (index -1) are fully defaulted.
-        //      All other missing items assigned from parent item.
+        // see comments on the constructor to learn about _configIsComplete and
+        // what type of scenarios you can expect for incoming configs
+
+        // snapshot doesn't apply to child layers
+        // we don't include bounding box / extent, as we are inheriting it.
+        // a lack of the property means we use the layer definition
+        const dummyState = {
+            opacity: 1,
+            visibility: false,
+            query: false
+        };
+
+        // subfunction to clone a layerEntries config object.
+        // since we are using typed objects with getters and setters,
+        // our usual easy ways of cloning an object don't work (e.g. using
+        // JSON.parse(JSON.stringify(x))). This is not a great solution (understatement),
+        //  but is being done as a quick n dirty workaround. At a later time,
+        // the guts of this function can be re-examined for a better,
+        // less hardcoded solution.
+        const cloneConfig = origConfig => {
+            const clone = {};
+
+            // direct copies, no defaulting
+            clone.name = origConfig.name;
+            clone.index = origConfig.index;
+            clone.stateOnly = origConfig.stateOnly;
+
+            // an empty string is a valid property, so be wary of falsy logic
+            clone.outfields = origConfig.hasOwnProperty('outfields') ? origConfig.outfields : '*';
+
+            // with state, we are either complete, or pure defaults.
+            // in the non-complete case, we treat our state as unreliable and
+            // expect the client to assign properties as it does parent-child inheritance
+            // defaulting (which occurs after this onLoad function has completed)
+            if (this._configIsComplete) {
+                clone.state = {
+                    visiblity: origConfig.visiblity,
+                    opacity: origConfig.opacity,
+                    query: origConfig.query
+                };
+            } else {
+                clone.state = Object.assign({}, dummyState);
+            }
+
+            // if extent is present, we assume it is fully defined.
+            // TODO living dangerously for now. clarify if extents are strongly typed or just classic json
+            clone.extent = origConfig.extent;
+
+            /*
+            if (origConfig.extent) {
+                clone.extent = {
+
+                }
+            }
+            */
+
+            return clone;
+        };
 
         // collate any relevant overrides from the config.
         const subConfigs = {};
 
         this.config.layerEntries.forEach(le => {
             subConfigs[le.index.toString()] = {
-                config: JSON.parse(JSON.stringify(le)),
+                config: cloneConfig(le),
                 defaulted: this._configIsComplete
             };
         });
@@ -158,29 +211,12 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // if it does not exist or is not defaulted, will do that first
         // id param is an integer in string format
         const fetchSubConfig = (id, serverName = '')  => {
-            // snapshot doesn't apply to child layers
-            // we don't include bounding box / extent, as we are inheriting it.
-            // a lack of the property means we use the layer definition
-            const dummyState = {
-                opacity: 1,
-                visibility: false,
-                query: false
-            };
 
             if (subConfigs[id]) {
                 const subC = subConfigs[id];
                 if (!subC.defaulted) {
                     // config is incomplete, fill in blanks
                     // we will never hit this code block a complete config was passed in
-                    // (because it will already have defaulted === true).
-                    // that means our state is unreliable and will be overwritten with a default
-
-                    subC.config.state = Object.assign({}, dummyState);
-
-                    // default outfields if not already there
-                    if (!subC.config.hasOwnProperty('outfields')) {
-                        subC.config.outfields = '*';
-                    }
 
                     // apply a server name if no name exists
                     if (!subC.config.name) {
@@ -193,13 +229,12 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 return subC.config;
             } else {
                 // no config at all. we apply defaults, and a name from the server if available
-                const newConfig = {
+                const configSeed = {
                     name: serverName,
-                    state: Object.assign({}, dummyState),
-                    outfields: '*',
                     index: parseInt(id),
                     stateOnly: true
                 };
+                const newConfig = cloneConfig(configSeed);
                 subConfigs[id] = {
                     config: newConfig,
                     defaulted: true
@@ -218,7 +253,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
             const subC = fetchSubConfig(sId, layerInfo.name);
 
             if (layerInfo.subLayerIds && layerInfo.subLayerIds.length > 0) {
-                // group sublayer
+                // group sublayer. set up our tree for the client, then crawl childs.
+
                 const treeGroup = {
                     entryIndex: layerInfo.id,
                     name: subC.name,
@@ -233,7 +269,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 });
 
             } else {
-                // leaf
+                // leaf sublayer. make placeholders, add leaf to the tree
 
                 const pfc = new placeholderFC.PlaceholderFC(this, subC.name);
                 if (this._proxies[sId]) {

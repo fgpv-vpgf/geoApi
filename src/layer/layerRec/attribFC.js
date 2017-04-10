@@ -73,13 +73,12 @@ class AttribFC extends basicFC.BasicFC {
     * @returns {Promise}         resolves with the name of the feature
     */
     getFeatureName (objId, attribs) {
-        // TEST STATUS none
         let nameField = '';
 
         if (this.nameField) {
             nameField = this.nameField;
-        } else if (this.parent._layer && this.parent._layer.displayField) {
-            nameField = this.parent._layer.displayField;
+        } else if (this._parent._layer && this._parent._layer.displayField) {
+            nameField = this._parent._layer.displayField;
         }
 
         if (nameField) {
