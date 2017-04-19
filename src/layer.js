@@ -83,7 +83,9 @@ function getServerFile(url, esriBundle) {
 // type is serviceType enum value
 function makeInfo(type) {
     return {
-        serviceType: type
+        serviceType: type,
+        index: -1,
+        tileSupport: false
     };
 }
 
@@ -95,7 +97,11 @@ function makeInfo(type) {
 // json is json result from service
 function makeLayerInfo(type, name, json) {
     const info = makeInfo(type);
-    info.name = json[name] || '';
+    info.serviceName = json[name] || '';
+    if (type === serviceType.TileService) {
+        info.tileSupport = true;
+        info.serviceType = serviceType.DynamicService;
+    }
     return info;
 }
 
@@ -110,7 +116,7 @@ function makeFileInfo(type, url, esriBundle) {
                 info.fileData = data;
                 resolve(info);
             }).catch(() => {
-                info.type = serviceType.Error;
+                info.serviceType = serviceType.Error;
                 resolve(info);
             });
         } else {
@@ -158,6 +164,41 @@ function crawlEsriService(srvJson) {
     }
 }
 
+/**
+ * handles the situation where our first poke revealed a child layer
+ * (i.e. an indexed endpoint in an arcgis server). We need to extract
+ * some extra information about the service it resides in (the root service)
+ * and add it to our info package.
+ *
+ * @param {String} url          the url of the original endpoint (including the index)
+ * @param {Object} esriBundle   has ESRI API objects
+ * @param {Object} childInfo    the information we have gathered on the child layer from the first poke
+ * @returns {Promise}           resolves with information object containing child and root information
+ */
+function repokeEsriService(url, esriBundle, childInfo) {
+
+    // break url into root and index
+    const re = /\/(\d+)\/?$/;
+    const matches = url.match(re);
+    if (!matches) {
+        // give up, dont crash with error.
+        console.warn('Cannot extract layer index from url ' + url);
+        return Promise.resolve(childInfo);
+    }
+
+    childInfo.index = parseInt(matches[1]);
+    const rootUrl = url.substr(0, url.length - matches[0].length); // will drop trailing slash
+
+    // inspect the server root
+    return pokeEsriService(rootUrl, esriBundle).then(rootInfo => {
+        // take relevant info from root, mash it into our child package
+        childInfo.tileSupport = rootInfo.tileSupport;
+        childInfo.serviceType = rootInfo.serviceType;
+        childInfo.layers = rootInfo.layers;
+        return childInfo;
+    });
+}
+
 // given a URL, attempt to read it as an ESRI rest endpoint.
 // returns a promise that resovles with an information object.
 // at minimum, the object will have a .serviceType property with a value from the above enumeration.
@@ -172,7 +213,6 @@ function pokeEsriService(url, esriBundle, hint) {
     // reaction functions to different esri services
     const srvHandler = {};
 
-    // feature layer gets some extra treats
     srvHandler[serviceType.FeatureLayer] = srvJson => {
         const info = makeLayerInfo(serviceType.FeatureLayer, 'name', srvJson);
         info.fields = srvJson.fields;
@@ -181,32 +221,40 @@ function pokeEsriService(url, esriBundle, hint) {
             // TODO: try to find a name field if possible
             primary: info.fields[0].name // pick the first field as primary and return its name for ui binding
         };
+        info.indexType = 'feature';
+        return repokeEsriService(url, esriBundle, info);
+    };
+
+    srvHandler[serviceType.RasterLayer] = srvJson => {
+        const info = makeLayerInfo(serviceType.RasterLayer, 'name', srvJson);
+        info.indexType = 'raster';
+        return repokeEsriService(url, esriBundle, info);
+    };
+
+    srvHandler[serviceType.GroupLayer] = srvJson => {
+        const info = makeLayerInfo(serviceType.GroupLayer, 'name', srvJson);
+        info.indexType = 'group';
+        return repokeEsriService(url, esriBundle, info);
+    };
+
+    srvHandler[serviceType.TileService] = srvJson => {
+        const info = makeLayerInfo(serviceType.TileService, 'mapName', srvJson);
+        info.layers = srvJson.layers;
         return info;
     };
 
-    // no treats for raster (for now)
-    srvHandler[serviceType.RasterLayer] = srvJson => {
-        return makeLayerInfo(serviceType.RasterLayer, 'name', srvJson);
-    };
-
-    // no treats for group (for now)
-    srvHandler[serviceType.GroupLayer] = srvJson => {
-        return makeLayerInfo(serviceType.GroupLayer, 'name', srvJson);
-    };
-
-    // no treats for tile (for now)
-    srvHandler[serviceType.TileService] = srvJson => {
-        return makeLayerInfo(serviceType.TileService, 'mapName', srvJson);
-    };
-
-    // no treats for mapserver / dynamic (for now)
     srvHandler[serviceType.DynamicService] = srvJson => {
         const info = makeLayerInfo(serviceType.DynamicService, 'mapName', srvJson);
         info.layers = srvJson.layers;
         return info;
     };
 
-    // no treats for imageserver (for now)
+    srvHandler[serviceType.FeatureService] = srvJson => {
+        const info = makeLayerInfo(serviceType.FeatureService, 'description', srvJson);
+        info.layers = srvJson.layers;
+        return info;
+    };
+
     srvHandler[serviceType.ImageService] = srvJson => {
         const info = makeLayerInfo(serviceType.ImageService, 'name', srvJson);
         info.fields = srvJson.fields;
