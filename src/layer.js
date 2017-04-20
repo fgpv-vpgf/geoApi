@@ -187,10 +187,10 @@ function repokeEsriService(url, esriBundle, childInfo) {
     }
 
     childInfo.index = parseInt(matches[1]);
-    const rootUrl = url.substr(0, url.length - matches[0].length); // will drop trailing slash
+    childInfo.rootUrl = url.substr(0, url.length - matches[0].length); // will drop trailing slash
 
     // inspect the server root
-    return pokeEsriService(rootUrl, esriBundle).then(rootInfo => {
+    return pokeEsriService(childInfo.rootUrl, esriBundle).then(rootInfo => {
         // take relevant info from root, mash it into our child package
         childInfo.tileSupport = rootInfo.tileSupport;
         childInfo.serviceType = rootInfo.serviceType;
@@ -221,19 +221,19 @@ function pokeEsriService(url, esriBundle, hint) {
             // TODO: try to find a name field if possible
             primary: info.fields[0].name // pick the first field as primary and return its name for ui binding
         };
-        info.indexType = 'feature';
+        info.indexType = serviceType.FeatureLayer;
         return repokeEsriService(url, esriBundle, info);
     };
 
     srvHandler[serviceType.RasterLayer] = srvJson => {
         const info = makeLayerInfo(serviceType.RasterLayer, 'name', srvJson);
-        info.indexType = 'raster';
+        info.indexType = serviceType.RasterLayer;
         return repokeEsriService(url, esriBundle, info);
     };
 
     srvHandler[serviceType.GroupLayer] = srvJson => {
         const info = makeLayerInfo(serviceType.GroupLayer, 'name', srvJson);
-        info.indexType = 'group';
+        info.indexType = serviceType.GroupLayer;
         return repokeEsriService(url, esriBundle, info);
     };
 

@@ -24,7 +24,6 @@ class AttribRecord extends layerRecord.LayerRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
-        // TEST STATUS basic
         super(layerClass, apiRef, config, esriLayer, epsgLookup);
 
         this._esriRequest = esriRequest;
@@ -37,7 +36,6 @@ class AttribRecord extends layerRecord.LayerRecord {
      * @return {Promise}              resolves to the best available user friendly attribute name
      */
     aliasedFieldName (attribName) {
-        // TEST STATUS basic
         return this._featClasses[this._defaultFC].aliasedFieldName(attribName);
     }
 
@@ -46,12 +44,10 @@ class AttribRecord extends layerRecord.LayerRecord {
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
     getFormattedAttributes () {
-        // TEST STATUS none
         return this._featClasses[this._defaultFC].getFormattedAttributes();
     }
 
     checkDateType (attribName) {
-        // TEST STATUS basic
         return this._featClasses[this._defaultFC].checkDateType(attribName);
     }
 

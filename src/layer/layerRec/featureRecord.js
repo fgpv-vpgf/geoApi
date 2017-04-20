@@ -25,7 +25,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
     constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
-        // TEST STATUS basic
         // TODO if we have nothing to add here, delete this constructor
         // TODO might need to add a placeholder here with stuff like
         //    this._defaultFC = '0';
@@ -44,7 +43,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
     //      remove comment once that is done
 
     makeLayerConfig () {
-        // TEST STATUS basic
         const cfg = super.makeLayerConfig();
         cfg.mode = this.config.state.snapshot ? this._layerClass.MODE_SNAPSHOT
                                                         : this._layerClass.MODE_ONDEMAND;
@@ -58,7 +56,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
     }
 
     getGeomType () {
-        // TEST STATUS none
         // standard case, layer has no geometry. This gets overridden in feature-based Record classes.
         return this._geometryType;
     }
@@ -66,7 +63,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
     // returns the proxy interface object for the root of the layer (i.e. main entry in legend, not nested child things)
     // TODO docs
     getProxy () {
-        // TEST STATUS basic
         // TODO figure out control name arrays from config (specifically disabled stuff)
         //      updated config schema uses term "enabled" but have a feeling it really means available
         // TODO figure out how placeholders work with all this
@@ -83,7 +79,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
     * @function onLoad
     */
     onLoad () {
-        // TEST STATUS basic
         super.onLoad();
 
         // set up attributes, set up children bundles.
@@ -110,13 +105,11 @@ class FeatureRecord extends attribRecord.AttribRecord {
     }
 
     getFeatureCount () {
-        // TEST STATUS basic
         // just use the layer url (or lack of in case of file layer)
         return super.getFeatureCount(this._layer.url);
     }
 
     isFileLayer () {
-        // TEST STATUS none
         // TODO revisit.  is it robust enough?
         return this._layer && this._layer.url === '';
     }
@@ -131,7 +124,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
     get featureCount () { return this._fcount; }
 
     onMouseOver (e) {
-        // TEST STATUS none
         if (this._hoverListeners.length > 0) {
             // TODO add in quick lookup for layers that dont have attributes loaded yet
 
@@ -176,7 +168,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
     }
 
     onMouseOut (e) {
-        // TEST STATUS none
         // tell anyone listening we moused out
         const outBundle = {
             type: 'mouseOut',
@@ -192,7 +183,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
     * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
     */
     identify (opts) {
-        // TEST STATUS none
         // TODO add full documentation for options parameter
 
         // TODO fix these params
