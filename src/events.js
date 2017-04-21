@@ -4,15 +4,18 @@
  *
  * @param {esriObject} esriObject which contains the dojo events to be wrapped
  * @param {handlers} handlers is an object which contains all handlers needed
+ *
+ * @return {object} evt is the event created on the object
  */
 function wrapEvents(esriObject, handlers) {
+    var evt;
     Object.keys(handlers).forEach(ourEventName => {
         // replace camelCase name to dojo event name format
         const dojoName = ourEventName.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 
         // TODO: Validity checking on inputs for dojoName
         // make dojo call
-        esriObject.on(dojoName, (e) => {
+        evt = esriObject.on(dojoName, (e) => {
 
             // check if needs special handling to point at layer calling event
             const layerEvents = ['update-start', 'update-end', 'error'];
@@ -22,6 +25,8 @@ function wrapEvents(esriObject, handlers) {
             handlers[ourEventName](e);
         });
     });
+
+    return evt;
 }
 
 module.exports = () => {
