@@ -79,6 +79,7 @@ class WmsFC extends basicFC.BasicFC {
                 return symbologyItem;
             });
         this.symbology = legendArray;
+        return Promise.resolve();
     }
 }
 

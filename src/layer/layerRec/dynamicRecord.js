@@ -131,7 +131,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
     * @function onLoad
     */
     onLoad () {
-        super.onLoad();
+        const loadPromises = super.onLoad();
         this._isTrueDynamic = this._layer.supportsDynamicLayers;
 
         // don't worry about structured legend. the legend part is separate from
@@ -339,10 +339,10 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 }
 
                 // load real symbols into our source
-                dFC.loadSymbology();
+                loadPromises.push(dFC.loadSymbology());
 
                 // update asynchronous values
-                dFC.getLayerData()
+                const pLD = dFC.getLayerData()
                     .then(ld => {
                         dFC.layerType = serverLayerTypeToClientLayerType(ld.layerType);
 
@@ -352,17 +352,22 @@ class DynamicRecord extends attribRecord.AttribRecord {
                         }
 
                         // skip a number of things if it is a raster layer
+                        // either way, return a promise so our loadPromises have a good
+                        // value to wait on.
                         if (dFC.layerType === shared.clientLayerType.ESRI_FEATURE) {
                             dFC.geomType = ld.geometryType;
 
-                            this.getFeatureCount(idx).then(fc => {
+                            return this.getFeatureCount(idx).then(fc => {
                                 dFC.featureCount = fc;
                             });
+                        } else {
+                            return Promise.resolve();
                         }
                     })
                     .catch(() => {
                         dFC.layerType = shared.clientLayerType.UNRESOLVED;
                     });
+                loadPromises.push(pLD);
             }
         });
 
@@ -386,6 +391,9 @@ class DynamicRecord extends attribRecord.AttribRecord {
             this._layer.setVisibleLayers([-1]);
         }
 
+        Promise.all(loadPromises).then(() => {
+            this._stateChange(shared.states.LOADED);
+        });
     }
 
     // override to add child index parameter

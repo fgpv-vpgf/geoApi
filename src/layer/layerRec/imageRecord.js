@@ -39,12 +39,16 @@ class ImageRecord extends layerRecord.LayerRecord {
     * @function onLoad
     */
     onLoad () {
-        super.onLoad();
+        const loadPromises = super.onLoad();
 
         const fc = new basicFC.BasicFC(this, '0', this.config);
         this._featClasses['0'] = fc;
 
-        fc.loadSymbology();
+        loadPromises.push(fc.loadSymbology());
+
+        Promise.all(loadPromises).then(() => {
+            this._stateChange(shared.states.LOADED);
+        });
     }
 }
 

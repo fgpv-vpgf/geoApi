@@ -79,7 +79,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
     * @function onLoad
     */
     onLoad () {
-        super.onLoad();
+        const loadPromises = super.onLoad();
 
         // set up attributes, set up children bundles.
         const attributeBundle = this._apiRef.attribs.loadLayerAttribs(this._layer);
@@ -91,17 +91,21 @@ class FeatureRecord extends attribRecord.AttribRecord {
         this._defaultFC = idx;
         this._featClasses[idx] = aFC;
 
-        aFC.loadSymbology();
+        const pLS = aFC.loadSymbology();
 
         // update asynch data
-        aFC.getLayerData().then(ld => {
+        const pLD = aFC.getLayerData().then(ld => {
             this._geometryType = ld.geometryType;
         });
 
-        this.getFeatureCount().then(fc => {
+        const pFC = this.getFeatureCount().then(fc => {
             this._fcount = fc;
         });
 
+        loadPromises.push(pLD, pFC, pLS);
+        Promise.all(loadPromises).then(() => {
+            this._stateChange(shared.states.LOADED);
+        });
     }
 
     getFeatureCount () {

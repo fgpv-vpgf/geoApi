@@ -18,7 +18,6 @@ class AttribFC extends basicFC.BasicFC {
      * @param {Object} config        the config object for this sublayer
      */
     constructor (parent, idx, layerPackage, config) {
-        // TEST STATUS basic
         super(parent, idx, config);
 
         this._layerPackage = layerPackage;
@@ -35,7 +34,6 @@ class AttribFC extends basicFC.BasicFC {
     * @returns {Promise}         resolves with a layer attribute data object
     */
     getAttribs () {
-        // TEST STATUS none
         return this._layerPackage.getAttribs();
     }
 
@@ -46,19 +44,18 @@ class AttribFC extends basicFC.BasicFC {
     * @returns {Promise}         resolves with a layer data object
     */
     getLayerData () {
-        // TEST STATUS basic
         return this._layerPackage.layerData;
     }
 
     // this will actively download / refresh the internal symbology
     loadSymbology () {
-        this.getLayerData().then(lData => {
+        return this.getLayerData().then(lData => {
             if (lData.layerType === 'Feature Layer') {
                 // feature always has a single item, so index 0
                 this.symbology = shared.makeSymbologyArray(lData.legend.layers[0].legend);
             } else {
                 // non-feature source. use legend server
-                super.loadSymbology();
+                return super.loadSymbology();
             }
         });
     }

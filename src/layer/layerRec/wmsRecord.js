@@ -32,7 +32,6 @@ class WmsRecord extends layerRecord.LayerRecord {
     get layerType () { return shared.clientLayerType.OGC_WMS; }
 
     makeLayerConfig () {
-        // TEST STATUS none
         const cfg = super.makeLayerConfig();
         cfg.visibleLayers = this.config.layerEntries.map(le => le.id);
         return cfg;
@@ -44,13 +43,16 @@ class WmsRecord extends layerRecord.LayerRecord {
     * @function onLoad
     */
     onLoad () {
-        // TEST STATUS none
-        super.onLoad();
+        const loadPromises = super.onLoad();
 
         const fc = new wmsFC.WmsFC(this, '0', this.config);
         this._featClasses['0'] = fc;
 
-        fc.loadSymbology();
+        loadPromises.push(fc.loadSymbology());
+
+        Promise.all(loadPromises).then(() => {
+            this._stateChange(shared.states.LOADED);
+        });
     }
 
     /**
@@ -60,7 +62,6 @@ class WmsRecord extends layerRecord.LayerRecord {
      * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
      */
     identify (opts) {
-        // TEST STATUS none
         // TODO add full documentation for options parameter
 
         // TODO consider having a constants area in geoApi / better place for this definition

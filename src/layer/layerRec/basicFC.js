@@ -90,7 +90,7 @@ class BasicFC extends placeholderFC.PlaceholderFC {
         const url = this._parent._layer.url;
         if (url) {
             // fetch legend from server, convert to local format, process local format
-            this._parent._apiRef.symbology.mapServerToLocalLegend(url, this._idx)
+            return this._parent._apiRef.symbology.mapServerToLocalLegend(url, this._idx)
                 .then(legendData => {
                     this.symbology = shared.makeSymbologyArray(legendData.layers[0].legend);
                 });

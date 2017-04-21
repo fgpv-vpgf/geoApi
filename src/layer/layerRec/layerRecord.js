@@ -144,6 +144,7 @@ class LayerRecord extends root.Root {
 
     /**
     * Triggers when the layer loads.
+    * Returns an array of promises that need to resolve for layer to be loaded.
     *
     * @function onLoad
     */
@@ -173,14 +174,13 @@ class LayerRecord extends root.Root {
             // TODO if we don't find a projection, the app will show the layer loading forever.
             //      might need to handle the fail case and show something to the user.
         }
-        lookupPromise.then(() => this._stateChange(shared.states.LOADED));
+        return [lookupPromise];
     }
 
     /**
      * Handles when the layer has an error
      */
     onError (e) {
-        // TEST STATUS basic
         console.warn(`Layer error: ${e}`);
         console.warn(e);
         this._stateChange(shared.states.ERROR);
@@ -190,7 +190,6 @@ class LayerRecord extends root.Root {
      * Handles when the layer starts to update
      */
     onUpdateStart () {
-        // TEST STATUS none
         this._stateChange(shared.states.REFRESH);
     }
 
@@ -198,7 +197,6 @@ class LayerRecord extends root.Root {
      * Handles when the layer finishes updating
      */
     onUpdateEnd () {
-        // TEST STATUS none
         this._stateChange(shared.states.LOADED);
     }
 

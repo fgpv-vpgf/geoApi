@@ -81,14 +81,9 @@
 
                 console.log('loaded state', proxy.state);
 
-                // wait for some promises to update
-                var toTo = setTimeout(() => {
-                    clearTimeout(toTo);
-                    console.log('geom type layer root - sb point', proxy.geometryType);
-                    console.log('feature count - sb 27', proxy.featureCount);
-                    console.log('root layer extent - sb {}', proxy.extent);
-
-                }, 2000);
+                console.log('geom type layer root - sb point', proxy.geometryType);
+                console.log('feature count - sb 27', proxy.featureCount);
+                console.log('root layer extent - sb {}', proxy.extent);
 
             }
 
