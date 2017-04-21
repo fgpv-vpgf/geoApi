@@ -89,15 +89,25 @@ function makeInfo(type) {
     };
 }
 
-// returns a standard information object with serviceType and name
-// common for most ESRI endpoints
-// supports predictLayerUrl
-// type is serviceType enum value
-// name is property in json containing a service name
-// json is json result from service
-function makeLayerInfo(type, name, json) {
+/**
+ * Returns a standard information object with info common for most ESRI endpoints
+ * .serviceName
+ * .serviceType
+ * .tileSupport
+ * .rootUrl
+ *
+ * @function makeLayerInfo
+ * @private
+ * @param {String} type    serviceType enum value for layer
+ * @param {String} name    property in json parameter containing a service name
+ * @param {String} url     url we are investigating
+ * @param {Object} json    data result from service we interrogated
+ * @returns {Object}
+ */
+function makeLayerInfo(type, name, url, json) {
     const info = makeInfo(type);
     info.serviceName = json[name] || '';
+    info.rootUrl = url;
     if (type === serviceType.TileService) {
         info.tileSupport = true;
         info.serviceType = serviceType.DynamicService;
@@ -214,7 +224,7 @@ function pokeEsriService(url, esriBundle, hint) {
     const srvHandler = {};
 
     srvHandler[serviceType.FeatureLayer] = srvJson => {
-        const info = makeLayerInfo(serviceType.FeatureLayer, 'name', srvJson);
+        const info = makeLayerInfo(serviceType.FeatureLayer, 'name', url, srvJson);
         info.fields = srvJson.fields;
         info.geometryType = srvJson.geometryType;
         info.smartDefaults = {
@@ -226,37 +236,37 @@ function pokeEsriService(url, esriBundle, hint) {
     };
 
     srvHandler[serviceType.RasterLayer] = srvJson => {
-        const info = makeLayerInfo(serviceType.RasterLayer, 'name', srvJson);
+        const info = makeLayerInfo(serviceType.RasterLayer, 'name', url, srvJson);
         info.indexType = serviceType.RasterLayer;
         return repokeEsriService(url, esriBundle, info);
     };
 
     srvHandler[serviceType.GroupLayer] = srvJson => {
-        const info = makeLayerInfo(serviceType.GroupLayer, 'name', srvJson);
+        const info = makeLayerInfo(serviceType.GroupLayer, 'name', url, srvJson);
         info.indexType = serviceType.GroupLayer;
         return repokeEsriService(url, esriBundle, info);
     };
 
     srvHandler[serviceType.TileService] = srvJson => {
-        const info = makeLayerInfo(serviceType.TileService, 'mapName', srvJson);
+        const info = makeLayerInfo(serviceType.TileService, 'mapName', url, srvJson);
         info.layers = srvJson.layers;
         return info;
     };
 
     srvHandler[serviceType.DynamicService] = srvJson => {
-        const info = makeLayerInfo(serviceType.DynamicService, 'mapName', srvJson);
+        const info = makeLayerInfo(serviceType.DynamicService, 'mapName', url, srvJson);
         info.layers = srvJson.layers;
         return info;
     };
 
     srvHandler[serviceType.FeatureService] = srvJson => {
-        const info = makeLayerInfo(serviceType.FeatureService, 'description', srvJson);
+        const info = makeLayerInfo(serviceType.FeatureService, 'description', url, srvJson);
         info.layers = srvJson.layers;
         return info;
     };
 
     srvHandler[serviceType.ImageService] = srvJson => {
-        const info = makeLayerInfo(serviceType.ImageService, 'name', srvJson);
+        const info = makeLayerInfo(serviceType.ImageService, 'name', url, srvJson);
         info.fields = srvJson.fields;
         return info;
     };
