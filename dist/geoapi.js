@@ -2559,7 +2559,7 @@ module.exports = Array.isArray || function (arr) {
 					}
 				}
 			};
-			
+
 			// Microsoft Edge fix
 			var allUppercase = new RegExp("^[A-Z\-]+$");
 			var normalizeAttributeName = function (name) {
@@ -3430,13 +3430,13 @@ module.exports = Array.isArray || function (arr) {
 			this.getGradient = function() {
 				// OVERRIDE ME!
 			}
-			
+
 			this.gradientUnits = function () {
 				return this.attribute('gradientUnits').valueOrDefault('objectBoundingBox');
 			}
-			
+
 			this.attributesToInherit = ['gradientUnits'];
-			
+
 			this.inheritStopContainer = function (stopsContainer) {
 				for (var i=0; i<this.attributesToInherit.length; i++) {
 					var attributeToInherit = this.attributesToInherit[i];
@@ -3506,7 +3506,7 @@ module.exports = Array.isArray || function (arr) {
 		svg.Element.linearGradient = function(node) {
 			this.base = svg.Element.GradientBase;
 			this.base(node);
-			
+
 			this.attributesToInherit.push('x1');
 			this.attributesToInherit.push('y1');
 			this.attributesToInherit.push('x2');
@@ -3548,7 +3548,7 @@ module.exports = Array.isArray || function (arr) {
 		svg.Element.radialGradient = function(node) {
 			this.base = svg.Element.GradientBase;
 			this.base(node);
-			
+
 			this.attributesToInherit.push('cx');
 			this.attributesToInherit.push('cy');
 			this.attributesToInherit.push('r');
@@ -4766,7 +4766,7 @@ module.exports = Array.isArray || function (arr) {
 				scaleWidth: dw,
 				scaleHeight: dh
 			}
-			
+
 			for(var prop in opts) {
 				if(opts.hasOwnProperty(prop)){
 					cOpts[prop] = opts[prop];
@@ -14698,7 +14698,7 @@ function all(iterable) {
   var resolved = 0;
   var i = -1;
   var promise = new Promise(INTERNAL);
-  
+
   while (++i < len) {
     allResolver(iterable[i], i);
   }
@@ -14962,7 +14962,7 @@ function safelyResolveThenable(self, thenable) {
   function tryToUnwrap() {
     thenable(onSuccess, onError);
   }
-  
+
   var result = tryCatch(tryToUnwrap);
   if (result.status === 'error') {
     onError(result.value);
@@ -18225,7 +18225,7 @@ var qsfnz = _dereq_('../common/qsfnz');
 var msfnz = _dereq_('../common/msfnz');
 var iqsfnz = _dereq_('../common/iqsfnz');
 /*
-  reference:  
+  reference:
     "Cartographic Projection Procedures for the UNIX Environment-
     A User's Manual" by Gerald I. Evenden,
     USGS Open File Report 90-284and Release 4 Interim Reports (2003)
@@ -18537,10 +18537,10 @@ exports.forward = function(p) {
   else {
 
     // Point is in the opposing hemisphere and is unprojectable
-    // We still need to return a reasonable point, so we project 
-    // to infinity, on a bearing 
+    // We still need to return a reasonable point, so we project
+    // to infinity, on a bearing
     // equivalent to the northern hemisphere equivalent
-    // This is a reasonable approximation for short shapes and lines that 
+    // This is a reasonable approximation for short shapes and lines that
     // straddle the horizon.
 
     x = this.x0 + this.infinity_dist * cosphi * Math.sin(dlon);
@@ -21798,7 +21798,7 @@ ParseShp.prototype.getRow = function(offset){
 	var view = new DataView(this.buffer,offset,12);
 	var len = view.getInt32(4,false) << 1;
 	var data = new DataView(this.buffer,offset+12,len - 4);
-	
+
 	return {
 		id:view.getInt32(0,false),
 		len:len,
@@ -21857,7 +21857,7 @@ In case you find this class useful - especially in commercial projects -
 I am not totally unhappy for a small donation to my PayPal account
 mario@quasimondo.de
 
-Or support me on flattr: 
+Or support me on flattr:
 https://flattr.com/thing/72791/StackBlur-a-fast-almost-Gaussian-Blur-Effect-for-CanvasJavascript
 
 Copyright (c) 2010 Mario Klingemann
@@ -21901,21 +21901,21 @@ var mul_table = [
         385,381,377,374,370,367,363,360,357,354,350,347,344,341,338,335,
         332,329,326,323,320,318,315,312,310,307,304,302,299,297,294,292,
         289,287,285,282,280,278,275,273,271,269,267,265,263,261,259];
-        
-   
+
+
 var shg_table = [
-	     9, 11, 12, 13, 13, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17, 
-		17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 19, 
+	     9, 11, 12, 13, 13, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17,
+		17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 19,
 		19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 20, 20, 20,
 		20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 21,
 		21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21,
-		21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 22, 22, 22, 22, 22, 22, 
+		21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 22, 22, 22, 22, 22, 22,
 		22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22,
-		22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 23, 
+		22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 23,
 		23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23,
 		23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23,
-		23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 
-		23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 
+		23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23,
+		23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
 		24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
 		24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
 		24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
@@ -21926,18 +21926,18 @@ function blur( pixels, width, height, radius )
 	if ( isNaN(radius) || radius < 1 ) return;
 	radius |= 0;
 
-	var x, y, i, p, yp, yi, yw, r_sum, g_sum, b_sum, a_sum, 
+	var x, y, i, p, yp, yi, yw, r_sum, g_sum, b_sum, a_sum,
 	r_out_sum, g_out_sum, b_out_sum, a_out_sum,
-	r_in_sum, g_in_sum, b_in_sum, a_in_sum, 
+	r_in_sum, g_in_sum, b_in_sum, a_in_sum,
 	pr, pg, pb, pa, rbs;
-			
+
 	var div = radius + radius + 1;
 	var w4 = width << 2;
 	var widthMinus1  = width - 1;
 	var heightMinus1 = height - 1;
 	var radiusPlus1  = radius + 1;
 	var sumFactor = radiusPlus1 * ( radiusPlus1 + 1 ) / 2;
-	
+
 	var stackStart = new BlurStack();
 	var stack = stackStart;
 	for ( i = 1; i < div; i++ )
@@ -21948,28 +21948,28 @@ function blur( pixels, width, height, radius )
 	stack.next = stackStart;
 	var stackIn = null;
 	var stackOut = null;
-	
+
 	yw = yi = 0;
-	
+
 	var mul_sum = mul_table[radius];
 	var shg_sum = shg_table[radius];
-	
+
 	for ( y = 0; y < height; y++ )
 	{
 		r_in_sum = g_in_sum = b_in_sum = a_in_sum = r_sum = g_sum = b_sum = a_sum = 0;
-		
+
 		r_out_sum = radiusPlus1 * ( pr = pixels[yi] );
 		g_out_sum = radiusPlus1 * ( pg = pixels[yi+1] );
 		b_out_sum = radiusPlus1 * ( pb = pixels[yi+2] );
 		a_out_sum = radiusPlus1 * ( pa = pixels[yi+3] );
-		
+
 		r_sum += sumFactor * pr;
 		g_sum += sumFactor * pg;
 		b_sum += sumFactor * pb;
 		a_sum += sumFactor * pa;
-		
+
 		stack = stackStart;
-		
+
 		for( i = 0; i < radiusPlus1; i++ )
 		{
 			stack.r = pr;
@@ -21978,7 +21978,7 @@ function blur( pixels, width, height, radius )
 			stack.a = pa;
 			stack = stack.next;
 		}
-		
+
 		for( i = 1; i < radiusPlus1; i++ )
 		{
 			p = yi + (( widthMinus1 < i ? widthMinus1 : i ) << 2 );
@@ -21986,16 +21986,16 @@ function blur( pixels, width, height, radius )
 			g_sum += ( stack.g = ( pg = pixels[p+1])) * rbs;
 			b_sum += ( stack.b = ( pb = pixels[p+2])) * rbs;
 			a_sum += ( stack.a = ( pa = pixels[p+3])) * rbs;
-			
+
 			r_in_sum += pr;
 			g_in_sum += pg;
 			b_in_sum += pb;
 			a_in_sum += pa;
-			
+
 			stack = stack.next;
 		}
-		
-		
+
+
 		stackIn = stackStart;
 		stackOut = stackEnd;
 		for ( x = 0; x < width; x++ )
@@ -22010,41 +22010,41 @@ function blur( pixels, width, height, radius )
 			} else {
 				pixels[yi] = pixels[yi+1] = pixels[yi+2] = 0;
 			}
-			
+
 			r_sum -= r_out_sum;
 			g_sum -= g_out_sum;
 			b_sum -= b_out_sum;
 			a_sum -= a_out_sum;
-			
+
 			r_out_sum -= stackIn.r;
 			g_out_sum -= stackIn.g;
 			b_out_sum -= stackIn.b;
 			a_out_sum -= stackIn.a;
-			
+
 			p =  ( yw + ( ( p = x + radius + 1 ) < widthMinus1 ? p : widthMinus1 ) ) << 2;
-			
+
 			r_in_sum += ( stackIn.r = pixels[p]);
 			g_in_sum += ( stackIn.g = pixels[p+1]);
 			b_in_sum += ( stackIn.b = pixels[p+2]);
 			a_in_sum += ( stackIn.a = pixels[p+3]);
-			
+
 			r_sum += r_in_sum;
 			g_sum += g_in_sum;
 			b_sum += b_in_sum;
 			a_sum += a_in_sum;
-			
+
 			stackIn = stackIn.next;
-			
+
 			r_out_sum += ( pr = stackOut.r );
 			g_out_sum += ( pg = stackOut.g );
 			b_out_sum += ( pb = stackOut.b );
 			a_out_sum += ( pa = stackOut.a );
-			
+
 			r_in_sum -= pr;
 			g_in_sum -= pg;
 			b_in_sum -= pb;
 			a_in_sum -= pa;
-			
+
 			stackOut = stackOut.next;
 
 			yi += 4;
@@ -22052,24 +22052,24 @@ function blur( pixels, width, height, radius )
 		yw += width;
 	}
 
-	
+
 	for ( x = 0; x < width; x++ )
 	{
 		g_in_sum = b_in_sum = a_in_sum = r_in_sum = g_sum = b_sum = a_sum = r_sum = 0;
-		
+
 		yi = x << 2;
 		r_out_sum = radiusPlus1 * ( pr = pixels[yi]);
 		g_out_sum = radiusPlus1 * ( pg = pixels[yi+1]);
 		b_out_sum = radiusPlus1 * ( pb = pixels[yi+2]);
 		a_out_sum = radiusPlus1 * ( pa = pixels[yi+3]);
-		
+
 		r_sum += sumFactor * pr;
 		g_sum += sumFactor * pg;
 		b_sum += sumFactor * pb;
 		a_sum += sumFactor * pa;
-		
+
 		stack = stackStart;
-		
+
 		for( i = 0; i < radiusPlus1; i++ )
 		{
 			stack.r = pr;
@@ -22078,31 +22078,31 @@ function blur( pixels, width, height, radius )
 			stack.a = pa;
 			stack = stack.next;
 		}
-		
+
 		yp = width;
-		
+
 		for( i = 1; i <= radius; i++ )
 		{
 			yi = ( yp + x ) << 2;
-			
+
 			r_sum += ( stack.r = ( pr = pixels[yi])) * ( rbs = radiusPlus1 - i );
 			g_sum += ( stack.g = ( pg = pixels[yi+1])) * rbs;
 			b_sum += ( stack.b = ( pb = pixels[yi+2])) * rbs;
 			a_sum += ( stack.a = ( pa = pixels[yi+3])) * rbs;
-		   
+
 			r_in_sum += pr;
 			g_in_sum += pg;
 			b_in_sum += pb;
 			a_in_sum += pa;
-			
+
 			stack = stack.next;
-		
+
 			if( i < heightMinus1 )
 			{
 				yp += width;
 			}
 		}
-		
+
 		yi = x;
 		stackIn = stackStart;
 		stackOut = stackEnd;
@@ -22119,38 +22119,38 @@ function blur( pixels, width, height, radius )
 			} else {
 				pixels[p] = pixels[p+1] = pixels[p+2] = 0;
 			}
-			
+
 			r_sum -= r_out_sum;
 			g_sum -= g_out_sum;
 			b_sum -= b_out_sum;
 			a_sum -= a_out_sum;
-		   
+
 			r_out_sum -= stackIn.r;
 			g_out_sum -= stackIn.g;
 			b_out_sum -= stackIn.b;
 			a_out_sum -= stackIn.a;
-			
+
 			p = ( x + (( ( p = y + radiusPlus1) < heightMinus1 ? p : heightMinus1 ) * width )) << 2;
-			
+
 			r_sum += ( r_in_sum += ( stackIn.r = pixels[p]));
 			g_sum += ( g_in_sum += ( stackIn.g = pixels[p+1]));
 			b_sum += ( b_in_sum += ( stackIn.b = pixels[p+2]));
 			a_sum += ( a_in_sum += ( stackIn.a = pixels[p+3]));
-		   
+
 			stackIn = stackIn.next;
-			
+
 			r_out_sum += ( pr = stackOut.r );
 			g_out_sum += ( pg = stackOut.g );
 			b_out_sum += ( pb = stackOut.b );
 			a_out_sum += ( pa = stackOut.a );
-			
+
 			r_in_sum -= pr;
 			g_in_sum -= pg;
 			b_in_sum -= pb;
 			a_in_sum -= pa;
-			
+
 			stackOut = stackOut.next;
-			
+
 			yi += width;
 		}
 	}
