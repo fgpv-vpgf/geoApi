@@ -440,6 +440,7 @@ function processFeatureLayer(layer, options, esriBundle, geoApi) {
             geometryType: layer.geometryType || JSON.parse(layer._json).layerDefinition.drawingInfo.geometryType,
             minScale: layer.minScale,
             maxScale: layer.maxScale,
+            layerType: 'Feature Layer',
             renderer,
             legend
         });

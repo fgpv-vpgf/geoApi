@@ -32,11 +32,15 @@ class FeatureRecord extends attribRecord.AttribRecord {
         super(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup);
 
         // handles placeholder symbol, possibly other things
-        this._defaultFC = '0';
-        this._featClasses['0'] = new placeholderFC.PlaceholderFC(this, this.name);
+        // if we were passed a pre-loaded layer, we skip this (it will run after the load triggers
+        // in the super-constructor, thus overwriting our good results)
+        if (!esriLayer) {
+            this._defaultFC = '0';
+            this._featClasses['0'] = new placeholderFC.PlaceholderFC(this, this.name);
 
-        this._geometryType = undefined;
-        this._fcount = undefined;
+            this._geometryType = undefined;
+            this._fcount = undefined;
+        }
     }
 
     // TODO ensure whoever is making layers from config fragments is also setting the feature index.
@@ -101,6 +105,11 @@ class FeatureRecord extends attribRecord.AttribRecord {
         const pFC = this.getFeatureCount().then(fc => {
             this._fcount = fc;
         });
+
+        // if file based (or server extent was fried), calculate extent based on geometry
+        if (!this.extent || !this.extent.xmin) {
+            this.extent = this._apiRef.proj.graphicsUtils.graphicsExtent(this._layer.graphics);
+        }
 
         loadPromises.push(pLD, pFC, pLS);
         Promise.all(loadPromises).then(() => {

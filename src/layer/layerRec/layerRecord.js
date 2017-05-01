@@ -484,13 +484,20 @@ class LayerRecord extends root.Root {
             this.constructLayer = () => { throw new Error('Cannot construct pre-made layers'); };
             this._layer = esriLayer;
             this.bindEvents(this._layer);
-            this._state = shared.states.LOADED;
+
+            // TODO might want to change this to be whatever layer says it is
+            this._state = shared.states.LOADING;
             if (!this.name) {
                 // no name from config. attempt layer name
                 this.name = esriLayer.name;
             }
 
-            // TODO fire loaded event?
+            if (!esriLayer.url) {
+                // file layer. force snapshot, force an onload
+                this._snapshot = true;
+                this.onLoad();
+            }
+
         } else {
             this.constructLayer(config);
             this._state = shared.states.LOADING;
