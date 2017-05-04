@@ -192,9 +192,9 @@ module.exports = function (esriBundle, geoApi) {
         let angle = 180;
 
         // if not web mercator calculate angle.
-        if (map.spatialReference.wkid !== 3857 && map.spatialReference.wkid !== 102100) {
+        if (map.extent.spatialReference.wkid !== 3857 && map.extent.spatialReference.wkid !== 102100) {
             // get center point in longitude and use bottom value for latitude
-            const pointB = geoApi.proj.localProjectPoint(map.spatialReference, 'EPSG:4326',
+            const pointB = geoApi.proj.localProjectPoint(map.extent.spatialReference, 'EPSG:4326',
                     { x: (map.extent.xmin + map.extent.xmax) / 2, y: map.extent.ymin });
 
             // north value (set longitude to be half of Canada extent (141° W, 52° W))
