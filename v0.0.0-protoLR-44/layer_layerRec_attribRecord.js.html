@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>layer/layerRec/attribRecord.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AttribFC.html">AttribFC</a><ul class='methods'><li data-type='method'><a href="AttribFC.html#.unAliasAttribs">unAliasAttribs</a></li><li data-type='method'><a href="AttribFC.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="AttribFC.html#checkDateType">checkDateType</a></li><li data-type='method'><a href="AttribFC.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="AttribRecord.html">AttribRecord</a><ul class='methods'><li data-type='method'><a href="AttribRecord.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="AttribRecord.html#attributesToDetails">attributesToDetails</a></li><li data-type='method'><a href="AttribRecord.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="BasicFC.html">BasicFC</a></li><li><a href="DynamicFC.html">DynamicFC</a></li><li><a href="DynamicRecord.html">DynamicRecord</a><ul class='methods'><li data-type='method'><a href="DynamicRecord.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="DynamicRecord.html#checkDateType">checkDateType</a></li><li data-type='method'><a href="DynamicRecord.html#getChildProxy">getChildProxy</a></li><li data-type='method'><a href="DynamicRecord.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="FeatureRecord.html">FeatureRecord</a></li><li><a href="IdentifyResult.html">IdentifyResult</a></li><li><a href="ImageRecord.html">ImageRecord</a></li><li><a href="LayerInterface.html">LayerInterface</a></li><li><a href="LayerRecord.html">LayerRecord</a><ul class='methods'><li data-type='method'><a href="LayerRecord.html#_stateChange">_stateChange</a></li><li data-type='method'><a href="LayerRecord.html#_zoomToScaleSet">_zoomToScaleSet</a></li><li data-type='method'><a href="LayerRecord.html#addHoverListener">addHoverListener</a></li><li data-type='method'><a href="LayerRecord.html#addStateListener">addStateListener</a></li><li data-type='method'><a href="LayerRecord.html#bindEvents">bindEvents</a></li><li data-type='method'><a href="LayerRecord.html#constructLayer">constructLayer</a></li><li data-type='method'><a href="LayerRecord.html#findZoomScale">findZoomScale</a></li><li data-type='method'><a href="LayerRecord.html#getFeatureCount">getFeatureCount</a></li><li data-type='method'><a href="LayerRecord.html#getVisibleScales">getVisibleScales</a></li><li data-type='method'><a href="LayerRecord.html#makeClickBuffer">makeClickBuffer</a></li><li data-type='method'><a href="LayerRecord.html#makeLayerConfig">makeLayerConfig</a></li><li data-type='method'><a href="LayerRecord.html#onError">onError</a></li><li data-type='method'><a href="LayerRecord.html#onMouseOut">onMouseOut</a></li><li data-type='method'><a href="LayerRecord.html#onMouseOver">onMouseOver</a></li><li data-type='method'><a href="LayerRecord.html#onUpdateEnd">onUpdateEnd</a></li><li data-type='method'><a href="LayerRecord.html#onUpdateStart">onUpdateStart</a></li><li data-type='method'><a href="LayerRecord.html#removeHoverListener">removeHoverListener</a></li><li data-type='method'><a href="LayerRecord.html#removeStateListener">removeStateListener</a></li><li data-type='method'><a href="LayerRecord.html#setMapScale">setMapScale</a></li><li data-type='method'><a href="LayerRecord.html#zoomToBoundary">zoomToBoundary</a></li><li data-type='method'><a href="LayerRecord.html#zoomToExtent">zoomToExtent</a></li></ul></li><li><a href="Root.html">Root</a><ul class='methods'><li data-type='method'><a href="Root.html#_fireEvent">_fireEvent</a></li></ul></li><li><a href="TileRecord.html">TileRecord</a></li><li><a href="WmsFC.html">WmsFC</a></li><li><a href="WmsRecord.html">WmsRecord</a><ul class='methods'><li data-type='method'><a href="WmsRecord.html#identify">identify</a></li></ul></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-developer-guide.html">developer-guide</a></li><li><a href="tutorial-getting_started.html">getting_started</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addHilight">addHilight</a></li><li><a href="global.html#addPin">addPin</a></li><li><a href="global.html#allComb">allComb</a></li><li><a href="global.html#allocateLayersToSections">allocateLayersToSections</a></li><li><a href="global.html#arrayBufferToString">arrayBufferToString</a></li><li><a href="global.html#assignIds">assignIds</a></li><li><a href="global.html#assignLayerSplits">assignLayerSplits</a></li><li><a href="global.html#checkProj">checkProj</a></li><li><a href="global.html#clearHilight">clearHilight</a></li><li><a href="global.html#clipExtentCoords">clipExtentCoords</a></li><li><a href="global.html#cloneLayerGraphic">cloneLayerGraphic</a></li><li><a href="global.html#convertImageToCanvas">convertImageToCanvas</a></li><li><a href="global.html#convertImagetoDataURL">convertImagetoDataURL</a></li><li><a href="global.html#crawlLayerInfos">crawlLayerInfos</a></li><li><a href="global.html#createAttribSet">createAttribSet</a></li><li><a href="global.html#csvPeek">csvPeek</a></li><li><a href="global.html#enforceBoundary">enforceBoundary</a></li><li><a href="global.html#enhanceRenderer">enhanceRenderer</a></li><li><a href="global.html#extractFields">extractFields</a></li><li><a href="global.html#featureTypeToRenderer">featureTypeToRenderer</a></li><li><a href="global.html#findClosestLOD">findClosestLOD</a></li><li><a href="global.html#findOptimalSplit">findOptimalSplit</a></li><li><a href="global.html#generateLocalCanvas">generateLocalCanvas</a></li><li><a href="global.html#generatePlaceholderSymbology">generatePlaceholderSymbology</a></li><li><a href="global.html#generateServerImage">generateServerImage</a></li><li><a href="global.html#generateUUID">generateUUID</a></li><li><a href="global.html#generateWMSSymbology">generateWMSSymbology</a></li><li><a href="global.html#geomToGraphic">geomToGraphic</a></li><li><a href="global.html#getAttribs">getAttribs</a></li><li><a href="global.html#getExtentFromJson">getExtentFromJson</a></li><li><a href="global.html#getFeatureName">getFeatureName</a></li><li><a href="global.html#getGraphicIcon">getGraphicIcon</a></li><li><a href="global.html#getGraphicSymbol">getGraphicSymbol</a></li><li><a href="global.html#getLayerData">getLayerData</a></li><li><a href="global.html#getLayerType">getLayerType</a></li><li><a href="global.html#getLegendUrls">getLegendUrls</a></li><li><a href="global.html#getMapServerLegend">getMapServerLegend</a></li><li><a href="global.html#getNorthArrowAngle">getNorthArrowAngle</a></li><li><a href="global.html#getScaleRatio">getScaleRatio</a></li><li><a href="global.html#getUnboundGraphics">getUnboundGraphics</a></li><li><a href="global.html#getWMSLayerTitle">getWMSLayerTitle</a></li><li><a href="global.html#getZoomLevel">getZoomLevel</a></li><li><a href="global.html#guessCSVfields">guessCSVfields</a></li><li><a href="global.html#hideLayers">hideLayers</a></li><li><a href="global.html#identify">identify</a></li><li><a href="global.html#initBasemaps">initBasemaps</a></li><li><a href="global.html">isSpatialRefEqual</a></li><li><a href="global.html#loadDataBatch">loadDataBatch</a></li><li><a href="global.html#loadFeatureAttribs">loadFeatureAttribs</a></li><li><a href="global.html#localProjectExtent">localProjectExtent</a></li><li><a href="global.html#localProjectGeometry">localProjectGeometry</a></li><li><a href="global.html#localProjectPoint">localProjectPoint</a></li><li><a href="global.html#makeBoundingBox">makeBoundingBox</a></li><li><a href="global.html#makeGeoJsonLayer">makeGeoJsonLayer</a></li><li><a href="global.html#makeHilightLayer">makeHilightLayer</a></li><li><a href="global.html#makeLayerInfo">makeLayerInfo</a></li><li><a href="global.html#makeLegend">makeLegend</a></li><li><a href="global.html#mapDefault">mapDefault</a></li><li><a href="global.html#mapServerLegendToRenderer">mapServerLegendToRenderer</a></li><li><a href="global.html#mapServerLegendToRendererAll">mapServerLegendToRendererAll</a></li><li><a href="global.html#mapServerToLocalLegend">mapServerToLocalLegend</a></li><li><a href="global.html#newLayerBundle">newLayerBundle</a></li><li><a href="global.html#newLayerPackage">newLayerPackage</a></li><li><a href="global.html#newProp">newProp</a></li><li><a href="global.html#normalizeProj">normalizeProj</a></li><li><a href="global.html#onLoad">onLoad</a></li><li><a href="global.html#packLayersIntoExactSections">packLayersIntoExactSections</a></li><li><a href="global.html#packLayersIntoOptimalSections">packLayersIntoOptimalSections</a></li><li><a href="global.html#predictLayerUrl">predictLayerUrl</a></li><li><a href="global.html#processDynamicLayer">processDynamicLayer</a></li><li><a href="global.html#processFeatureLayer">processFeatureLayer</a></li><li><a href="global.html#projectGeojson">projectGeojson</a></li><li><a href="global.html#projectionLookup">projectionLookup</a></li><li><a href="global.html#repokeEsriService">repokeEsriService</a></li><li><a href="global.html#resizeSVGElement">resizeSVGElement</a></li><li><a href="global.html#scrapeListRenderer">scrapeListRenderer</a></li><li><a href="global.html#searchRenderer">searchRenderer</a></li><li><a href="global.html#serverLayerIdentify">serverLayerIdentify</a></li><li><a href="global.html#serviceType">serviceType</a></li><li><a href="global.html#shiftZoom">shiftZoom</a></li><li><a href="global.html#showLayers">showLayers</a></li><li><a href="global.html#splitLayer">splitLayer</a></li><li><a href="global.html#svgDrawImage">svgDrawImage</a></li><li><a href="global.html#symbolToLegend">symbolToLegend</a></li><li><a href="global.html#validateCSV">validateCSV</a></li><li><a href="global.html#validateFile">validateFile</a></li><li><a href="global.html#validateGeoJson">validateGeoJson</a></li><li><a href="global.html#validateLatLong">validateLatLong</a></li><li><a href="global.html#wrapEvents">wrapEvents</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">layer/layerRec/attribRecord.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+const layerRecord = require('./layerRecord.js')();
+const attribFC = require('./attribFC.js')();
+
+/**
+ * @class AttribRecord
+ */
+class AttribRecord extends layerRecord.LayerRecord {
+    // this class has functions common to layers that have attributes
+
+    // FIXME clickTolerance is not specific to AttribRecord but rather Feature and Dynamic
+    get clickTolerance () { return this.config.tolerance; }
+
+    /**
+     * Create a layer record with the appropriate geoApi layer type.  Layer config
+     * should be fully merged with all layer options defined (i.e. this constructor
+     * will not apply any defaults).
+     * @param {Object} layerClass    the ESRI api object for the layer
+     * @param {Object} esriRequest   the ESRI api object for making web requests with proxy support
+     * @param {Object} apiRef        object pointing to the geoApi. allows us to call other geoApi functions.
+     * @param {Object} config        layer config values
+     * @param {Object} esriLayer     an optional pre-constructed layer
+     * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
+     */
+    constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
+        super(layerClass, apiRef, config, esriLayer, epsgLookup);
+
+        this._esriRequest = esriRequest;
+    }
+
+    /**
+     * Get the best user-friendly name of a field. Uses alias if alias is defined, else uses the system attribute name.
+     *
+     * @param {String} attribName     the attribute name we want a nice name for
+     * @return {Promise}              resolves to the best available user friendly attribute name
+     */
+    aliasedFieldName (attribName) {
+        return this._featClasses[this._defaultFC].aliasedFieldName(attribName);
+    }
+
+    /**
+     * Retrieves attributes from a layer for a specified feature index
+     * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
+     */
+    getFormattedAttributes () {
+        return this._featClasses[this._defaultFC].getFormattedAttributes();
+    }
+
+    checkDateType (attribName) {
+        return this._featClasses[this._defaultFC].checkDateType(attribName);
+    }
+
+    /**
+    * Returns attribute data for this layer.
+    *
+    * @function getAttribs
+    * @returns {Promise}         resolves with a layer attribute data object
+    */
+    getAttribs () {
+        return this._featClasses[this._defaultFC].getAttribs();
+    }
+
+    /**
+    * Returns layer-specific data for this Record
+    *
+    * @function getLayerData
+    * @returns {Promise}         resolves with a layer data object
+    */
+    getLayerData () {
+        return this._featClasses[this._defaultFC].getLayerData();
+    }
+
+    getFeatureName (objId, attribs) {
+        return this._featClasses[this._defaultFC].getFeatureName(objId, attribs);
+    }
+
+    getFeatureCount (url) {
+        if (url) {
+            // wrapping server call in a function, as we regularly encounter sillyness
+            // where we need to execute the count request twice.
+            // having a function (with finalTry flag) lets us handle the double-request
+            const esriServerCount = (layerUrl, finalTry = false) => {
+                // extract info for this service
+                const defService = this._esriRequest({
+                    url: `${layerUrl}/query`,
+                    content: {
+                        f: 'json',
+                        where: '1=1',
+                        returnCountOnly: true,
+                        returnGeometry: false
+                    },
+                    callbackParamName: 'callback',
+                    handleAs: 'json',
+                });
+
+                return new Promise(resolve => {
+                    defService.then(serviceResult => {
+                        if (serviceResult &amp;&amp; (typeof serviceResult.error === 'undefined') &amp;&amp;
+                            (typeof serviceResult.count !== 'undefined')) {
+                            // we got a row count
+                            resolve(serviceResult.count);
+                        } else if (!finalTry) {
+                            // do a second attempt
+                            resolve(esriServerCount(layerUrl, true));
+                        } else {
+                            // tells the app it failed
+                            resolve(-1);
+                        }
+                    }, error => {
+                        // failed to load service info.
+                        // TODO any tricks to avoid duplicating the error case in both blocks?
+                        if (!finalTry) {
+                            // do a second attempt
+                            resolve(esriServerCount(layerUrl, true));
+                        } else {
+                            // tells the app it failed
+                            console.warn(error);
+                            resolve(-1);
+                        }
+                    });
+                });
+            };
+
+            return esriServerCount(url);
+
+        } else {
+            // file based layer.  count local features
+            return Promise.resolve(this._layer.graphics.length);
+        }
+    }
+
+    /**
+     * Transforms esri key-value attribute object into key value array with format suitable
+     * for consumption by the details pane.
+     *
+     * @param  {Object} attribs      attribute key-value mapping, potentially with aliases as keys
+     * @param  {Array} fields        optional. fields definition array for layer. no aliasing done if not provided
+     * @return {Array}               attribute data transformed into a list, with potential field aliasing applied
+     */
+    attributesToDetails (attribs, fields) {
+        // TODO make this extensible / modifiable / configurable to allow different details looks for different data
+        // simple array of text mapping for demonstration purposes. fancy grid formatting later?
+        return Object.keys(attribs)
+            .map(key => {
+                const fieldType = fields ? fields.find(f => f.name === key) : null;
+                return {
+                    key: attribFC.AttribFC.aliasedFieldNameDirect(key, fields), // need synchronous variant of alias lookup
+                    value: attribs[key],
+                    type: fieldType ? fieldType.type : fieldType
+                };
+            });
+    }
+}
+
+module.exports = () => ({
+    AttribRecord
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon May 08 2017 19:12:15 GMT+0000 (UTC) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
