@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>layer/layerRec/layerInterface.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AttribFC.html">AttribFC</a><ul class='methods'><li data-type='method'><a href="AttribFC.html#.unAliasAttribs">unAliasAttribs</a></li><li data-type='method'><a href="AttribFC.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="AttribFC.html#checkDateType">checkDateType</a></li><li data-type='method'><a href="AttribFC.html#getFormattedAttributes">getFormattedAttributes</a></li><li data-type='method'><a href="AttribFC.html#getServerFeatureInfo">getServerFeatureInfo</a></li></ul></li><li><a href="AttribRecord.html">AttribRecord</a><ul class='methods'><li data-type='method'><a href="AttribRecord.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="AttribRecord.html#attributesToDetails">attributesToDetails</a></li><li data-type='method'><a href="AttribRecord.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="BasicFC.html">BasicFC</a></li><li><a href="DynamicFC.html">DynamicFC</a></li><li><a href="DynamicRecord.html">DynamicRecord</a><ul class='methods'><li data-type='method'><a href="DynamicRecord.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="DynamicRecord.html#checkDateType">checkDateType</a></li><li data-type='method'><a href="DynamicRecord.html#getChildProxy">getChildProxy</a></li><li data-type='method'><a href="DynamicRecord.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="FeatureRecord.html">FeatureRecord</a></li><li><a href="IdentifyResult.html">IdentifyResult</a></li><li><a href="ImageRecord.html">ImageRecord</a></li><li><a href="LayerInterface.html">LayerInterface</a></li><li><a href="LayerRecord.html">LayerRecord</a><ul class='methods'><li data-type='method'><a href="LayerRecord.html#_stateChange">_stateChange</a></li><li data-type='method'><a href="LayerRecord.html#_zoomToScaleSet">_zoomToScaleSet</a></li><li data-type='method'><a href="LayerRecord.html#addHoverListener">addHoverListener</a></li><li data-type='method'><a href="LayerRecord.html#addStateListener">addStateListener</a></li><li data-type='method'><a href="LayerRecord.html#bindEvents">bindEvents</a></li><li data-type='method'><a href="LayerRecord.html#constructLayer">constructLayer</a></li><li data-type='method'><a href="LayerRecord.html#findZoomScale">findZoomScale</a></li><li data-type='method'><a href="LayerRecord.html#getFeatureCount">getFeatureCount</a></li><li data-type='method'><a href="LayerRecord.html#getVisibleScales">getVisibleScales</a></li><li data-type='method'><a href="LayerRecord.html#makeClickBuffer">makeClickBuffer</a></li><li data-type='method'><a href="LayerRecord.html#makeLayerConfig">makeLayerConfig</a></li><li data-type='method'><a href="LayerRecord.html#onError">onError</a></li><li data-type='method'><a href="LayerRecord.html#onMouseOut">onMouseOut</a></li><li data-type='method'><a href="LayerRecord.html#onMouseOver">onMouseOver</a></li><li data-type='method'><a href="LayerRecord.html#onUpdateEnd">onUpdateEnd</a></li><li data-type='method'><a href="LayerRecord.html#onUpdateStart">onUpdateStart</a></li><li data-type='method'><a href="LayerRecord.html#removeHoverListener">removeHoverListener</a></li><li data-type='method'><a href="LayerRecord.html#removeStateListener">removeStateListener</a></li><li data-type='method'><a href="LayerRecord.html#setMapScale">setMapScale</a></li><li data-type='method'><a href="LayerRecord.html#zoomToBoundary">zoomToBoundary</a></li><li data-type='method'><a href="LayerRecord.html#zoomToExtent">zoomToExtent</a></li></ul></li><li><a href="Root.html">Root</a><ul class='methods'><li data-type='method'><a href="Root.html#_fireEvent">_fireEvent</a></li></ul></li><li><a href="TileRecord.html">TileRecord</a></li><li><a href="WmsFC.html">WmsFC</a></li><li><a href="WmsRecord.html">WmsRecord</a><ul class='methods'><li data-type='method'><a href="WmsRecord.html#identify">identify</a></li></ul></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-developer-guide.html">developer-guide</a></li><li><a href="tutorial-getting_started.html">getting_started</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addHilight">addHilight</a></li><li><a href="global.html#addPin">addPin</a></li><li><a href="global.html#allComb">allComb</a></li><li><a href="global.html#allocateLayersToSections">allocateLayersToSections</a></li><li><a href="global.html#arrayBufferToString">arrayBufferToString</a></li><li><a href="global.html#assignIds">assignIds</a></li><li><a href="global.html#assignLayerSplits">assignLayerSplits</a></li><li><a href="global.html#checkProj">checkProj</a></li><li><a href="global.html#clearHilight">clearHilight</a></li><li><a href="global.html#clipExtentCoords">clipExtentCoords</a></li><li><a href="global.html#cloneLayerGraphic">cloneLayerGraphic</a></li><li><a href="global.html#convertImageToCanvas">convertImageToCanvas</a></li><li><a href="global.html#convertImagetoDataURL">convertImagetoDataURL</a></li><li><a href="global.html#crawlLayerInfos">crawlLayerInfos</a></li><li><a href="global.html#createAttribSet">createAttribSet</a></li><li><a href="global.html#csvPeek">csvPeek</a></li><li><a href="global.html#enforceBoundary">enforceBoundary</a></li><li><a href="global.html#enhanceRenderer">enhanceRenderer</a></li><li><a href="global.html#extractFields">extractFields</a></li><li><a href="global.html#featureTypeToRenderer">featureTypeToRenderer</a></li><li><a href="global.html#fetchGraphic">fetchGraphic</a></li><li><a href="global.html#findClosestLOD">findClosestLOD</a></li><li><a href="global.html#findOptimalSplit">findOptimalSplit</a></li><li><a href="global.html#generateLocalCanvas">generateLocalCanvas</a></li><li><a href="global.html#generatePlaceholderSymbology">generatePlaceholderSymbology</a></li><li><a href="global.html#generateServerImage">generateServerImage</a></li><li><a href="global.html#generateUUID">generateUUID</a></li><li><a href="global.html#generateWMSSymbology">generateWMSSymbology</a></li><li><a href="global.html#geomToGraphic">geomToGraphic</a></li><li><a href="global.html#getAttribs">getAttribs</a></li><li><a href="global.html#getExtentFromJson">getExtentFromJson</a></li><li><a href="global.html#getFeatureName">getFeatureName</a></li><li><a href="global.html#getGraphicIcon">getGraphicIcon</a></li><li><a href="global.html#getGraphicSymbol">getGraphicSymbol</a></li><li><a href="global.html#getLayerData">getLayerData</a></li><li><a href="global.html#getLayerType">getLayerType</a></li><li><a href="global.html#getLegendUrls">getLegendUrls</a></li><li><a href="global.html#getMapServerLegend">getMapServerLegend</a></li><li><a href="global.html#getNorthArrowAngle">getNorthArrowAngle</a></li><li><a href="global.html#getScaleRatio">getScaleRatio</a></li><li><a href="global.html#getUnboundGraphics">getUnboundGraphics</a></li><li><a href="global.html#getWMSLayerTitle">getWMSLayerTitle</a></li><li><a href="global.html#getZoomLevel">getZoomLevel</a></li><li><a href="global.html#guessCSVfields">guessCSVfields</a></li><li><a href="global.html#hideLayers">hideLayers</a></li><li><a href="global.html#identify">identify</a></li><li><a href="global.html#initBasemaps">initBasemaps</a></li><li><a href="global.html">isSpatialRefEqual</a></li><li><a href="global.html#loadDataBatch">loadDataBatch</a></li><li><a href="global.html#localProjectExtent">localProjectExtent</a></li><li><a href="global.html#localProjectGeometry">localProjectGeometry</a></li><li><a href="global.html#localProjectPoint">localProjectPoint</a></li><li><a href="global.html#makeBoundingBox">makeBoundingBox</a></li><li><a href="global.html#makeGeoJsonLayer">makeGeoJsonLayer</a></li><li><a href="global.html#makeHilightLayer">makeHilightLayer</a></li><li><a href="global.html#makeLayerInfo">makeLayerInfo</a></li><li><a href="global.html#makeLegend">makeLegend</a></li><li><a href="global.html#mapDefault">mapDefault</a></li><li><a href="global.html#mapServerLegendToRenderer">mapServerLegendToRenderer</a></li><li><a href="global.html#mapServerLegendToRendererAll">mapServerLegendToRendererAll</a></li><li><a href="global.html#mapServerToLocalLegend">mapServerToLocalLegend</a></li><li><a href="global.html#newLayerPackage">newLayerPackage</a></li><li><a href="global.html#newProp">newProp</a></li><li><a href="global.html#normalizeProj">normalizeProj</a></li><li><a href="global.html#onLoad">onLoad</a></li><li><a href="global.html#packLayersIntoExactSections">packLayersIntoExactSections</a></li><li><a href="global.html#packLayersIntoOptimalSections">packLayersIntoOptimalSections</a></li><li><a href="global.html#predictLayerUrl">predictLayerUrl</a></li><li><a href="global.html#projectGeojson">projectGeojson</a></li><li><a href="global.html#projectionLookup">projectionLookup</a></li><li><a href="global.html#repokeEsriService">repokeEsriService</a></li><li><a href="global.html#resizeSVGElement">resizeSVGElement</a></li><li><a href="global.html#scrapeListRenderer">scrapeListRenderer</a></li><li><a href="global.html#searchRenderer">searchRenderer</a></li><li><a href="global.html#serverLayerIdentify">serverLayerIdentify</a></li><li><a href="global.html#serviceType">serviceType</a></li><li><a href="global.html#shiftZoom">shiftZoom</a></li><li><a href="global.html#showLayers">showLayers</a></li><li><a href="global.html#splitLayer">splitLayer</a></li><li><a href="global.html#svgDrawImage">svgDrawImage</a></li><li><a href="global.html#symbolToLegend">symbolToLegend</a></li><li><a href="global.html#validateCSV">validateCSV</a></li><li><a href="global.html#validateFile">validateFile</a></li><li><a href="global.html#validateGeoJson">validateGeoJson</a></li><li><a href="global.html#validateLatLong">validateLatLong</a></li><li><a href="global.html#wrapEvents">wrapEvents</a></li><li><a href="global.html#zoomToLatLong">zoomToLatLong</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">layer/layerRec/layerInterface.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+// Controls Interface class is used to provide something to the UI that it can bind to.
+// It helps the UI keep in line with the layer state.
+// Due to bindings, we cannot destroy &amp; recreate an interface when a legend item
+// goes from 'Unknown Placeholder' to 'Specific Layer Type'. This means we cannot
+// do object heirarchies, as to go from PlaceholderInterface to FeatureLayerInterface
+// would require a new object. Instead, we have a class that exposes all possible
+// methods and properties as error throwing stubs. Then we replace those functions
+// with real ones once we know the flavour of interface we want.
+
+class LayerInterface {
+
+    /**
+     * @param {Object} source     object that provides info to the interface. usually a LayerRecord or FeatureClass
+     */
+    constructor (source) {
+        this._source = source;
+
+        // TODO revisit isPlaceholder after grand refactor
+        this._isPlaceholder = true;
+    }
+
+    get isPlaceholder () { return this._isPlaceholder; } // returns Boolean
+
+    // these expose ui controls available on the interface and indicate which ones are disabled
+    get symbology () { return undefined; } // returns Array
+
+    // can be group or node name
+    get name () { return undefined; } // returns String
+
+    // these are needed for the type flag
+    get layerType () { return undefined; } // returns String
+    get geometryType () { return undefined; } // returns String
+    get featureCount () { return undefined; } // returns Integer
+    get extent () { return undefined; } // returns Object (Esri Extent)
+
+    // layer states
+    get state () { return undefined; } // returns String
+
+    // these return the current values of the corresponding controls
+    get visibility () { return undefined; } // returns Boolean
+    get opacity () { return undefined; } // returns Decimal
+    get query () { return undefined; } // returns Boolean
+    get snapshot () { return undefined; } // returns Boolean
+    get highlightFeature () { return undefined; } // returns Boolean
+
+    // fetches attributes for use in the datatable
+    get formattedAttributes () { return undefined; } // returns Promise of Object
+
+    // returns a feature name of an attribute set
+    getFeatureName () { return undefined; } // returns String
+
+    // formats an attribute to standard details
+    attributesToDetails () { return undefined; } // returns Array
+
+    // these set values to the corresponding controls
+    setVisibility () { return undefined; }
+    setOpacity () { return undefined; }
+    setQuery () { return undefined; }
+
+    fetchGraphic () { return undefined; } // returns promise that resolves with object containing graphics info
+    zoomToBoundary () { return undefined; } // returns promise that resolves after zoom completes
+
+    // updates what this interface is pointing to, in terms of layer data source.
+    // often, the interface starts with a placeholder to avoid errors and return
+    // defaults. This update happens after a layer has loaded, and new now want
+    // the interface reading off the real FC.
+    // TODO docs
+    updateSource (newSource) {
+        this._source = newSource;
+    }
+
+    convertToSingleLayer (layerRecord) {
+        this._source = layerRecord;
+        this._isPlaceholder = false;
+
+        newProp(this, 'symbology', standardGetSymbology);
+        newProp(this, 'state', standardGetState);
+
+        newProp(this, 'visibility', standardGetVisibility);
+        newProp(this, 'opacity', standardGetOpacity);
+        newProp(this, 'query', standardGetQuery);
+
+        newProp(this, 'name', standardGetName);
+
+        newProp(this, 'geometryType', standardGetGeometryType);
+        newProp(this, 'layerType', standardGetLayerType);
+        newProp(this, 'featureCount', standardGetFeatureCount);
+        newProp(this, 'extent', standardGetExtent);
+
+        this.setVisibility = standardSetVisibility;
+        this.setOpacity = standardSetOpacity;
+        this.setQuery = standardSetQuery;
+        this.zoomToBoundary = standardZoomToBoundary;
+    }
+
+    convertToFeatureLayer (layerRecord) {
+        this.convertToSingleLayer(layerRecord);
+
+        newProp(this, 'snapshot', featureGetSnapshot);
+        newProp(this, 'formattedAttributes', standardGetFormattedAttributes);
+        newProp(this, 'geometryType', featureGetGeometryType);
+        newProp(this, 'featureCount', featureGetFeatureCount);
+        newProp(this, 'highlightFeature', featureGetHighlightFeature);
+
+        this.getFeatureName = featureGetFeatureName;
+        this.attributesToDetails = featureAttributesToDetails;
+        this.fetchGraphic = featureFetchGraphic;
+    }
+
+    convertToDynamicLeaf (dynamicFC) {
+        this._source = dynamicFC;
+        this._isPlaceholder = false;
+
+        newProp(this, 'symbology', dynamicLeafGetSymbology);
+        newProp(this, 'state', dynamicLeafGetState);
+
+        newProp(this, 'name', dynamicLeafGetName);
+
+        newProp(this, 'visibility', dynamicLeafGetVisibility);
+        newProp(this, 'opacity', dynamicLeafGetOpacity);
+        newProp(this, 'query', dynamicLeafGetQuery);
+        newProp(this, 'formattedAttributes', dynamicLeafGetFormattedAttributes);
+
+        newProp(this, 'geometryType', dynamicLeafGetGeometryType);
+        newProp(this, 'layerType', dynamicLeafGetLayerType);
+        newProp(this, 'featureCount', dynamicLeafGetFeatureCount);
+        newProp(this, 'extent', dynamicLeafGetExtent);
+
+        newProp(this, 'highlightFeature', dynamicLeafGetHighlightFeature);
+
+        this.setVisibility = dynamicLeafSetVisibility;
+        this.setOpacity = dynamicLeafSetOpacity;
+        this.setQuery = dynamicLeafSetQuery;
+        this.zoomToBoundary = dynamicLeafZoomToBoundary;
+        this.getFeatureName = featureGetFeatureName;
+        this.attributesToDetails = dynamicLeafAttributesToDetails;
+        this.fetchGraphic = dynamicLeafFetchGraphic;
+    }
+
+    convertToPlaceholder (placeholderFC) {
+        this._source = placeholderFC;
+        this._isPlaceholder = true;
+
+        newProp(this, 'symbology', standardGetSymbology);
+        newProp(this, 'name', standardGetName);
+        newProp(this, 'state', standardGetState);
+        newProp(this, 'layerType', standardGetLayerType);
+    }
+
+}
+
+/**
+ * Worker function to add or override a get property on an object
+ *
+ * @function newProp
+ * @private
+ * @param {Object} target     the object that will receive the new property
+ * @param {String} propName   name of the get property
+ * @param {Function} getter   the function defining the guts of the get property.
+ */
+function newProp(target, propName, getter) {
+    Object.defineProperty(target, propName, {
+        get: getter,
+        enumerable: true,
+        configurable: true
+    });
+}
+
+// these functions are upgrades to the duds above.
+// we don't use arrow notation, as we want the `this` to point at the object
+// that these functions get smashed into.
+
+function standardGetState() {
+    /* jshint validthis: true */
+    return this._source.state;
+}
+
+function dynamicLeafGetState() {
+    /* jshint validthis: true */
+    return this._source.state;
+}
+
+function standardGetVisibility() {
+    /* jshint validthis: true */
+    return this._source.visibility;
+}
+
+function dynamicLeafGetVisibility() {
+    /* jshint validthis: true */
+    return this._source.getVisibility();
+}
+
+function standardGetName() {
+    /* jshint validthis: true */
+    return this._source.name;
+}
+
+function dynamicLeafGetName() {
+    /* jshint validthis: true */
+    return this._source.name;
+}
+
+function standardGetOpacity() {
+    /* jshint validthis: true */
+    return this._source.opacity;
+}
+
+function dynamicLeafGetOpacity() {
+    /* jshint validthis: true */
+    return this._source.opacity;
+}
+
+function standardGetLayerType() {
+    /* jshint validthis: true */
+    return this._source.layerType;
+}
+
+function dynamicLeafGetLayerType() {
+    /* jshint validthis: true */
+    return this._source.layerType;
+}
+
+function standardGetExtent() {
+    /* jshint validthis: true */
+    return this._source.extent;
+}
+
+function dynamicLeafGetExtent() {
+    /* jshint validthis: true */
+    return this._source.extent;
+}
+
+function standardGetQuery() {
+    /* jshint validthis: true */
+    return this._source.isQueryable();
+}
+
+function dynamicLeafGetQuery() {
+    /* jshint validthis: true */
+    return this._source.queryable;
+}
+
+function standardGetFormattedAttributes() {
+    /* jshint validthis: true */
+
+    return this._source.getFormattedAttributes();
+}
+
+function dynamicLeafGetFormattedAttributes() {
+    /* jshint validthis: true */
+
+    // TODO code-wise this looks identical to standardGetFormattedAttributes.
+    //      however in this case, ._source is a DynamicFC, not a LayerRecord.
+    //      This is safer. Deleting this would avoid the duplication. Decide.
+    return this._source.getFormattedAttributes();
+}
+
+function standardGetSymbology() {
+    /* jshint validthis: true */
+    return this._source.symbology;
+}
+
+function dynamicLeafGetSymbology() {
+    /* jshint validthis: true */
+
+    // TODO code-wise this looks identical to standardGetSymbology.
+    //      however in this case, ._source is a DynamicFC, not a LayerRecord.
+    //      This is safer. Deleting this would avoid the duplication. Decide.
+    return this._source.symbology;
+}
+
+function standardGetGeometryType() {
+    /* jshint validthis: true */
+    return undefined;
+}
+
+function featureGetGeometryType() {
+    /* jshint validthis: true */
+    return this._source.getGeomType();
+}
+
+function dynamicLeafGetGeometryType() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return this._source.geomType;
+}
+
+function standardGetFeatureCount() {
+    /* jshint validthis: true */
+    return undefined;
+}
+
+function featureGetFeatureCount() {
+    /* jshint validthis: true */
+    return this._source.featureCount;
+}
+
+function dynamicLeafGetFeatureCount() {
+    /* jshint validthis: true */
+    return this._source.featureCount;
+}
+
+function standardSetVisibility(value) {
+    /* jshint validthis: true */
+    this._source.visibility = value;
+}
+
+function dynamicLeafSetVisibility(value) {
+    /* jshint validthis: true */
+    this._source.setVisibility(value);
+}
+
+function standardSetOpacity(value) {
+    /* jshint validthis: true */
+    this._source.opacity = value;
+}
+
+function dynamicLeafSetOpacity(value) {
+    /* jshint validthis: true */
+    this._source.opacity = value;
+}
+
+function standardSetQuery(value) {
+    /* jshint validthis: true */
+    this._source.setQueryable(value);
+}
+
+function dynamicLeafSetQuery(value) {
+    /* jshint validthis: true */
+    this._source.queryable = value;
+}
+
+function featureGetSnapshot() {
+    /* jshint validthis: true */
+    return this._source.isSnapshot;
+}
+
+function featureGetHighlightFeature() {
+    return true;
+}
+
+function dynamicLeafGetHighlightFeature() {
+    /* jshint validthis: true */
+    return this._source.highlightFeature;
+}
+
+function standardZoomToBoundary(map) {
+    /* jshint validthis: true */
+    this._source.zoomToBoundary(map);
+}
+
+function dynamicLeafZoomToBoundary(map) {
+    /* jshint validthis: true */
+    this._source.zoomToBoundary(map);
+}
+
+function featureGetFeatureName(objId, attribs) {
+    /* jshint validthis: true */
+    return this._source.getFeatureName(objId, attribs);
+}
+
+function featureAttributesToDetails(attribs, fields) {
+    /* jshint validthis: true */
+    return this._source.attributesToDetails(attribs, fields);
+}
+
+function dynamicLeafAttributesToDetails(attribs, fields) {
+    /* jshint validthis: true */
+    return this._source._parent.attributesToDetails(attribs, fields);
+}
+
+function featureFetchGraphic(oid) {
+    /* jshint validthis: true */
+    return this._source.fetchGraphic(oid);
+}
+
+function dynamicLeafFetchGraphic(oid) {
+    /* jshint validthis: true */
+    return this._source.fetchGraphic(oid);
+}
+
+module.exports = () => ({
+    LayerInterface
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue May 23 2017 18:08:52 GMT+0000 (UTC) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
