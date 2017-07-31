@@ -545,15 +545,27 @@ function validateCSV(data) {
             // check field counts of each row
             if (rows.every(rowArr => rowArr.length === fc)) {
 
+                // used for tracking column headers with the same name
+                const fieldCount = {};
+                const fields = rows[0]
+                    .map(field => {
+                        if (typeof fieldCount[field] !== 'undefined') {
+                            fieldCount[field]++;
+                            return field + '_' + fieldCount[field];
+                        } else {
+                            fieldCount[field] = 0;
+                            return field;
+                        }
+                    })
+                    .map(field => ({
+                        name: field,
+                        type: 'esriFieldTypeString'
+                    }));
+
                 const res = {
                     formattedData,
                     smartDefaults: guessCSVfields(rows), // calculate smart defaults
-
-                    // make field list esri-ish for consistancy
-                    fields: rows[0].map(field => ({
-                        name: field,
-                        type: 'esriFieldTypeString'
-                    })),
+                    fields,
                     geometryType: 'esriGeometryPoint' // always point for CSV
                 };
 
