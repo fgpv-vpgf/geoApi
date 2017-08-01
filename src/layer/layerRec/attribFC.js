@@ -31,6 +31,8 @@ class AttribFC extends basicFC.BasicFC {
 
     get queryUrl () { return `${this._parent.rootUrl}/${this._idx}`; }
 
+    get loadedFeatureCount () { return this._layerPackage ? this._layerPackage.loadedFeatureCount : 0; }
+
     /**
      * Returns attribute data for this FC.
      *
@@ -59,6 +61,16 @@ class AttribFC extends basicFC.BasicFC {
      */
     getLayerData () {
         return this._layerPackage.layerData;
+    }
+
+    /**
+     * Attempts to abort an attribute load in progress.
+     * Harmless to call before or after an attribute load.
+     *
+     * @function abortAttribLoad
+     */
+    abortAttribLoad () {
+        this._layerPackage.abortAttribLoad();
     }
 
     /**
