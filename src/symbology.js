@@ -20,6 +20,57 @@ const CONTAINER_CENTER = CONTAINER_SIZE / 2;
 const CONTENT_PADDING = (CONTAINER_SIZE - CONTENT_SIZE) / 2;
 
 /**
+ * Will add extra properties to a renderer to support filtering by symbol.
+ * New property .definitionClause contains sql where fragment valid for symbol
+ * for app on each renderer item.
+ *
+ * @param {Object} renderer an ESRI renderer object in server JSON form. Param is modified in place
+ */
+function filterifyRenderer(renderer) {
+
+    switch (renderer.type) {
+        case SIMPLE:
+            renderer.definitionClause = '1=1';
+            break;
+
+        case UNIQUE_VALUE:
+            const delim = renderer.fieldDelimiter || ', ';
+            const keyFields = ['field1', 'field2', 'field3']
+                .map(fn => renderer[fn]) // extract field names
+                .filter(fn => fn);       // remove any undefined names
+
+            renderer.uniqueValueInfos.forEach(uvi => {
+                // unpack .value into array
+                const keyValues = uvi.value.spit(delim);
+
+                // convert fields/values into sql clause
+                const clause = keyFields
+                    .map((kf, i) =>  `${kf} = '${keyValues[i]}'`)
+                    .join(' AND ');
+
+                uvi.definitionClause = `(${clause})`;
+            });
+
+            break;
+        case CLASS_BREAKS:
+
+            const f = renderer.field;
+ 
+            // figure out ranges of each break.
+            renderer.classBreakInfos.forEach(cbi => {
+                const minval = isNaN(cbi.classMinValue) ? renderer.minValue : cbi.classMinValue;
+                cbi.definitionClause = `(${f}) > ${minval} AND ${f} <= ${cbi.classMaxValue})`;
+            });
+
+            break;
+        default:
+
+            // Renderer we dont support
+            console.warn('encountered unsupported renderer type: ' + renderer.type);
+    }
+}
+
+/**
  * Will add extra properties to a renderer to support images.
  * New properties .svgcode and .defaultsvgcode contains image source
  * for app on each renderer item.
@@ -993,6 +1044,7 @@ module.exports = (esriBundle, geoApi, window) => {
         listToImageSymbology: list => _listToSymbology(renderSymbologyImage, list),
         enhanceRenderer,
         cleanRenderer,
+        filterifyRenderer,
         mapServerToLocalLegend: buildMapServerToLocalLegend(esriBundle, geoApi)
     };
 };
