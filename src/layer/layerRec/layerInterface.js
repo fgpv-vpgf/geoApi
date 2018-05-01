@@ -35,6 +35,7 @@ class LayerInterface {
     get layerType () { return undefined; } // returns String
     get parentLayerType () { return undefined; } // returns String
     get geometryType () { return undefined; } // returns String
+    get oidField () { return undefined; } // returns String
     get featureCount () { return undefined; } // returns Integer
     get loadedFeatureCount () { return undefined; } // returns Integer
     get extent () { return undefined; } // returns Object (Esri Extent)
@@ -51,6 +52,8 @@ class LayerInterface {
 
     // fetches attributes for use in the datatable
     get formattedAttributes () { return undefined; } // returns Promise of Object
+
+    get attribs () { return undefined; } // returns Promise of Object
 
     get queryUrl () { return undefined; } // returns String
 
@@ -103,28 +106,40 @@ class LayerInterface {
         this._source = newSource;
     }
 
-    convertToSingleLayer (layerRecord) {
+    // forReal indicates we actually want a graphics layer.
+    // other "convert" functions use method due to common commands,
+    // but they are not forReal. this flag lets us skip things that
+    // should ONLY be applied for real graphics layer
+    convertToGraphicsLayer (layerRecord, forReal = true) {
         this._source = layerRecord;
         this._isPlaceholder = false;
 
-        newProp(this, 'symbology', standardGetSymbology);
-        newProp(this, 'state', standardGetState);
-
         newProp(this, 'visibility', standardGetVisibility);
         newProp(this, 'opacity', standardGetOpacity);
-        newProp(this, 'query', standardGetQuery);
-
         newProp(this, 'name', standardGetName);
-        newProp(this, 'itemIndex', standardGetItemIndex);
-
-        newProp(this, 'geometryType', standardGetGeometryType);
         newProp(this, 'layerType', standardGetLayerType);
+
+        this.setVisibility = standardSetVisibility;
+        this.setOpacity = standardSetOpacity;
+
+        if (forReal) {
+            this.zoomToGraphic = graphicZoomToGraphic;
+        }
+    }
+
+    convertToSingleLayer (layerRecord) {
+        this.convertToGraphicsLayer(layerRecord, false);
+
+        newProp(this, 'symbology', standardGetSymbology);
+        newProp(this, 'state', standardGetState);
+        newProp(this, 'query', standardGetQuery);
+        newProp(this, 'itemIndex', standardGetItemIndex);
+        newProp(this, 'geometryType', standardGetGeometryType);
+        newProp(this, 'oidField', standardGetOidField);
         newProp(this, 'parentLayerType', standardGetParentLayerType);
         newProp(this, 'featureCount', standardGetFeatureCount);
         newProp(this, 'extent', standardGetExtent);
 
-        this.setVisibility = standardSetVisibility;
-        this.setOpacity = standardSetOpacity;
         this.setQuery = standardSetQuery;
         this.zoomToBoundary = standardZoomToBoundary;
         this.validateProjection = standardValidateProjection;
@@ -137,7 +152,9 @@ class LayerInterface {
 
         newProp(this, 'snapshot', featureGetSnapshot);
         newProp(this, 'formattedAttributes', standardGetFormattedAttributes);
+        newProp(this, 'attribs', standardGetAttribs);
         newProp(this, 'geometryType', featureGetGeometryType);
+        newProp(this, 'oidField', featureGetOidField);
         newProp(this, 'featureCount', featureGetFeatureCount);
         newProp(this, 'loadedFeatureCount', featureGetLoadedFeatureCount);
         newProp(this, 'highlightFeature', featureGetHighlightFeature);
@@ -165,8 +182,10 @@ class LayerInterface {
         newProp(this, 'opacity', dynamicLeafGetOpacity);
         newProp(this, 'query', dynamicLeafGetQuery);
         newProp(this, 'formattedAttributes', dynamicLeafGetFormattedAttributes);
+        newProp(this, 'attribs', dynamicLeafGetAttribs);
 
         newProp(this, 'geometryType', dynamicLeafGetGeometryType);
+        newProp(this, 'oidField', dynamicLeafGetOidField);
         newProp(this, 'layerType', dynamicLeafGetLayerType);
         newProp(this, 'parentLayerType', dynamicLeafGetParentLayerType);
         newProp(this, 'featureCount', dynamicLeafGetFeatureCount);
@@ -334,6 +353,21 @@ function dynamicLeafGetFormattedAttributes() {
     return this._source.getFormattedAttributes();
 }
 
+function standardGetAttribs() {
+    /* jshint validthis: true */
+
+    return this._source.getAttribs();
+}
+
+function dynamicLeafGetAttribs() {
+     /* jshint validthis: true */
+
+     // TODO code-wise this looks identical to standardGetAttribs.
+    //      however in this case, ._source is a DynamicFC, not a LayerRecord.
+    //      This is safer. Deleting this would avoid the duplication. Decide.
+    return this._source.getAttribs();
+}
+
 function standardGetSymbology() {
     /* jshint validthis: true */
     return this._source.symbology;
@@ -363,6 +397,23 @@ function dynamicLeafGetGeometryType() {
 
     // TEST STATUS none
     return this._source.geomType;
+}
+
+function standardGetOidField() {
+    /* jshint validthis: true */
+    return undefined;
+}
+
+function featureGetOidField() {
+    /* jshint validthis: true */
+    return this._source.getOidField();
+}
+
+function dynamicLeafGetOidField() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return this._source.oidField;
 }
 
 function standardGetFeatureCount() {
@@ -476,6 +527,14 @@ function featureZoomToGraphic(oid, map, offsetFraction) {
 
 function dynamicLeafZoomToGraphic(oid, map, offsetFraction) {
     /* jshint validthis: true */
+    return this._source.zoomToGraphic(oid, map, offsetFraction);
+}
+
+function graphicZoomToGraphic(oid, map, offsetFraction) {
+    /* jshint validthis: true */
+
+    // secret. its not really oid. its api id. see comments in graphicRecord.js.
+    // clean up when we get better design.
     return this._source.zoomToGraphic(oid, map, offsetFraction);
 }
 

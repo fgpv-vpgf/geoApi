@@ -147,6 +147,45 @@ class LayerRecord extends root.Root {
     }
 
     /**
+     * Reacts to a layer downloading attributes.
+     *
+     * @function _attribsAdded
+     * @private
+     * @param {String} idx the index of the layer whose attributes were downloaded
+     * @param {Object} attribs the layer attributes downloaded
+     */
+    _attribsAdded (idx, attribs) {
+        // if we don't copy the array we could be looping on an array
+        // that is being modified as it is being read
+        this._fireEvent(this._attribListeners, this, idx, attribs);
+    }
+
+    /**
+     * Wire up attrib added listener.
+     *
+     * @function addAttribListener
+     * @param {Function} listenerCallback function to call when attributes download event happens
+     */
+    addAttribListener (listenerCallback) {
+        this._attribListeners.push(listenerCallback);
+        return listenerCallback;
+    }
+
+    /**
+     * Remove an attribute added listener.
+     *
+     * @function removeAttribListener
+     * @param {Function} listenerCallback function to not call when attributes download event happens
+     */
+    removeAttribListener (listenerCallback) {
+        const idx = this._attribListeners.indexOf(listenerCallback);
+        if (idx < 0) {
+            throw new Error('Attempting to remove a listener which is not registered.');
+        }
+        this._attribListeners.splice(idx, 1);
+    }
+
+    /**
      * Wire up mouse hover listener.
      *
      * @function addHoverListener
@@ -270,7 +309,8 @@ class LayerRecord extends root.Root {
         return {
             id: this.config.id,
             opacity: this.config.state.opacity,
-            visible: this.config.state.visibility
+            visible: this.config.state.visibility,
+            refreshInterval: this.config.refreshInterval
         };
     }
 
@@ -389,7 +429,7 @@ class LayerRecord extends root.Root {
 
     /**
      * Zoom to layer boundary of the layer specified by layerId
-     * 
+     *
      * @function zoomToBoundary
      * @param {Object} map  esriMap object we want to execute the zoom on
      * @return {Promise} resolves when map is done zooming
@@ -400,7 +440,7 @@ class LayerRecord extends root.Root {
 
     /**
      * Returns the visible scale values of the layer
-     * 
+     *
      * @function getVisibleScales
      * @returns {Object} has properties .minScale and .maxScale
      */
@@ -416,7 +456,7 @@ class LayerRecord extends root.Root {
 
     /**
      * Returns the feature count
-     * 
+     *
      * @function getFeatureCount
      * @returns {Promise} resolves feature count
      */
@@ -429,7 +469,7 @@ class LayerRecord extends root.Root {
 
     /**
      * Create an extent centered around a point, that is appropriate for the current map scale.
-     * 
+     *
      * @function makeClickBuffer
      * @param {Object} point       point on the map for extent center
      * @param {Object} map         map object the extent is relevant for
@@ -481,6 +521,17 @@ class LayerRecord extends root.Root {
     }
 
     /**
+     * Indicates the oid field of the layer.
+     *
+     * @function getOidField
+     * @returns {String} the oid field of the layer
+     */
+    getOidField () {
+        // standard case, layer has no oid field. This gets overridden in feature-based Record classes.
+        return undefined;
+    }
+
+    /**
      * Provides the proxy interface object to the layer.
      *
      * @function getProxy
@@ -511,6 +562,22 @@ class LayerRecord extends root.Root {
     }
 
     /**
+     * Deletes any pre-loaded attributes when the layer automatically refreshes to ensure up-to-date attributes are loaded next time
+     *
+     * @function cleanUpAttribs
+     */
+    cleanUpAttribs () {
+        Object.keys(this._featClasses).forEach(fc => {
+            delete this._featClasses[fc]._formattedAttributes;
+
+            if (this._featClasses[fc]._layerPackage) {
+                delete this._featClasses[fc]._layerPackage._attribData;
+                this._featClasses[fc]._layerPackage.loadIsDone = false;
+            }
+        });
+    }
+
+    /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
      * should be fully merged with all layer options defined (i.e. this constructor
      * will not apply any defaults).
@@ -529,6 +596,7 @@ class LayerRecord extends root.Root {
         this._apiRef = apiRef;
         this.initialConfig = config;
         this._stateListeners = [];
+        this._attribListeners = [];
         this._hoverListeners = [];
         this._user = false;
         this._epsgLookup = epsgLookup;

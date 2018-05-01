@@ -6,6 +6,11 @@ function esriMap(esriBundle, geoApi) {
 
     const printModule = mapPrint(esriBundle);
 
+    let basemapErrored = false;
+
+    let basemaps = null;
+    let overviewExpand = null;
+
     class Map {
 
         static get Extent () { return esriBundle.Extent; }
@@ -29,7 +34,7 @@ function esriMap(esriBundle, geoApi) {
          * - lods: array of level of details. See config schema lodSetNode.lods
          * - tileSchema: object describing schema of map. See config schema tileSchemaNode
          * - proxyUrl: url to proxy for use by mapping api. optional
-         * 
+         *
          * @param {Object} domNode  the DOM node where the map will be created
          * @param {Object} opts     options object for the map (see above)
          */
@@ -51,7 +56,7 @@ function esriMap(esriBundle, geoApi) {
             }
 
             if (opts.basemaps) {
-                this.basemapGallery = basemap.initBasemaps(esriBundle, opts.basemaps, this._map);
+                basemaps = opts.basemaps;
             } else {
                 throw new Error('The basemaps option is required to and at least one basemap must be defined');
             }
@@ -66,7 +71,7 @@ function esriMap(esriBundle, geoApi) {
             }
 
             if (opts.overviewMap && opts.overviewMap.enabled) {
-                const expand = opts.overviewMap.expandFactor;
+                overviewExpand = opts.overviewMap.expandFactor;
 
                 if (opts.tileSchema.overviewUrl) {
                     // initial implementation.  we only are supporting tile layers.
@@ -75,18 +80,28 @@ function esriMap(esriBundle, geoApi) {
                     // or attempt to wire in the layer records.
                     const customOverview = new esriBundle.ArcGISTiledMapServiceLayer(opts.tileSchema.overviewUrl.url);
                     customOverview.on('load', () => {
-                        this.initOverviewMap(expand, customOverview);
+                        this.initOverviewMap(overviewExpand, customOverview);
                     });
                 } else {
                     // we use the active basemap, and reset the overview whenever it changes
-                    this.initOverviewMap(expand);
-                    this.basemapGallery.on('selection-change', () => this.resetOverviewMap(expand));
+                    this.initOverviewMap(overviewExpand);
                 }
             }
 
             this.zoomPromise = Promise.resolve();
             this.zoomCounter = 0;
 
+        }
+
+        initGallery() {
+            this.basemapGallery = basemap.initBasemaps(esriBundle, basemaps, this._map);
+            if (overviewExpand !== null) {
+                this.basemapGallery.on('selection-change', () => this.resetOverviewMap(overviewExpand));
+                this.basemapGallery.on('error', () => {
+                    this.overviewMap.destroy();
+                    basemapErrored = true;
+                });
+            }
         }
 
         printLocal (options) { return printModule.printLocal(this._map, options); }
@@ -317,6 +332,12 @@ function esriMap(esriBundle, geoApi) {
         }
 
         initOverviewMap (expandFactor, baseLayer) {
+            if (basemapErrored) {
+                basemapErrored = false;
+                return;
+            }
+            basemapErrored = false;
+
             const opts = {
                 map: this._map,
                 expandFactor,
@@ -325,11 +346,24 @@ function esriMap(esriBundle, geoApi) {
             if (baseLayer) {
                 opts.baseLayer = baseLayer;
             }
-            this.overviewMap = new esriBundle.OverviewMap(opts);
-            this.overviewMap.startup();
+
+            let hasBaseLayer = false;
+            Object.keys(opts.map._layers).forEach(id => {
+                const layer = opts.map._layers[id];
+                if (layer._basemapGalleryLayerType === 'basemap') {
+                    hasBaseLayer = true;
+                }
+            });
+
+            if (opts.baseLayer || hasBaseLayer) {
+                this.overviewMap = new esriBundle.OverviewMap(opts);
+                this.overviewMap.startup();
+            }
         }
         resetOverviewMap (expandFactor) {
-            this.overviewMap.destroy();
+            if (this.overviewMap) {
+                this.overviewMap.destroy();
+            }
             this.initOverviewMap(expandFactor);
         }
 

@@ -734,6 +734,10 @@ function serverLayerIdentifyBuilder(esriBundle) {
             identParams.spatialReference = opts.geometry.spatialReference;
             identParams.tolerance = opts.tolerance || 5;
 
+            if (opts.layerDefinitions.length > 0) {
+                identParams.layerDefinitions = opts.layerDefinitions;
+            }
+
             // TODO add support for identParams.layerDefinitions once attribute filtering is implemented
 
         } else {
@@ -1154,6 +1158,17 @@ function createFeatureRecordBuilder(esriBundle, geoApi, classBundle) {
     };
 }
 
+function createGraphicsRecordBuilder(esriBundle, geoApi, classBundle) {
+    /**
+    * Creates a Graphics Layer Record class
+    * @param {String} name           name and id of the layer to be constructed
+    * @returns {Object}              instantited GraphicsRecord class
+    */
+    return name => {
+        return new classBundle.GraphicsRecord(esriBundle, geoApi, name);
+    };
+}
+
 function createDynamicRecordBuilder(esriBundle, geoApi, classBundle) {
     /**
      * Creates an Dynamic Layer Record class
@@ -1227,6 +1242,7 @@ module.exports = function (esriBundle, geoApi) {
         ScreenPoint: esriBundle.ScreenPoint,
         Query: esriBundle.Query,
         TileLayer: esriBundle.ArcGISTiledMapServiceLayer,
+        ImageParameters: esriBundle.ImageParameters,
         ogc: ogc(esriBundle),
         bbox: bbox(esriBundle, geoApi),
         createImageRecord: createImageRecordBuilder(esriBundle, geoApi, layerClassBundle),
@@ -1234,6 +1250,7 @@ module.exports = function (esriBundle, geoApi) {
         createTileRecord: createTileRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createDynamicRecord: createDynamicRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createFeatureRecord: createFeatureRecordBuilder(esriBundle, geoApi, layerClassBundle),
+        createGraphicsRecord: createGraphicsRecordBuilder(esriBundle, geoApi, layerClassBundle),
         LayerDrawingOptions: esriBundle.LayerDrawingOptions,
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
         makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),

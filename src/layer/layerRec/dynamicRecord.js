@@ -76,6 +76,20 @@ class DynamicRecord extends attribRecord.AttribRecord {
     }
 
     /**
+     * Creates an options object for the map API object
+     *
+     * @function makeLayerConfig
+     * @returns {Object} an object with api options
+     */
+    makeLayerConfig () {
+        const cfg = super.makeLayerConfig();
+        cfg.imageParameters = new this._apiRef.layer.ImageParameters();
+        cfg.imageParameters.format = this.config.imageFormat || 'png32';
+
+        return cfg;
+    }
+
+    /**
      * Return a proxy interface for a child layer
      *
      * @param {Integer} featureIdx    index of child entry (leaf or group)
@@ -371,6 +385,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
                     // value to wait on.
                     if (dFC.layerType === shared.clientLayerType.ESRI_FEATURE) {
                         dFC.geomType = ld.geometryType;
+                        dFC.oidField = ld.oidField;
 
                         return this.getFeatureCount(idx).then(fc => {
                             dFC.featureCount = fc;
@@ -659,6 +674,14 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
         // TODO verify if 0 is valid click tolerance. if so, need to address falsy logic.
         opts.tolerance = opts.tolerance || this.clickTolerance || 5;
+
+        // if there are filter queries on the layer, don't include them in the identify results
+        opts.layerDefinitions = [];
+        this.config.layerEntries.forEach(entry => {
+            if (entry.initialFilteredQuery) {
+                opts.layerDefinitions[entry.index] = entry.initialFilteredQuery;
+            }
+        });
 
         const identifyPromise = this._apiRef.layer.serverLayerIdentify(this._layer, opts)
             .then(clickResults => {
