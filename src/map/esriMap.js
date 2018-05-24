@@ -413,6 +413,10 @@ function esriMap(esriBundle, geoApi) {
                         this.zoomPromise = zoomPromise;
                     }
                 }
+            }).catch(() => {
+                // zoom action failed; resetting zoomPromise to prevent subsequent zoom events from failing immediatelly when running `zoomPromise.then`
+                this.zoomCounter = 0;
+                this.zoomPromise = Promise.resolve();
             });
         }
 
