@@ -241,7 +241,7 @@ function pokeEsriService(url, esriBundle, hint) {
             url: url,
             content: { f: 'json' },
             callbackParamName: 'callback',
-            handleAs: 'json',
+            handleAs: 'json'
         });
 
         defService.then(srvResult => {
