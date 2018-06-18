@@ -1,10 +1,11 @@
 {
   "name": "geoApi",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "",
   "main": "src/index.js",
   "dependencies": {
     "babel-cli": "^6.24.1",
+    "babel-preset-env": "1.6.1",
     "babel-preset-latest": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "canvg-origin": "^1.0.0",

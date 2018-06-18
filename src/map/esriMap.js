@@ -120,6 +120,28 @@ function esriMap(esriBundle, geoApi) {
         }
 
         /**
+         * Remove a basemap from the basemapGallery
+         *
+         * @param {Object|String} value either an object with an id field or a string
+         */
+        removeBasemap (value) {
+            if (typeof value === 'object') {
+                value = value.id;
+            }
+            this.basemapGallery.remove(value);
+        }
+
+        /**
+         * Add a basemap to the basemapGallery
+         *
+         * @param {Object} basemapConfig a basemap JSON snippet
+         */
+        addBasemap (basemapConfig) {
+            const basemapToAdd = basemap.createBasemap(esriBundle, basemapConfig);
+            this.basemapGallery.add(basemapToAdd);
+        }
+
+        /**
          * Create an ESRI Extent object from extent setting JSON object.
          *
          * @function getExtentFromJson
@@ -204,12 +226,15 @@ function esriMap(esriBundle, geoApi) {
          * Calculate north arrow bearing. Angle returned is to to rotate north arrow image.
          * http://www.movable-type.co.uk/scripts/latlong.html
          * @function getNorthArrowAngle
+         * @param {Object} opts options to apply to north arrow calculation
          * @returns {Number} map rotation angle (in degree)
          */
-        getNorthArrowAngle () {
-            // get center point in longitude and use bottom value for latitude
-            const pointB = geoApi.proj.localProjectPoint(this._map.extent.spatialReference, 'EPSG:4326',
-                    { x: (this._map.extent.xmin + this._map.extent.xmax) / 2, y: this._map.extent.ymin });
+        getNorthArrowAngle (opts) {
+            // get center point in longitude and use bottom value for latitude for default point
+            const bottomCenter = { x: (this._map.extent.xmin + this._map.extent.xmax) / 2, y: this._map.extent.ymin };
+            // get point if specified by caller else get default
+            const point = opts ? opts.point || bottomCenter : bottomCenter;
+            const pointB = geoApi.proj.localProjectPoint(this._map.extent.spatialReference, 'EPSG:4326', point);
 
             // north value (set longitude to be half of Canada extent (141° W, 52° W))
             const pointA = { x: -96, y: 90 };
@@ -377,7 +402,14 @@ function esriMap(esriBundle, geoApi) {
          */
         shiftZoom (byValue) {
             this.zoomCounter += byValue;
-            this.zoomPromise.then(() => {
+            // when using keys for navigation esri throws an internal exception which cannot be caught when `centerAt` is called right after `setZoom`
+            // so far, we could not reproduce it by calling these two functions manually in the console, so there must be another factor involved
+            // when this internal exception is thrown, zoomPromise get's rejected
+            // calling `then` on a rejected promise does not work which prevents further zoom actions triggered throught the keyboard
+            // calling `catch` on a rejected promise works, and the promise can be reset
+            // calling `finally` on a rejected promise works as well, and this can be used to reset the promise and trigger further zoom actions
+            // NOTE: this is not an ideal solution, but unless the third factor causing errors in `centerAt/setZoom` calls can be found, the internal esri exceptions needs to be ignored
+            this.zoomPromise.finally(() => {
                 if (this.zoomCounter !== 0) {
                     const zoomValue = this._map.getZoom() + this.zoomCounter;
                     const zoomPromise = Promise.resolve(this.setZoom(zoomValue));
