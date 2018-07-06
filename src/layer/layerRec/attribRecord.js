@@ -43,8 +43,8 @@ class AttribRecord extends layerRecord.LayerRecord {
      * Retrieves attributes from a layer for a specified feature index
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
-    getFormattedAttributes () {
-        return this._featClasses[this._defaultFC].getFormattedAttributes();
+    getFormattedAttributes (webRequest, dataUrl) {
+        return this._featClasses[this._defaultFC].getFormattedAttributes(webRequest, dataUrl);
     }
 
     /**
@@ -63,8 +63,8 @@ class AttribRecord extends layerRecord.LayerRecord {
     * @function getAttribs
     * @returns {Promise}         resolves with a layer attribute data object
     */
-    getAttribs () {
-        return this._featClasses[this._defaultFC].getAttribs();
+    getAttribs (webRequest, dataUrl) {
+        return this._featClasses[this._defaultFC].getAttribs(webRequest, dataUrl);
     }
 
     /**
@@ -192,10 +192,10 @@ class AttribRecord extends layerRecord.LayerRecord {
         // TODO make this extensible / modifiable / configurable to allow different details looks for different data
         // simple array of text mapping for demonstration purposes. fancy grid formatting later?
         // ignore any functions hanging around on the attribute.
-        if (fields) {
+        if (fields && attribs) {
             attribs = attribFC.AttribFC.unAliasAttribs(attribs, fields);
         }
-        return Object.keys(attribs)
+        return attribs ? Object.keys(attribs)
             .filter(key => typeof attribs[key] !== 'function')
             .map(key => {
                 const fieldType = fields ? fields.find(f => f.name === key) : null;
@@ -205,7 +205,7 @@ class AttribRecord extends layerRecord.LayerRecord {
                     field: key,
                     type: fieldType ? fieldType.type : fieldType
                 };
-            });
+            }) : [];
     }
 }
 

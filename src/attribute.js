@@ -67,15 +67,17 @@ this is a layer data object.  it contains information describing the server-side
  * Will generate an empty object structure to store attributes for a single layer of features
  * @private
  * @param  {String} featureIdx server index of the layer
+ * @param  {Boolean} hasJsonTable indicates whether to hit the server or use a JSON file for fetching attributes
  * @param  {Object} esriBundle bundle of API classes
  * @return {Object} empty layer package object
  */
-function newLayerPackage(featureIdx, esriBundle) {
+function newLayerPackage(featureIdx, hasJsonTable, esriBundle) {
     // only reason this is in a function is to tack on the lazy-load
     // attribute function. all object properties are added elsewhere
     const layerPackage = {
         featureIdx,
         getAttribs,
+        hasJsonTable,
         loadedFeatureCount: 0,
         loadAbortFlag: false,
         loadIsDone: false,
@@ -283,13 +285,14 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
     * fetch attributes from an ESRI ArcGIS Server Feature Layer Service endpoint
     * @param {String} mapServiceUrl   an arcgis map server service endpoint (no integer index)
     * @param {String} featureIdx      index of where the endpoint is.
+    * @param {Boolean} hasJsonTable   indicates whether a JSON file is provided containing the layer attributes
     * @param {String} attribs         an optional comma separated list of attributes to download. default '*' will download all
     * @return {Object} attributes in a packaged format for asynch access
     */
-    return (mapServiceUrl, featureIdx, attribs = '*') => {
+    return (mapServiceUrl, featureIdx, hasJsonTable, attribs = '*') => {
 
         const layerUrl = mapServiceUrl + '/' + featureIdx;
-        const layerPackage = newLayerPackage(featureIdx, esriBundle);
+        const layerPackage = newLayerPackage(featureIdx, hasJsonTable, esriBundle);
 
         // get information about this layer, asynch
         layerPackage.layerData = new Promise((resolve, reject) => {
@@ -392,7 +395,7 @@ function loadFileAttribsBuilder(esriBundle, geoApi) {
         // this approach is inefficient (duplicates attributes in layer and in attribute store),
         // but provides a consistent approach to attributes regardless of where the layer came from
 
-        const layerPackage = newLayerPackage('0', esriBundle); // files have no index (no server), so we use value 0
+        const layerPackage = newLayerPackage('0', false, esriBundle); // files have no index (no server), so we use value 0
 
         // it's local, no need to lazy-load
         layerPackage._attribData = Promise.resolve(createAttribSet(layer.objectIdField, layer.graphics.map(elem => {
@@ -419,12 +422,20 @@ function loadFileAttribsBuilder(esriBundle, geoApi) {
     };
 }
 
+function loadJsonAttribsBuilder(esriBundle) {
+
+    return () => {
+        return newLayerPackage('0', true, esriBundle);
+    }
+}
+
 //  Attribute Loader related functions
 // TODO consider re-writing all the asynch stuff with the ECMA-7 style of asynch keywords
 module.exports = (esriBundle, geoApi) => {
     return {
         loadServerAttribs: loadServerAttribsBuilder(esriBundle, geoApi),
         loadFileAttribs: loadFileAttribsBuilder(esriBundle, geoApi),
+        loadJsonAttribs: loadJsonAttribsBuilder(esriBundle),
         getLayerIndex
     };
 };

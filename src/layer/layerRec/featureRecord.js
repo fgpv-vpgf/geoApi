@@ -113,7 +113,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
             const splitUrl = shared.parseUrlIndex(this._layer.url);
             featIdx = splitUrl.index;
             this.rootUrl = splitUrl.rootUrl;
-            attribPackage = this._apiRef.attribs.loadServerAttribs(splitUrl.rootUrl, featIdx, this.config.outfields);
+            attribPackage = this._apiRef.attribs.loadServerAttribs(splitUrl.rootUrl, featIdx, this.config.hasJsonTable, this.config.outfields);
         }
 
         // feature has only one layer
@@ -284,7 +284,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @param {Object} opts    additional arguemets, see above.
      * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
      */
-    identify (opts) {
+    identify (opts, webRequest, dataUrl) {
         // TODO add full documentation for options parameter
 
         // early kickout check. not loaded/error; not visible; not queryable; off scale
@@ -315,7 +315,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         }
 
         const identifyPromise = Promise.all([
-                this.getAttribs(),
+                this.getAttribs(webRequest, dataUrl),
                 Promise.resolve(this._layer.queryFeatures(qry)),
                 this.getLayerData()
             ])
@@ -333,7 +333,11 @@ class FeatureRecord extends attribRecord.AttribRecord {
                         const objIdStr = objId.toString();
 
                         // use object id find location of our feature in the feature array, and grab its attributes
-                        const featAttribs = attributes.features[attributes.oidIndex[objIdStr]].attributes;
+                        const featObj = attributes.features[attributes.oidIndex[objIdStr]];
+                        let featAttribs;
+                        if (featObj) {
+                            featAttribs = featObj.attributes;
+                        }
                         return {
                             name: this.getFeatureName(objIdStr, featAttribs),
                             data: this.attributesToDetails(featAttribs, layerData.fields),

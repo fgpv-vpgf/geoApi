@@ -51,9 +51,8 @@ class LayerInterface {
     get highlightFeature () { return undefined; } // returns Boolean
 
     // fetches attributes for use in the datatable
-    get formattedAttributes () { return undefined; } // returns Promise of Object
-
-    get attribs () { return undefined; } // returns Promise of Object
+    formattedAttributes () { return undefined; } // returns Promise of Object
+    attribs () { return undefined; } // returns Promise of Object
 
     get queryUrl () { return undefined; } // returns String
 
@@ -145,14 +144,17 @@ class LayerInterface {
         this.validateProjection = standardValidateProjection;
         this.zoomToScale = standardZoomToScale;
         this.isOffScale = standardIsOffScale;
+
+        if (layerRecord.config.hasJsonTable) {
+            this.attribs = standardGetAttribs;
+            this.formattedAttributes = standardGetFormattedAttributes;
+        }
     }
 
     convertToFeatureLayer (layerRecord) {
         this.convertToSingleLayer(layerRecord);
 
         newProp(this, 'snapshot', featureGetSnapshot);
-        newProp(this, 'formattedAttributes', standardGetFormattedAttributes);
-        newProp(this, 'attribs', standardGetAttribs);
         newProp(this, 'geometryType', featureGetGeometryType);
         newProp(this, 'oidField', featureGetOidField);
         newProp(this, 'featureCount', featureGetFeatureCount);
@@ -160,6 +162,8 @@ class LayerInterface {
         newProp(this, 'highlightFeature', featureGetHighlightFeature);
         newProp(this, 'queryUrl', featureGetQueryUrl);
 
+        this.attribs = standardGetAttribs;
+        this.formattedAttributes = standardGetFormattedAttributes;
         this.getFeatureName = featureGetFeatureName;
         this.attributesToDetails = featureAttributesToDetails;
         this.fetchGraphic = featureFetchGraphic;
@@ -181,8 +185,6 @@ class LayerInterface {
         newProp(this, 'visibility', dynamicLeafGetVisibility);
         newProp(this, 'opacity', dynamicLeafGetOpacity);
         newProp(this, 'query', dynamicLeafGetQuery);
-        newProp(this, 'formattedAttributes', dynamicLeafGetFormattedAttributes);
-        newProp(this, 'attribs', dynamicLeafGetAttribs);
 
         newProp(this, 'geometryType', dynamicLeafGetGeometryType);
         newProp(this, 'oidField', dynamicLeafGetOidField);
@@ -195,6 +197,8 @@ class LayerInterface {
         newProp(this, 'highlightFeature', dynamicLeafGetHighlightFeature);
         newProp(this, 'queryUrl', dynamicLeafGetQueryUrl);
 
+        this.attribs = dynamicLeafGetAttribs;
+        this.formattedAttributes = dynamicLeafGetFormattedAttributes;
         this.setVisibility = dynamicLeafSetVisibility;
         this.setOpacity = dynamicLeafSetOpacity;
         this.setQuery = dynamicLeafSetQuery;
@@ -338,34 +342,34 @@ function dynamicLeafGetQuery() {
     return this._source.queryable;
 }
 
-function standardGetFormattedAttributes() {
+function standardGetFormattedAttributes(webRequest, dataUrl) {
     /* jshint validthis: true */
 
-    return this._source.getFormattedAttributes();
+    return this._source.getFormattedAttributes(webRequest, dataUrl);
 }
 
-function dynamicLeafGetFormattedAttributes() {
+function dynamicLeafGetFormattedAttributes(webRequest, dataUrl) {
     /* jshint validthis: true */
 
     // TODO code-wise this looks identical to standardGetFormattedAttributes.
     //      however in this case, ._source is a DynamicFC, not a LayerRecord.
     //      This is safer. Deleting this would avoid the duplication. Decide.
-    return this._source.getFormattedAttributes();
+    return this._source.getFormattedAttributes(webRequest, dataUrl);
 }
 
-function standardGetAttribs() {
+function standardGetAttribs(webRequest, dataUrl) {
     /* jshint validthis: true */
 
-    return this._source.getAttribs();
+    return this._source.getAttribs(webRequest, dataUrl);
 }
 
-function dynamicLeafGetAttribs() {
+function dynamicLeafGetAttribs(webRequest, dataUrl) {
      /* jshint validthis: true */
 
      // TODO code-wise this looks identical to standardGetAttribs.
     //      however in this case, ._source is a DynamicFC, not a LayerRecord.
     //      This is safer. Deleting this would avoid the duplication. Decide.
-    return this._source.getAttribs();
+    return this._source.getAttribs(webRequest, dataUrl);
 }
 
 function standardGetSymbology() {

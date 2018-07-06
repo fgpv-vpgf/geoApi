@@ -18,9 +18,8 @@ class AttribFC extends basicFC.BasicFC {
      * @param {Object} config        the config object for this sublayer
      */
     constructor (parent, idx, layerPackage, config) {
-        super(parent, idx, config);
+        super(parent, idx, layerPackage, config);
 
-        this._layerPackage = layerPackage;
         this._geometryType = undefined; // this indicates unknown to the ui.
         this._oidField = undefined;
         this._fcount = undefined;
@@ -46,27 +45,31 @@ class AttribFC extends basicFC.BasicFC {
      * @function getAttribs
      * @returns {Promise}         resolves with a layer attribute data object
      */
-    getAttribs () {
-        const attribsDownloaded = this.attribsLoaded();
+    getAttribs (webRequest, dataUrl) {
+        if (this._layerPackage.hasJsonTable) {
+            return super.getAttribs(webRequest, dataUrl);
+        } else {
+            const attribsDownloaded = this.attribsLoaded();
 
-        const attribPromise = this._layerPackage.getAttribs();
+            const attribPromise = this._layerPackage.getAttribs();
 
-        attribPromise.then(attrib => {
-            // only trigger the event the first time when the download was in progress.
-            // after the attribs have been downloaded, if triggered again through API, since the attributes have
-            // previously been downloaded, this event will not trigger in the viewer
-            if (!attribsDownloaded) {
-                this._parent._attribsAdded(this._idx, attrib.features);
+            attribPromise.then(attrib => {
+                // only trigger the event the first time when the download was in progress.
+                // after the attribs have been downloaded, if triggered again through API, since the attributes have
+                // previously been downloaded, this event will not trigger in the viewer
+                if (!attribsDownloaded) {
+                    this._parent._attribsAdded(this._idx, attrib.features);
 
-                // for file layers, since attributes are local and we have promise initially,
-                // must set loadIsDone to true after promise resolved to ensure we trigger event once and only once
-                if (this._parent.dataSource() !== 'esri') {
-                    this._layerPackage.loadIsDone = true;
+                    // for file layers, since attributes are local and we have promise initially,
+                    // must set loadIsDone to true after promise resolved to ensure we trigger event once and only once
+                    if (this._parent.dataSource() !== 'esri') {
+                        this._layerPackage.loadIsDone = true;
+                    }
                 }
-            }
-        });
+            });
 
-        return attribPromise;
+            return attribPromise;
+        }
     }
 
     /**
@@ -77,16 +80,6 @@ class AttribFC extends basicFC.BasicFC {
      */
     attribsLoaded () {
         return this._layerPackage.loadIsDone;
-    }
-
-    /**
-     * Returns layer-specific data for this FC.
-     *
-     * @function getLayerData
-     * @returns {Promise}         resolves with a layer data object
-     */
-    getLayerData () {
-        return this._layerPackage.layerData;
     }
 
     /**
@@ -139,81 +132,6 @@ class AttribFC extends basicFC.BasicFC {
             // FIXME wire in "feature" to translation service
             return 'Feature ' + objId;
         }
-    }
-
-    /**
-     * Retrieves attributes from a layer for a specified feature index
-     * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
-     */
-    getFormattedAttributes () {
-        if (this._formattedAttributes) {
-            return this._formattedAttributes;
-        }
-
-        // TODO after refactor, consider changing this to a warning and just return some dummy value
-        if (this.layerType === shared.clientLayerType.ESRI_RASTER) {
-            throw new Error('Attempting to get attributes on a raster layer.');
-        }
-
-        this._formattedAttributes = Promise.all([this.getAttribs(), this.getLayerData()])
-            .then(([aData, lData]) => {
-                // create columns array consumable by datables
-                const columns = lData.fields
-                    .filter(field =>
-
-                        // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
-                        // filter out fields where there is no corresponding attribute data
-                        aData.features[0].attributes.hasOwnProperty(field.name))
-                    .map(field => ({
-                        data: field.name,
-                        title: field.alias || field.name
-                    }));
-
-                // derive the icon for the row
-                const rows = aData.features.map(feature => {
-                    const att = feature.attributes;
-                    att.rvInteractive = '';
-                    att.rvSymbol = this._parent._apiRef.symbology.getGraphicIcon(att, lData.renderer);
-                    return att;
-                });
-
-                // if a field name resembles a function, the data table will treat it as one.
-                // to get around this, we add a function with the same name that returns the value,
-                // tricking that silly datagrid.
-                columns.forEach(c => {
-                    if (c.data.substr(-2) === '()') {
-                        // have to use function() to get .this to reference the row.
-                        // arrow notation will reference the attribFC class.
-                        const secretFunc = function() {
-                            return this[c.data];
-                        };
-
-                        const stub = c.data.substr(0, c.data.length - 2); // function without brackets
-                        rows.forEach(r => {
-                            r[stub] = secretFunc;
-                        });
-                    }
-                });
-
-                return {
-                    columns,
-                    rows,
-                    fields: lData.fields, // keep fields for reference ...
-                    oidField: lData.oidField, // ... keep a reference to id field ...
-                    oidIndex: aData.oidIndex, // ... and keep id mapping array
-                    renderer: lData.renderer
-                };
-            })
-            .catch(e => {
-                delete this._formattedAttributes; // delete cached promise when the geoApi `getAttribs` call fails, so it will be requested again next time `getAttributes` is called;
-                if (e === 'ABORTED') {
-                    throw new Error('ABORTED');
-                } else {
-                    throw new Error('Attrib loading failed');
-                }
-            });
-
-        return this._formattedAttributes;
     }
 
     /**
@@ -354,7 +272,10 @@ class AttribFC extends basicFC.BasicFC {
                 // since our store is a promise, need to do some hack trickery here
                 attribHackPromise = new Promise(resolve => {
                     this._layerPackage.getAttribs().then(ad => {
-                        resultFeat.attributes = ad.features[ad.oidIndex[objectId]].attributes;
+                        const feat = ad.features[ad.oidIndex[objectId]]
+                        if (feat) {
+                            resultFeat.attributes = feat.attributes;
+                        }
                         resolve();
                     });
                 });

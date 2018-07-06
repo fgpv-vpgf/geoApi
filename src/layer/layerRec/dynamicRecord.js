@@ -201,6 +201,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
             clone.index = origConfig.index;
             clone.stateOnly = origConfig.stateOnly;
             clone.nameField = origConfig.nameField;
+            clone.hasJsonTable = origConfig.hasJsonTable;
             clone.highlightFeature = origConfig.highlightFeature || true; // simple default
 
             // an empty string is a valid property, so be wary of falsy logic
@@ -350,7 +351,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
         leafsToInit.forEach(idx => {
 
             const subC = subConfigs[idx].config;
-            const attribPackage = this._apiRef.attribs.loadServerAttribs(this._layer.url, idx, subC.outfields);
+            const attribPackage = this._apiRef.attribs.loadServerAttribs(this._layer.url, idx, subC.hasJsonTable, subC.outfields);
             const dFC = new dynamicFC.DynamicFC(this, idx, attribPackage, subC);
             dFC.highlightFeature = subC.highlightFeature;
             this._featClasses[idx] = dFC;
@@ -527,8 +528,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {String}  childIndex  index of the child layer to get attributes for
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
-    getFormattedAttributes (childIndex) {
-        return this._featClasses[childIndex].getFormattedAttributes();
+    getFormattedAttributes (childIndex, webRequest, dataUrl) {
+        return this._featClasses[childIndex].getFormattedAttributes(webRequest, dataUrl);
     }
 
     /**
@@ -581,8 +582,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {String} childIndex  the index of the child layer
      * @returns {Promise}          resolves with a layer attribute data object
      */
-    getAttribs (childIndex) {
-        return this._featClasses[childIndex].getAttribs();
+    getAttribs (childIndex, webRequest, dataUrl) {
+        return this._featClasses[childIndex].getAttribs(webRequest, dataUrl);
     }
 
     /**

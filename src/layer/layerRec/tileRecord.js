@@ -36,7 +36,7 @@ class TileRecord extends layerRecord.LayerRecord {
     onLoad () {
         const loadPromises = super.onLoad();
 
-        const fc = new basicFC.BasicFC(this, '0', this.config);
+        const fc = new basicFC.BasicFC(this, '0', this._featClasses[this._defaultFC]._layerPackage, this.config);
         this._featClasses['0'] = fc;
 
         loadPromises.push(fc.loadSymbology(true));

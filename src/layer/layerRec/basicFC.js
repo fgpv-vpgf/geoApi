@@ -19,11 +19,13 @@ class BasicFC extends placeholderFC.PlaceholderFC {
     /**
      * @param {Object} parent        the Record object that this Feature Class belongs to
      * @param {String} idx           the service index of this Feature Class. an integer in string format. use '0' for non-indexed sources.
+     * @param {Object} layerPackage  a layer package object from the attribute module for this feature class
      * @param {Object} config        the config object for this sublayer
      */
-    constructor (parent, idx, config) {
+    constructor (parent, idx, layerPackage, config) {
         super(parent, config.name || '');
         this._idx = idx;
+        this._layerPackage = layerPackage;
         this.queryable = config.state.query;
         this.extent = config.extent;  // if missing, will fill more values after layer loads
 
@@ -152,6 +154,170 @@ class BasicFC extends placeholderFC.PlaceholderFC {
         // get scale set from child, then execute zoom
         const scaleSet = this.getScaleSet();
         return this._parent._zoomToScaleSet(map, lods, zoomIn, scaleSet, positionOverLayer);
+    }
+
+    /**
+     * Returns layer-specific data for this FC.
+     *
+     * @function getLayerData
+     * @returns {Promise}         resolves with a layer data object
+     */
+    getLayerData (webRequest, dataUrl) {
+        if (this._layerPackage.layerData) {
+            // layer data already set.
+            return this._layerPackage.layerData;
+        }
+
+        const request = webRequest(dataUrl);
+        this._layerPackage.layerData = new Promise((resolve, reject) => {
+            const layerData = {};
+
+            request.then(result => {
+                result.fields.every(elem => {
+                    if (elem.type === 'esriFieldTypeOID') {
+                        layerData.oidField = elem.name;
+                        return false; // break the loop
+                    }
+
+                    return true; // keep looping
+                });
+                layerData.fields = result.fields;
+                layerData.renderer = { type: 'simple' };
+                layerData.geometryType = 'none';
+
+                resolve(layerData);
+            }, error => {
+                console.warn('error getting layer data');
+                reject(error);
+            });
+        });
+
+        return this._layerPackage.layerData;
+    }
+
+    getAttribs (webRequest, dataUrl) {
+        if (this._layerPackage._attribData) {
+            // attributes have already been downloaded.
+            return this._layerPackage._attribData;
+        }
+
+        const request = webRequest(dataUrl);
+        this._layerPackage._attribData = new Promise((resolve, reject) => {
+            request.then(result => {
+                this._layerPackage.loadIsDone = true;
+
+                // resolve the promise with the attribute set
+                resolve(createAttribSet('OBJECTID', result.features));
+            }, error => {
+                console.warn('error getting attribute data');
+
+                // attrib data deleted so the first check for attribData doesn't return a rejected promise
+                delete this._layerPackage._attribData;
+                reject(error);
+            });
+        });
+
+        return this._layerPackage._attribData;
+
+        /**
+         * Will generate attribute package with object id indexes
+         * @private
+         * @param  {String} oidField field containing object id
+         * @param  {Array} featureData feature objects to index and return
+         * @return {Object} object containing features and an index by object id
+         */
+        function createAttribSet(oidField, featureData) {
+
+            // add new data to layer data's array
+            const res = {
+                features: featureData,
+                oidIndex: {}
+            };
+
+            // make index on object id
+            featureData.forEach((elem, idx) => {
+                // map object id to index of object in feature array
+                // use toString, as objectid is integer and will act funny using array notation.
+                res.oidIndex[elem.attributes[oidField].toString()] = idx;
+            });
+
+            return res;
+        }
+    }
+
+    /**
+     * Retrieves attributes from a layer for a specified feature index
+     * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
+     */
+    getFormattedAttributes (webRequest, dataUrl) {
+        if (this._formattedAttributes) {
+            return this._formattedAttributes;
+        }
+
+        // TODO after refactor, consider changing this to a warning and just return some dummy value
+        if (this.layerType === shared.clientLayerType.ESRI_RASTER) {
+            throw new Error('Attempting to get attributes on a raster layer.');
+        }
+
+        this._formattedAttributes = Promise.all([this.getAttribs(webRequest, dataUrl), this.getLayerData(webRequest, dataUrl)])
+            .then(([aData, lData]) => {
+                // create columns array consumable by datables
+                const columns = lData.fields
+                    .filter(field =>
+
+                        // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
+                        // filter out fields where there is no corresponding attribute data
+                        aData.features[0].attributes.hasOwnProperty(field.name))
+                    .map(field => ({
+                        data: field.name,
+                        title: field.alias || field.name
+                    }));
+
+                // derive the icon for the row
+                const rows = aData.features.map(feature => {
+                    const att = feature.attributes;
+                    att.rvInteractive = '';
+                    att.rvSymbol = this._parent._apiRef.symbology.getGraphicIcon(att, lData.renderer);
+                    return att;
+                });
+
+                // if a field name resembles a function, the data table will treat it as one.
+                // to get around this, we add a function with the same name that returns the value,
+                // tricking that silly datagrid.
+                columns.forEach(c => {
+                    if (c.data.substr(-2) === '()') {
+                        // have to use function() to get .this to reference the row.
+                        // arrow notation will reference the attribFC class.
+                        const secretFunc = function() {
+                            return this[c.data];
+                        };
+
+                        const stub = c.data.substr(0, c.data.length - 2); // function without brackets
+                        rows.forEach(r => {
+                            r[stub] = secretFunc;
+                        });
+                    }
+                });
+
+                return {
+                    columns,
+                    rows,
+                    fields: lData.fields, // keep fields for reference ...
+                    oidField: lData.oidField, // ... keep a reference to id field ...
+                    oidIndex: aData.oidIndex, // ... and keep id mapping array
+                    renderer: lData.renderer
+                };
+            })
+            .catch(e => {
+                delete this._formattedAttributes; // delete cached promise when the geoApi `getAttribs` call fails, so it will be requested again next time `getAttributes` is called;
+                if (e === 'ABORTED') {
+                    throw new Error('ABORTED');
+                } else {
+                    throw new Error('Attrib loading failed');
+                }
+            });
+
+        return this._formattedAttributes;
     }
 }
 

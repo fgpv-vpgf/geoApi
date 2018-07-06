@@ -58,7 +58,7 @@ class WmsRecord extends layerRecord.LayerRecord {
     onLoad () {
         const loadPromises = super.onLoad();
 
-        const fc = new wmsFC.WmsFC(this, '0', this.config);
+        const fc = new wmsFC.WmsFC(this, '0', this._featClasses[this._defaultFC]._layerPackage, this.config);
         this._featClasses['0'] = fc;
 
         loadPromises.push(fc.loadSymbology());

@@ -220,6 +220,10 @@ class LayerRecord extends root.Root {
         // only super-general stuff in here, that all layers should run.
         console.info(`Layer loaded: ${this._layer.id}`);
 
+        if (this.layerType !== shared.clientLayerType.ESRI_FEATURE && this.layerType !== shared.clientLayerType.ESRI_DYNAMIC && this.config.hasJsonTable) {
+            this._featClasses[this._defaultFC]._layerPackage = this._apiRef.attribs.loadJsonAttribs();
+        }
+
         if (!this.name) {
             // no name from config. attempt layer name
             this.name = this._layer.name;
@@ -575,6 +579,28 @@ class LayerRecord extends root.Root {
                 this._featClasses[fc]._layerPackage.loadIsDone = false;
             }
         });
+    }
+
+    /**
+     * Retrieves attributes from a layer for a specified feature index
+     * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
+     */
+    getFormattedAttributes (webRequest, dataUrl) {
+        return this.config.hasJsonTable && webRequest && dataUrl ?
+            this._featClasses[this._defaultFC].getFormattedAttributes(webRequest, dataUrl) :
+            Promise.resolve({});
+    }
+
+    /**
+     * Returns attribute data for this layer.
+     *
+     * @function getAttribs
+     * @returns {Promise}         resolves with a layer attribute data object
+     */
+    getAttribs (webRequest, dataUrl) {
+        return this.config.hasJsonTable && webRequest && dataUrl ?
+            this._featClasses[this._defaultFC].getAttribs(webRequest, dataUrl) :
+            Promise.resolve({});
     }
 
     /**
