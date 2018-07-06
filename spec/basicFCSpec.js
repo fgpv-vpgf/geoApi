@@ -49,9 +49,17 @@ describe('BasicFC', () => {
             }
         }
     };
+    const layerPackage = {
+        featureIdx: 0,
+        hasJsonTable: true,
+        loadedFeatureCount: 0,
+        loadAbortFlag: false,
+        loadIsDone: false
+    }
+
     let basicFC;
     beforeEach(() => {
-        basicFC = new basicFCModule.BasicFC(parent, '1', config);
+        basicFC = new basicFCModule.BasicFC(parent, '1', layerPackage, config);
     });
 
     describe('queryable', () => {

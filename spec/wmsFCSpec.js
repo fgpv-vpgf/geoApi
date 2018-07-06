@@ -37,6 +37,14 @@ describe('WmsFC', () => {
         },
         extent: { }
     };
+    const layerPackage = {
+        featureIdx: 0,
+        hasJsonTable: true,
+        loadedFeatureCount: 0,
+        loadAbortFlag: false,
+        loadIsDone: false
+    }
+
     let wmsFC;
     beforeEach(() => {
         parent.config = {
@@ -74,7 +82,7 @@ describe('WmsFC', () => {
         parent._visDelay = {
             lastIdx: '2'
         };
-        wmsFC = new wmsFCModule.WmsFC(parent, '1', config);
+        wmsFC = new wmsFCModule.WmsFC(parent, '1', layerPackage, config);
     });
 
     describe('loadSymbology', () => {
