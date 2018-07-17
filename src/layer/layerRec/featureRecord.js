@@ -33,11 +33,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
             this._featClasses['0'] = new placeholderFC.PlaceholderFC(this, this.name);
             this._fcount = undefined;
         }
-
-        if (config.wfsConfig) {
-            // we want to block this record as loading until the real data gets passed in.
-            this._state = shared.states.LOADING;
-        }
     }
 
     get queryUrl () { return `${this.rootUrl}/${this._defaultFC}`; }
@@ -94,7 +89,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
      */
     getProxy () {
         if (!this._rootProxy) {
-            this._rootProxy = new layerInterface.LayerInterface(this, this.initialConfig.controls);
+            this._rootProxy = new layerInterface.LayerInterface(this);
             this._rootProxy.convertToFeatureLayer(this);
         }
         return this._rootProxy;
@@ -161,6 +156,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
         loadPromises.push(pLD, pFC, pLS);
         Promise.all(loadPromises).then(() => {
+            this.canAddToMap = true;
             this._stateChange(shared.states.LOADED);
         });
     }
@@ -373,21 +369,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @param {String} esriLayer an esri layer. specifically a FeatureLayer that's been pre-created from GeoJSON source
      */
     updateWfsSource (esriLayer) {
+        this._layer = esriLayer;
+        this.bindEvents(this._layer);
+        this._snapshot = true; // possibly redundant
 
-        /*
-				- needs to essentially re-do the constructor, but not on the constructor
-					- must retain original proxy object
-						- updateSource ?
-						- need to do a check if the proxy exists.  if not we should be ok
-					- replace esri class behind the scenes
-					- call onLoad
-			
-				- this._layer
-				- this.bindEvents(this._layer)
-				- this._snapshot = true;
-                - this.onLoad();
-        */
-
+        // do the loading activites.  will trigger the loaded event.
+        this.onLoad();
     }
     
 }
