@@ -47,6 +47,13 @@ class WmsRecord extends layerRecord.LayerRecord {
             styles: styles
         };
 
+        if (this.config.suppressGetCapabilities) {
+            cfg.resourceInfo = {
+                layerInfos: this.config.layerEntries
+                    .map(le => new this._apiRef.layer.WMSLayerInfo({name: le.id, title: le.name || ''}))
+            };
+        }
+
         return cfg;
     }
 
