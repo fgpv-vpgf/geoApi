@@ -59,6 +59,23 @@ class WmsRecord extends layerRecord.LayerRecord {
     }
 
     /**
+     * Add a WMS layer parameter, maybe even refresh the layer
+     * 
+     * @function setCustomParameter
+     * @param {String} key name of the key to be created or updated
+     * @param {String} value value of the key
+     * @param {Boolean} enhance show the new fancy version of the layer or not
+     * @param {Number} enhanceFactor an enhancement multiplier
+     */
+    setCustomParameter(key, value, enhance=true, enhanceFactor=1) {
+        this._layer.customLayerParameters[key] = value;
+        if (enhance) {
+            this._layer.refresh();
+        }
+        return enhanceFactor;
+    }
+
+    /**
     * Triggers when the layer loads.
     *
     * @function onLoad
