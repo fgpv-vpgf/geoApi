@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>map/esriMap.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AttribFC.html">AttribFC</a><ul class='methods'><li data-type='method'><a href="AttribFC.html#.aliasedFieldNameDirect">aliasedFieldNameDirect</a></li><li data-type='method'><a href="AttribFC.html#.unAliasAttribs">unAliasAttribs</a></li><li data-type='method'><a href="AttribFC.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="AttribFC.html#checkDateType">checkDateType</a></li><li data-type='method'><a href="AttribFC.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="AttribRecord.html">AttribRecord</a><ul class='methods'><li data-type='method'><a href="AttribRecord.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="AttribRecord.html#attributesToDetails">attributesToDetails</a></li><li data-type='method'><a href="AttribRecord.html#checkDateType">checkDateType</a></li><li data-type='method'><a href="AttribRecord.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="BasicFC.html">BasicFC</a><ul class='methods'><li data-type='method'><a href="BasicFC.html#zoomToBoundary">zoomToBoundary</a></li></ul></li><li><a href="DynamicFC.html">DynamicFC</a></li><li><a href="DynamicRecord.html">DynamicRecord</a><ul class='methods'><li data-type='method'><a href="DynamicRecord.html#getChildProxy">getChildProxy</a></li></ul></li><li><a href="FeatureRecord.html">FeatureRecord</a></li><li><a href="GraphicsRecord.html">GraphicsRecord</a></li><li><a href="IdentifyResult.html">IdentifyResult</a></li><li><a href="ImageRecord.html">ImageRecord</a></li><li><a href="LayerInterface.html">LayerInterface</a></li><li><a href="LayerRecord.html">LayerRecord</a><ul class='methods'><li data-type='method'><a href="LayerRecord.html#onMouseOut">onMouseOut</a></li><li data-type='method'><a href="LayerRecord.html#onMouseOver">onMouseOver</a></li><li data-type='method'><a href="LayerRecord.html#validateProjection">validateProjection</a></li></ul></li><li><a href="PlaceholderFC.html">PlaceholderFC</a></li><li><a href="Root.html">Root</a></li><li><a href="TileRecord.html">TileRecord</a></li><li><a href="WmsFC.html">WmsFC</a></li><li><a href="WmsRecord.html">WmsRecord</a><ul class='methods'><li data-type='method'><a href="WmsRecord.html#identify">identify</a></li></ul></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-developer-guide.html">developer-guide</a></li><li><a href="tutorial-getting_started.html">getting_started</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_addLine">_addLine</a></li><li><a href="global.html#_addMultiLine">_addMultiLine</a></li><li><a href="global.html#_addMultiPoint">_addMultiPoint</a></li><li><a href="global.html#_addPoint">_addPoint</a></li><li><a href="global.html#_addPolygon">_addPolygon</a></li><li><a href="global.html#_attribsAdded">_attribsAdded</a></li><li><a href="global.html#_fireEvent">_fireEvent</a></li><li><a href="global.html#_isUrl">_isUrl</a></li><li><a href="global.html#_listToSymbology">_listToSymbology</a></li><li><a href="global.html#_stateChange">_stateChange</a></li><li><a href="global.html#_zoomToScaleSet">_zoomToScaleSet</a></li><li><a href="global.html#abortAttribLoad">abortAttribLoad</a></li><li><a href="global.html#addAttribListener">addAttribListener</a></li><li><a href="global.html#addGeometry">addGeometry</a></li><li><a href="global.html#addHilight">addHilight</a></li><li><a href="global.html#addHoverListener">addHoverListener</a></li><li><a href="global.html#addPin">addPin</a></li><li><a href="global.html#addStateListener">addStateListener</a></li><li><a href="global.html#aliasedFieldName">aliasedFieldName</a></li><li><a href="global.html#allComb">allComb</a></li><li><a href="global.html#allocateLayersToSections">allocateLayersToSections</a></li><li><a href="global.html#arrayBufferToString">arrayBufferToString</a></li><li><a href="global.html#assignIds">assignIds</a></li><li><a href="global.html#assignLayerSplits">assignLayerSplits</a></li><li><a href="global.html#attribsLoaded">attribsLoaded</a></li><li><a href="global.html#bindEvents">bindEvents</a></li><li><a href="global.html#checkDateType">checkDateType</a></li><li><a href="global.html#checkProj">checkProj</a></li><li><a href="global.html#cleanRenderer">cleanRenderer</a></li><li><a href="global.html#cleanUpAttribs">cleanUpAttribs</a></li><li><a href="global.html#cleanUpFields">cleanUpFields</a></li><li><a href="global.html#clearHilight">clearHilight</a></li><li><a href="global.html#clipExtentCoords">clipExtentCoords</a></li><li><a href="global.html#constructLayer">constructLayer</a></li><li><a href="global.html#convertImageToCanvas">convertImageToCanvas</a></li><li><a href="global.html#convertImagetoDataURL">convertImagetoDataURL</a></li><li><a href="global.html#crawlLayerInfos">crawlLayerInfos</a></li><li><a href="global.html#createAttribSet">createAttribSet</a></li><li><a href="global.html#createBasemap">createBasemap</a></li><li><a href="global.html#csvPeek">csvPeek</a></li><li><a href="global.html#dataSource">dataSource</a></li><li><a href="global.html#enforceBoundary">enforceBoundary</a></li><li><a href="global.html#enhanceRenderer">enhanceRenderer</a></li><li><a href="global.html#extractFields">extractFields</a></li><li><a href="global.html#featureTypeToRenderer">featureTypeToRenderer</a></li><li><a href="global.html#fetchGraphic">fetchGraphic</a></li><li><a href="global.html#filterifyRenderer">filterifyRenderer</a></li><li><a href="global.html#findCandidates">findCandidates</a></li><li><a href="global.html#findClosestLOD">findClosestLOD</a></li><li><a href="global.html#findOptimalSplit">findOptimalSplit</a></li><li><a href="global.html#findZoomScale">findZoomScale</a></li><li><a href="global.html#fitInto">fitInto</a></li><li><a href="global.html#generateLocalCanvas">generateLocalCanvas</a></li><li><a href="global.html#generatePlaceholderSymbology">generatePlaceholderSymbology</a></li><li><a href="global.html#generateServerImage">generateServerImage</a></li><li><a href="global.html#generateUUID">generateUUID</a></li><li><a href="global.html#generateWMSSymbology">generateWMSSymbology</a></li><li><a href="global.html#geomToGraphic">geomToGraphic</a></li><li><a href="global.html#getAttribs">getAttribs</a></li><li><a href="global.html#getChildName">getChildName</a></li><li><a href="global.html#getChildTree">getChildTree</a></li><li><a href="global.html#getExtentFromJson">getExtentFromJson</a></li><li><a href="global.html#getFeatureCount">getFeatureCount</a></li><li><a href="global.html#getFeatureName">getFeatureName</a></li><li><a href="global.html#getFormattedAttributes">getFormattedAttributes</a></li><li><a href="global.html#getGeomType">getGeomType</a></li><li><a href="global.html#getGraphicIcon">getGraphicIcon</a></li><li><a href="global.html#getGraphicsBoundingBox">getGraphicsBoundingBox</a></li><li><a href="global.html#getGraphicSymbol">getGraphicSymbol</a></li><li><a href="global.html#getLayerData">getLayerData</a></li><li><a href="global.html#getLayerType">getLayerType</a></li><li><a href="global.html#getLegendUrls">getLegendUrls</a></li><li><a href="global.html#getMapServerLegend">getMapServerLegend</a></li><li><a href="global.html#getNorthArrowAngle">getNorthArrowAngle</a></li><li><a href="global.html#getOidField">getOidField</a></li><li><a href="global.html#getProxy">getProxy</a></li><li><a href="global.html#getScaleRatio">getScaleRatio</a></li><li><a href="global.html#getScaleSet">getScaleSet</a></li><li><a href="global.html#getSymbology">getSymbology</a></li><li><a href="global.html#getTooltipName">getTooltipName</a></li><li><a href="global.html#getUnboundGraphics">getUnboundGraphics</a></li><li><a href="global.html#getVisibility">getVisibility</a></li><li><a href="global.html#getVisibleScales">getVisibleScales</a></li><li><a href="global.html#getWMSLayerTitle">getWMSLayerTitle</a></li><li><a href="global.html#guessCSVfields">guessCSVfields</a></li><li><a href="global.html#hideLayers">hideLayers</a></li><li><a href="global.html#identify">identify</a></li><li><a href="global.html#initBasemaps">initBasemaps</a></li><li><a href="global.html#isOffScale">isOffScale</a></li><li><a href="global.html#isQueryable">isQueryable</a></li><li><a href="global.html">isSpatialRefEqual</a></li><li><a href="global.html#layerLoaded">layerLoaded</a></li><li><a href="global.html#loadDataBatch">loadDataBatch</a></li><li><a href="global.html#loadSymbology">loadSymbology</a></li><li><a href="global.html#localProjectExtent">localProjectExtent</a></li><li><a href="global.html#localProjectGeometry">localProjectGeometry</a></li><li><a href="global.html#localProjectPoint">localProjectPoint</a></li><li><a href="global.html#makeBoundingBox">makeBoundingBox</a></li><li><a href="global.html#makeClickBuffer">makeClickBuffer</a></li><li><a href="global.html#makeGeoJsonLayer">makeGeoJsonLayer</a></li><li><a href="global.html#makeHilightLayer">makeHilightLayer</a></li><li><a href="global.html#makeLayerConfig">makeLayerConfig</a></li><li><a href="global.html#makeLayerInfo">makeLayerInfo</a></li><li><a href="global.html#makeLegend">makeLegend</a></li><li><a href="global.html#makeSafeExtent">makeSafeExtent</a></li><li><a href="global.html#makeSymbologyArray">makeSymbologyArray</a></li><li><a href="global.html#mapDefault">mapDefault</a></li><li><a href="global.html#mapServerLegendToRenderer">mapServerLegendToRenderer</a></li><li><a href="global.html#mapServerLegendToRendererAll">mapServerLegendToRendererAll</a></li><li><a href="global.html#mapServerToLocalLegend">mapServerToLocalLegend</a></li><li><a href="global.html#moveToOffsetExtent">moveToOffsetExtent</a></li><li><a href="global.html#newLayerPackage">newLayerPackage</a></li><li><a href="global.html#newProp">newProp</a></li><li><a href="global.html#normalizeProj">normalizeProj</a></li><li><a href="global.html#onError">onError</a></li><li><a href="global.html#onLoad">onLoad</a></li><li><a href="global.html#onMouseOut">onMouseOut</a></li><li><a href="global.html#onMouseOver">onMouseOver</a></li><li><a href="global.html#onUpdateEnd">onUpdateEnd</a></li><li><a href="global.html#onUpdateStart">onUpdateStart</a></li><li><a href="global.html#packLayersIntoExactSections">packLayersIntoExactSections</a></li><li><a href="global.html#packLayersIntoOptimalSections">packLayersIntoOptimalSections</a></li><li><a href="global.html#parseUrlIndex">parseUrlIndex</a></li><li><a href="global.html#predictFileUrlBuilder">predictFileUrlBuilder</a></li><li><a href="global.html#predictLayerUrl">predictLayerUrl</a></li><li><a href="global.html#projectGeojson">projectGeojson</a></li><li><a href="global.html#removeAttribListener">removeAttribListener</a></li><li><a href="global.html#removeGeometry">removeGeometry</a></li><li><a href="global.html#removeHoverListener">removeHoverListener</a></li><li><a href="global.html#removeStateListener">removeStateListener</a></li><li><a href="global.html#renderSymbologyIcon">renderSymbologyIcon</a></li><li><a href="global.html#renderSymbologyImage">renderSymbologyImage</a></li><li><a href="global.html#repokeEsriService">repokeEsriService</a></li><li><a href="global.html#resizeSVGElement">resizeSVGElement</a></li><li><a href="global.html#scrapeListRenderer">scrapeListRenderer</a></li><li><a href="global.html#searchRenderer">searchRenderer</a></li><li><a href="global.html#serverLayerIdentify">serverLayerIdentify</a></li><li><a href="global.html#serviceType">serviceType</a></li><li><a href="global.html#setCustomParameter">setCustomParameter</a></li><li><a href="global.html#setDefinitionQuery">setDefinitionQuery</a></li><li><a href="global.html#setMapScale">setMapScale</a></li><li><a href="global.html#setQueryable">setQueryable</a></li><li><a href="global.html#setVisibility">setVisibility</a></li><li><a href="global.html#shiftZoom">shiftZoom</a></li><li><a href="global.html#showLayers">showLayers</a></li><li><a href="global.html#splitLayer">splitLayer</a></li><li><a href="global.html#stringToArrayBuffer">stringToArrayBuffer</a></li><li><a href="global.html#svgDrawImage">svgDrawImage</a></li><li><a href="global.html#symbolToLegend">symbolToLegend</a></li><li><a href="global.html#synchOpacity">synchOpacity</a></li><li><a href="global.html#updateWfsSource">updateWfsSource</a></li><li><a href="global.html#validateCSV">validateCSV</a></li><li><a href="global.html#validateFile">validateFile</a></li><li><a href="global.html#validateGeoJson">validateGeoJson</a></li><li><a href="global.html#validateLatLong">validateLatLong</a></li><li><a href="global.html#wrapEvents">wrapEvents</a></li><li><a href="global.html#zoomToBoundary">zoomToBoundary</a></li><li><a href="global.html#zoomToExtent">zoomToExtent</a></li><li><a href="global.html#zoomToGraphic">zoomToGraphic</a></li><li><a href="global.html#zoomToLatLong">zoomToLatLong</a></li><li><a href="global.html#zoomToScale">zoomToScale</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">map/esriMap.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+const basemap = require('./basemap.js');
+const mapPrint = require('./print.js');
+
+function esriMap(esriBundle, geoApi) {
+
+    const printModule = mapPrint(esriBundle);
+
+    let basemapErrored = false;
+
+    let basemaps = null;
+    let corsEverywhere = false;
+    let overviewExpand = null;
+
+    class Map {
+
+        static get Extent () { return esriBundle.Extent; }
+
+        // TODO when jshint parses instance fields properly we can change this from a property to a field
+        get _passthroughBindings () { return [
+            'addLayer', 'centerAndZoom', 'centerAt', 'destroy', 'disableKeyboardNavigation', 'getLevel',
+            'getScale', 'on', 'removeLayer', 'reorderLayer', 'reposition', 'resize', 'setExtent',
+            'setMapCursor', 'setScale', 'setZoom', 'toMap', 'toScreen'
+        ]; }
+        get _passthroughProperties () { return [
+            'attribution', 'extent', 'graphicsLayerIds', 'height', 'layerIds', 'spatialReference', 'width'
+        ]; } // TODO when jshint parses instance fields properly we can change this from a property to a field
+
+        /*
+         * Option params
+         * - basemaps: array of basemap options.  See config schema baseMapNode
+         * - scalebar: object to show scalebar. Has .enabled property, and optional .attachTo and .scalebarUnit properties
+         * - overviewMap: object to show overview map. Has .enabled and .expandFactor properties
+         * - extent: extent object for initial extent
+         * - lods: array of level of details. See config schema lodSetNode.lods
+         * - tileSchema: object describing schema of map. See config schema tileSchemaNode
+         * - proxyUrl: url to proxy for use by mapping api. optional
+         * - corsEverywhere: boolean to be set if every layer on the map is CORS enabled, mutually exclusive with proxyUrl, optional
+         *
+         * @param {Object} domNode  the DOM node where the map will be created
+         * @param {Object} opts     options object for the map (see above)
+         */
+        constructor (domNode, opts) {
+
+            this._passthroughBindings.forEach(bindingName =>
+                this[bindingName] = (...args) => this._map[bindingName](...args));
+            this._passthroughProperties.forEach(propName => {
+                const descriptor = {
+                    enumerable: true,
+                    get: () => this._map[propName]
+                };
+                Object.defineProperty(this, propName, descriptor);
+            });
+
+            this._map = new esriBundle.Map(domNode, { extent: Map.getExtentFromJson(opts.extent), lods: opts.lods });
+            if (opts.proxyUrl) {
+                this.proxy = opts.proxyUrl;
+            }
+            if (opts.corsEverywhere) {
+                if (this.corsEverywhere === true &amp;&amp; this.proxy) {
+                    throw new Error('proxyUrl and corsEverywhere are mutually exclusive');
+                }
+                corsEverywhere = opts.corsEverywhere;
+            }
+
+            if (opts.basemaps) {
+                basemaps = opts.basemaps;
+                basemaps.forEach(bm => {
+                    bm._layers.forEach(l => this.checkCorsException(l.url));
+                })
+            } else {
+                throw new Error('The basemaps option is required to and at least one basemap must be defined');
+            }
+
+            if (opts.scalebar &amp;&amp; opts.scalebar.enabled) {
+                this.scalebar = new esriBundle.Scalebar({
+                    map: this._map,
+                    attachTo: opts.scalebar.attachTo,
+                    scalebarUnit: opts.scalebar.scalebarUnit
+                });
+                this.scalebar.show();
+            }
+
+            if (opts.overviewMap &amp;&amp; opts.overviewMap.enabled) {
+                overviewExpand = opts.overviewMap.expandFactor;
+
+                if (opts.tileSchema.overviewUrl) {
+                    // initial implementation.  we only are supporting tile layers.
+                    // if we want to enhance to have other layer types, will need to determine
+                    // how to go about it. we could just use raw objects in a switch statement here,
+                    // or attempt to wire in the layer records.
+                    this.checkCorsException(opts.tileSchema.overviewUrl.url);
+                    this.defaultOverview = false;
+                    const customOverview = new esriBundle.ArcGISTiledMapServiceLayer(opts.tileSchema.overviewUrl.url);
+                    customOverview.on('load', () => {
+                        this.initOverviewMap(overviewExpand, customOverview);
+                    });
+                } else {
+                    // we use the active basemap, and reset the overview whenever it changes
+                    this.defaultOverview = true;
+                    this.initOverviewMap(overviewExpand);
+                }
+            }
+
+            this.zoomPromise = Promise.resolve();
+            this.zoomCounter = 0;
+
+        }
+
+        checkCorsException(url) {
+            if (corsEverywhere) {
+                const hostRegex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?([^:\/\n]+)/i;
+                const match = hostRegex.exec(url);
+                if (match !== null) {
+                    const hostname = match[1];
+                    if (esriBundle.esriConfig.defaults.io.corsEnabledServers.indexOf(hostname) &lt; 0) {
+                        console.debug('layer added cors ', hostname);
+                        esriBundle.esriConfig.defaults.io.corsEnabledServers.push(hostname);
+                    }
+                }
+            }
+        }
+
+        initGallery() {
+            this.basemapGallery = basemap.initBasemaps(esriBundle, basemaps, this._map);
+            if (overviewExpand !== null) {
+                this.basemapGallery.on('selection-change', () => {
+                    if (this.defaultOverview) this.resetOverviewMap(overviewExpand)
+                });
+                this.basemapGallery.on('error', () => {
+                    this.overviewMap.destroy();
+                    basemapErrored = true;
+                });
+            }
+        }
+
+        printLocal (options) { return printModule.printLocal(this._map, options); }
+        printServer (options) { return printModule.printServer(this._map, options); }
+
+        /**
+         * Select a basemap which has been loaded in the basemapGallery
+         *
+         * @param {Object|String} value either an object with an id field or a string
+         */
+        selectBasemap (value) {
+            if (typeof value === 'object') {
+                value = value.id;
+            }
+            this.basemapGallery.select(value);
+        }
+
+        /**
+         * Remove a basemap from the basemapGallery
+         *
+         * @param {Object|String} value either an object with an id field or a string
+         */
+        removeBasemap (value) {
+            if (typeof value === 'object') {
+                value = value.id;
+            }
+            this.basemapGallery.remove(value);
+        }
+
+        /**
+         * Add a basemap to the basemapGallery
+         *
+         * @param {Object} basemapConfig a basemap JSON snippet
+         */
+        addBasemap (basemapConfig) {
+            const basemapToAdd = basemap.createBasemap(esriBundle, basemapConfig);
+            this.basemapGallery.add(basemapToAdd);
+        }
+
+        /**
+         * Create an ESRI Extent object from extent setting JSON object.
+         *
+         * @function getExtentFromJson
+         * @param {Object} extentJson that follows config spec
+         * @return {Object} an ESRI Extent object
+         */
+        static getExtentFromJson (extentJson) {
+            return esriBundle.Extent(extentJson);
+        }
+
+        /**
+         * Take a JSON object with extent properties and convert it to an ESRI Extent.
+         * Reprojects to map projection if required.
+         *
+         * @param {Object} extent the extent to enhance
+         * @returns {Extent} extent cast in Extent prototype, and in map spatial reference
+         */
+        enhanceConfigExtent (extent) {
+            const realExtent = Map.getExtentFromJson(extent);
+
+            if (geoApi.proj.isSpatialRefEqual(this._map.spatialReference, extent.spatialReference)) {
+                return realExtent;
+            } else {
+                return geoApi.proj.projectEsriExtent(realExtent, this._map.spatialReference);
+            }
+        }
+
+        /**
+         * Takes a location object in lat/long, converts to current map spatialReference using
+         * reprojection method in geoApi, and zooms to the point.
+         *
+         * @function zoomToLatLong
+         * @param {Object} location is a location object, containing geometries in the form of { longitude: &lt;Number>, latitude: &lt;Number> }
+         */
+        zoomToPoint ({ longitude, latitude }) {
+
+            // get reprojected point and zoom to it
+            const geoPt = geoApi.proj.localProjectPoint(4326, this._map.spatialReference.wkid,
+                [parseFloat(longitude), parseFloat(latitude)]);
+            const zoomPt = geoApi.proj.Point(geoPt[0], geoPt[1], this._map.spatialReference);
+
+            // give preference to the layer closest to a 50k scale ratio which is ideal for zoom
+            const sweetLod = Map.findClosestLOD(this.lods, 50000);
+            this._map.centerAndZoom(zoomPt, Math.max(sweetLod.level, 0));
+        }
+
+        /**
+         * Zoom the map to an extent. Extent can be in different projection
+         *
+         * @function zoomToExtent
+         * @param {Object} extent     map object we want to execute the zoom on
+         * @private
+         * @return {Promise} resolves when map is done zooming
+         */
+        zoomToExtent (extent) {
+            // TODO add some caching? make sure it will get wiped if we end up changing projections
+            //      or use wkid as caching key?
+
+            const projRawExtent = geoApi.proj.localProjectExtent(extent, this._map.spatialReference);
+
+            const projFancyExtent = esriBundle.Extent(projRawExtent.x0, projRawExtent.y0,
+                projRawExtent.x1, projRawExtent.y1, projRawExtent.sr);
+
+            return this._map.setExtent(projFancyExtent, true);
+        }
+
+        /**
+         * Finds the level of detail closest to the provided scale.
+         *
+         * @function findClosestLOD
+         * @param  {Array} lods     list of levels of detail objects
+         * @param  {Number} scale   scale value to search for in the levels of detail
+         * @return {Object}         the level of detail object closest to the scale
+         */
+        static findClosestLOD (lods, scale) {
+            const diffs = lods.map(lod => Math.abs(lod.scale - scale));
+            const lodIdx = diffs.indexOf(Math.min(...diffs));
+            return lods[lodIdx];
+        }
+
+        /**
+         * Calculate north arrow bearing. Angle returned is to to rotate north arrow image.
+         * http://www.movable-type.co.uk/scripts/latlong.html
+         * @function getNorthArrowAngle
+         * @param {Object} opts options to apply to north arrow calculation
+         * @returns {Number} map rotation angle (in degree)
+         */
+        getNorthArrowAngle (opts) {
+            // get center point in longitude and use bottom value for latitude for default point
+            const bottomCenter = { x: (this._map.extent.xmin + this._map.extent.xmax) / 2, y: this._map.extent.ymin };
+            // get point if specified by caller else get default
+            const point = opts ? opts.point || bottomCenter : bottomCenter;
+            const pointB = geoApi.proj.localProjectPoint(this._map.extent.spatialReference, 'EPSG:4326', point);
+
+            // north value (set longitude to be half of Canada extent (141° W, 52° W))
+            const pointA = { x: -96, y: 90 };
+
+            // set info on longitude and latitude
+            const dLon = (pointB.x - pointA.x) * Math.PI / 180;
+            const lat1 = pointA.y * Math.PI / 180;
+            const lat2 = pointB.y * Math.PI / 180;
+
+            // calculate bearing
+            const y = Math.sin(dLon) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+            const bearing = Math.atan2(y, x) * 180 / Math.PI;
+
+            // return angle (180 is pointiong north)
+            return ((bearing + 360) % 360).toFixed(1);
+        }
+
+        /**
+         * Calculate distance between min and max extent to know the pixel ratio between
+         * screen size and earth distance.
+         * http://www.movable-type.co.uk/scripts/latlong.html
+         * @function getScaleRatio
+         * @param {Number} mapWidth optional the map width to use to calculate ratio
+         * @returns {Object} contain information about the scale
+         *                               - distance: distance between min and max extentId
+         *                               - ratio: measure for 1 pixel in earth distance
+         *                               - units: array of units [metric, imperial]
+         */
+        getScaleRatio (mapWidth = 0) {
+            const map = this._map;
+
+            // get left and right maximum value point to calculate distance from
+            const pointA = geoApi.proj.localProjectPoint(map.spatialReference, 'EPSG:4326',
+                    { x: map.extent.xmin, y: (map.extent.ymin + map.extent.ymax) / 2 });
+            const pointB = geoApi.proj.localProjectPoint(map.spatialReference, 'EPSG:4326',
+                    { x: map.extent.xmax, y: (map.extent.ymin + map.extent.ymax) / 2 });
+
+            // Haversine formula to calculate distance
+            const R = 6371e3; // earth radius in meters
+            const rad = Math.PI / 180;
+            const phy1 = pointA.y * rad; // radiant
+            const phy2 = pointB.y * rad; // radiant
+            const deltaPhy = (pointB.y - pointA.y) * rad; // radiant
+            const deltaLambda = (pointB.x - pointA.x) * rad; // radiant
+
+            const a = Math.sin(deltaPhy / 2) * Math.sin(deltaPhy / 2) +
+                        Math.cos(phy1) * Math.cos(phy2) *
+                        Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const d = (R * c);
+
+            // set map / image width (if mapWidth = 0, use map.width)
+            const width = mapWidth ? mapWidth : map.width;
+
+            // get unit from distance, set distance and ratio (earth size for 1 pixel)
+            const units = [(d > 1000) ? 'km' : 'm', (d > 1600) ? 'mi' : 'ft'];
+            const distance = (d > 1000) ? d / 1000 : d;
+            const ratio = distance / width;
+
+            return { distance, ratio, units };
+        }
+
+        /**
+         * Compares to sets of co-ordinates for extents (valid for both x and y). If center of input co-ordinates falls outside
+         * map co-ordiantes, function will adjust them so the center is inside the map co-ordinates.
+         *
+         * @function clipExtentCoords
+         * @private
+         * @param {Numeric} mid      middle of the the range to test
+         * @param {Numeric} max      maximum value of the range to test
+         * @param {Numeric} min      minimum value of the range to test
+         * @param {Numeric} mapMax   maximum value of the map range
+         * @param {Numeric} mapMin   minimum value of the map range
+         * @param {Numeric} len      length of the adjusted range, if adjusted
+         * @return {Array}           two element array of Numeric, containing result max and min values
+         */
+        static clipExtentCoords (mid, max, min, mapMax, mapMin, len) {
+
+            if (mid > mapMax) {
+                [max, min] = [mapMax, mapMax - len];
+            } else if (mid &lt; mapMin) {
+                [max, min] = [mapMin + len, mapMin];
+            }
+            return [max, min];
+        }
+
+        /**
+         * Checks if the center of the given extent is outside of the maximum extent. If it is,
+         * will determine an adjusted extent with a center inside the maximum extent.  Returns both
+         * an indicator flag if an adjustment happened, and the adjusted extent.
+         *
+         * @function enforceBoundary
+         * @param {Object} extent      an ESRI extent to test
+         * @param {Object} maxExtent   an ESRI extent indicating the boundary of the map
+         * @return {Object}            an object with two properties. adjusted - boolean, true if extent was adjusted. newExtent - object, adjusted ESRI extent
+         */
+        static enforceBoundary (extent, maxExtent) {
+            // clone extent
+            const newExtent = esriBundle.Extent(extent.toJson());
+
+            // determine dimensions of adjusted extent.
+            // same as input, unless input is so large it consumes max.
+            // in that case, we shrink to the max. This avoids the "washing machine"
+            // bug where we over-correct past the valid range,
+            // and achieve infinite oscillating pans
+            const height = Math.min(extent.getHeight(), maxExtent.getHeight());
+            const width = Math.min(extent.getWidth(), maxExtent.getWidth());
+            const center = extent.getCenter();
+
+            [newExtent.xmax, newExtent.xmin] =
+                this.clipExtentCoords(center.x, newExtent.xmax, newExtent.xmin, maxExtent.xmax, maxExtent.xmin, width);
+            [newExtent.ymax, newExtent.ymin] =
+                this.clipExtentCoords(center.y, newExtent.ymax, newExtent.ymin, maxExtent.ymax, maxExtent.ymin, height);
+
+            return {
+                newExtent,
+                adjusted: !extent.contains(newExtent) // true if we adjusted the extent
+            };
+        }
+
+        initOverviewMap (expandFactor, baseLayer) {
+            if (basemapErrored) {
+                basemapErrored = false;
+                return;
+            }
+            basemapErrored = false;
+
+            const opts = {
+                map: this._map,
+                expandFactor,
+                visible: true
+            };
+            if (baseLayer) {
+                opts.baseLayer = baseLayer;
+            }
+
+            let hasBaseLayer = false;
+            Object.keys(opts.map._layers).forEach(id => {
+                const layer = opts.map._layers[id];
+                if (layer._basemapGalleryLayerType === 'basemap') {
+                    hasBaseLayer = true;
+                }
+            });
+
+            if (opts.baseLayer || hasBaseLayer) {
+                this.overviewMap = new esriBundle.OverviewMap(opts);
+                this.overviewMap.startup();
+            }
+        }
+        resetOverviewMap (expandFactor) {
+            if (this.overviewMap) {
+                this.overviewMap.destroy();
+            }
+            this.initOverviewMap(expandFactor);
+        }
+
+        /**
+         * Changes the zoom level by the specified value relative to the current level; can be negative.
+         * To avoid multiple chained zoom animations when rapidly pressing the zoom in/out icons, we
+         * update the zoom level only when the one before it resolves with the net zoom change.
+         *
+         * @function shiftZoom
+         * @param  {number} byValue a number of zoom levels to shift by
+         */
+        shiftZoom (byValue) {
+            this.zoomCounter += byValue;
+            // when using keys for navigation esri throws an internal exception which cannot be caught when `centerAt` is called right after `setZoom`
+            // so far, we could not reproduce it by calling these two functions manually in the console, so there must be another factor involved
+            // when this internal exception is thrown, zoomPromise get's rejected
+            // calling `then` on a rejected promise does not work which prevents further zoom actions triggered throught the keyboard
+            // calling `catch` on a rejected promise works, and the promise can be reset
+            // calling `finally` on a rejected promise works as well, and this can be used to reset the promise and trigger further zoom actions
+            // NOTE: this is not an ideal solution, but unless the third factor causing errors in `centerAt/setZoom` calls can be found, the internal esri exceptions needs to be ignored
+            this.zoomPromise.finally(() => {
+                if (this.zoomCounter !== 0) {
+                    const zoomValue = this._map.getZoom() + this.zoomCounter;
+                    const zoomPromise = Promise.resolve(this.setZoom(zoomValue));
+                    this.zoomCounter = 0;
+
+                    // undefined signals we've zoomed in/out as far as we can
+                    if (typeof zoomPromise !== 'undefined') {
+                        this.zoomPromise = zoomPromise;
+                    }
+                }
+            });
+        }
+
+        /**
+         * Sets or gets map default config values.
+         *
+         * @function mapDefault
+         * @param {String} key  name of the default property
+         * @param {Any} [value] optional value to set for the specified default property
+         */
+        mapDefault (key, value) {
+            if (typeof value === 'undefined') {
+                return esriBundle.esriConfig.defaults.map[key];
+            } else {
+                esriBundle.esriConfig.defaults.map[key] = value;
+            }
+        }
+
+        /**
+         * Will position the map so that the target extent is in view. Offsetting is available
+         * to allow the view to take into account UI elements that cover the map
+         * (e.g. legend and grid are open, so want extent visible in remaining map area)
+         *
+         * @function moveToOffsetExtent
+         * @param {Object} targetExtent     an ESRI extent to position the map to
+         * @param {Object} offsetFraction   an object with decimal properties `x` and `y` indicating percentage of offsetting on each axis
+         * @return {Promise}                resolves after the map is done moving
+         */
+        moveToOffsetExtent (targetExtent, offsetFraction) {
+            const currentExtent = this.extent;
+
+            let xOffset = currentExtent.getWidth() * -offsetFraction.x;
+            let yOffset = currentExtent.getHeight() * offsetFraction.y;
+
+            if (currentExtent.getWidth() &lt; targetExtent.getWidth() ||
+                currentExtent.getHeight() &lt; targetExtent.getHeight()) {
+                // the target extent doesn't fit in the current extent,
+                // offset the target extent using provided fractions
+
+                xOffset = targetExtent.getWidth() * -offsetFraction.x;
+                yOffset = targetExtent.getHeight() * offsetFraction.y;
+            }
+
+            const point = targetExtent.getCenter();
+            const offsetCenter = point.offset(xOffset, yOffset);
+
+            return this.centerAt(offsetCenter);
+        }
+
+        /**
+         * Set proxy service URL to avoid same origin issues.
+         */
+        set proxy (proxyUrl) { esriBundle.esriConfig.defaults.io.proxyUrl = proxyUrl; }
+        get proxy () { return esriBundle.esriConfig.defaults.io.proxyUrl; }
+
+        set basemapGallery (val) { this._basemapGallery = val; }
+        get basemapGallery () { return this._basemapGallery; }
+
+        set scalebar (val) { this._scalebar = val; }
+        get scalebar () { return this._scalebar; }
+
+        set overviewMap (val) { this._overviewMap = val; }
+        get overviewMap () { return this._overviewMap; }
+
+        // TODO an alternate approach: store opts.lods in the constructor and return that here.
+        //      need to consider impact (it could be .__tileInfo adjusts to current basemap, thus
+        //      preventing us from zooming to lods that have no tiles)
+        get lods () { return this._map.__tileInfo.lods; }
+
+    }
+
+    return Map;
+}
+
+/**
+  * The `MapManager` module exports an object with the following properties:
+  * - `Extent` esri/geometry type
+  * - `Map` esri/map type
+  * - `OverviewMap` esri/dijit/OverviewMap type
+  * - `Scalebar` sri/dijit/Scalebar type
+  * - `getExtentFromSetting function to create an ESRI Extent object from extent setting JSON object.
+  * - `setupMap` function that interates over config settings and apply logic for any items present.
+  * - `setProxy` function to set proxy service URL to avoid same origin issues
+  */
+
+// mapManager module, provides function to setup a map
+module.exports = (esriBundle, geoApi) => esriMap(esriBundle, geoApi);
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Sep 06 2018 17:59:27 GMT+0000 (UTC) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
