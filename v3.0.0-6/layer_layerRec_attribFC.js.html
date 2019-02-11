@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>layer/layerRec/attribFC.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AttribFC.html">AttribFC</a><ul class='methods'><li data-type='method'><a href="AttribFC.html#.aliasedFieldNameDirect">aliasedFieldNameDirect</a></li><li data-type='method'><a href="AttribFC.html#.unAliasAttribs">unAliasAttribs</a></li><li data-type='method'><a href="AttribFC.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="AttribFC.html#checkDateType">checkDateType</a></li><li data-type='method'><a href="AttribFC.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="AttribRecord.html">AttribRecord</a><ul class='methods'><li data-type='method'><a href="AttribRecord.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="AttribRecord.html#attributesToDetails">attributesToDetails</a></li><li data-type='method'><a href="AttribRecord.html#checkDateType">checkDateType</a></li><li data-type='method'><a href="AttribRecord.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="BasicFC.html">BasicFC</a><ul class='methods'><li data-type='method'><a href="BasicFC.html#zoomToBoundary">zoomToBoundary</a></li></ul></li><li><a href="DynamicFC.html">DynamicFC</a></li><li><a href="DynamicRecord.html">DynamicRecord</a><ul class='methods'><li data-type='method'><a href="DynamicRecord.html#getChildProxy">getChildProxy</a></li></ul></li><li><a href="FakeEvent.html">FakeEvent</a></li><li><a href="FeatureRecord.html">FeatureRecord</a></li><li><a href="Filter.html">Filter</a></li><li><a href="GraphicsRecord.html">GraphicsRecord</a></li><li><a href="IdentifyResult.html">IdentifyResult</a></li><li><a href="ImageRecord.html">ImageRecord</a></li><li><a href="LayerInterface.html">LayerInterface</a></li><li><a href="LayerRecord.html">LayerRecord</a><ul class='methods'><li data-type='method'><a href="LayerRecord.html#onMouseOut">onMouseOut</a></li><li data-type='method'><a href="LayerRecord.html#onMouseOver">onMouseOver</a></li><li data-type='method'><a href="LayerRecord.html#validateProjection">validateProjection</a></li></ul></li><li><a href="PlaceholderFC.html">PlaceholderFC</a></li><li><a href="Root.html">Root</a></li><li><a href="TileRecord.html">TileRecord</a></li><li><a href="WmsFC.html">WmsFC</a></li><li><a href="WmsRecord.html">WmsRecord</a><ul class='methods'><li data-type='method'><a href="WmsRecord.html#identify">identify</a></li></ul></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-developer-guide.html">developer-guide</a></li><li><a href="tutorial-getting_started.html">getting_started</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_addLine">_addLine</a></li><li><a href="global.html#_addMultiLine">_addMultiLine</a></li><li><a href="global.html#_addMultiPoint">_addMultiPoint</a></li><li><a href="global.html#_addPoint">_addPoint</a></li><li><a href="global.html#_addPolygon">_addPolygon</a></li><li><a href="global.html#_attribsAdded">_attribsAdded</a></li><li><a href="global.html#_isUrl">_isUrl</a></li><li><a href="global.html#_listToSymbology">_listToSymbology</a></li><li><a href="global.html#_stateChange">_stateChange</a></li><li><a href="global.html#_zoomToScaleSet">_zoomToScaleSet</a></li><li><a href="global.html#abortAttribLoad">abortAttribLoad</a></li><li><a href="global.html#addAttribListener">addAttribListener</a></li><li><a href="global.html#addFilterListener">addFilterListener</a></li><li><a href="global.html#addGeometry">addGeometry</a></li><li><a href="global.html#addHilight">addHilight</a></li><li><a href="global.html#addHoverListener">addHoverListener</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#addPin">addPin</a></li><li><a href="global.html#addStateListener">addStateListener</a></li><li><a href="global.html#aliasedFieldName">aliasedFieldName</a></li><li><a href="global.html#allComb">allComb</a></li><li><a href="global.html#allocateLayersToSections">allocateLayersToSections</a></li><li><a href="global.html#applyFilterToLayer">applyFilterToLayer</a></li><li><a href="global.html#areExtentsSame">areExtentsSame</a></li><li><a href="global.html#arrayBufferToString">arrayBufferToString</a></li><li><a href="global.html#arrayIntersect">arrayIntersect</a></li><li><a href="global.html#arrayToIn">arrayToIn</a></li><li><a href="global.html#assignIds">assignIds</a></li><li><a href="global.html#assignLayerSplits">assignLayerSplits</a></li><li><a href="global.html#attribsLoaded">attribsLoaded</a></li><li><a href="global.html#bindEvents">bindEvents</a></li><li><a href="global.html#cacheActiveKeys">cacheActiveKeys</a></li><li><a href="global.html#checkDateType">checkDateType</a></li><li><a href="global.html#checkProj">checkProj</a></li><li><a href="global.html#cleanRenderer">cleanRenderer</a></li><li><a href="global.html#cleanUpAttribs">cleanUpAttribs</a></li><li><a href="global.html#cleanUpFields">cleanUpFields</a></li><li><a href="global.html#clearAll">clearAll</a></li><li><a href="global.html#clearAllCaches">clearAllCaches</a></li><li><a href="global.html#clearCacheSet">clearCacheSet</a></li><li><a href="global.html#clearHilight">clearHilight</a></li><li><a href="global.html#clipExtentCoords">clipExtentCoords</a></li><li><a href="global.html#constructLayer">constructLayer</a></li><li><a href="global.html#convertImageToCanvas">convertImageToCanvas</a></li><li><a href="global.html#convertImagetoDataURL">convertImagetoDataURL</a></li><li><a href="global.html#crawlLayerInfos">crawlLayerInfos</a></li><li><a href="global.html#createAttribSet">createAttribSet</a></li><li><a href="global.html#createBasemap">createBasemap</a></li><li><a href="global.html#csvPeek">csvPeek</a></li><li><a href="global.html#dataSource">dataSource</a></li><li><a href="global.html#enforceBoundary">enforceBoundary</a></li><li><a href="global.html#enhanceRenderer">enhanceRenderer</a></li><li><a href="global.html#eventRaiser">eventRaiser</a></li><li><a href="global.html#extractFields">extractFields</a></li><li><a href="global.html#featureTypeToRenderer">featureTypeToRenderer</a></li><li><a href="global.html#fetchGraphic">fetchGraphic</a></li><li><a href="global.html#filterifyRenderer">filterifyRenderer</a></li><li><a href="global.html#findCandidates">findCandidates</a></li><li><a href="global.html#findClosestLOD">findClosestLOD</a></li><li><a href="global.html#findOptimalSplit">findOptimalSplit</a></li><li><a href="global.html#findZoomScale">findZoomScale</a></li><li><a href="global.html#fireEvent">fireEvent</a></li><li><a href="global.html#fitInto">fitInto</a></li><li><a href="global.html#generateLocalCanvas">generateLocalCanvas</a></li><li><a href="global.html#generatePlaceholderSymbology">generatePlaceholderSymbology</a></li><li><a href="global.html#generateServerImage">generateServerImage</a></li><li><a href="global.html#generateUUID">generateUUID</a></li><li><a href="global.html#generateWMSSymbology">generateWMSSymbology</a></li><li><a href="global.html#geomToGraphic">geomToGraphic</a></li><li><a href="global.html#getAttribs">getAttribs</a></li><li><a href="global.html#getCache">getCache</a></li><li><a href="global.html#getCacheKey">getCacheKey</a></li><li><a href="global.html#getChildName">getChildName</a></li><li><a href="global.html#getChildTree">getChildTree</a></li><li><a href="global.html#getCombinedSql">getCombinedSql</a></li><li><a href="global.html#getExtentFromJson">getExtentFromJson</a></li><li><a href="global.html#getFeatureCount">getFeatureCount</a></li><li><a href="global.html#getFeatureName">getFeatureName</a></li><li><a href="global.html#getFilterOIDs">getFilterOIDs</a></li><li><a href="global.html#getFormattedAttributes">getFormattedAttributes</a></li><li><a href="global.html#getGeomType">getGeomType</a></li><li><a href="global.html#getGraphicIcon">getGraphicIcon</a></li><li><a href="global.html#getGraphicsBoundingBox">getGraphicsBoundingBox</a></li><li><a href="global.html#getGraphicSymbol">getGraphicSymbol</a></li><li><a href="global.html#getLayerData">getLayerData</a></li><li><a href="global.html#getLayerType">getLayerType</a></li><li><a href="global.html#getLegendUrls">getLegendUrls</a></li><li><a href="global.html#getMapServerLegend">getMapServerLegend</a></li><li><a href="global.html#getNorthArrowAngle">getNorthArrowAngle</a></li><li><a href="global.html#getOidField">getOidField</a></li><li><a href="global.html#getProxy">getProxy</a></li><li><a href="global.html#getScaleRatio">getScaleRatio</a></li><li><a href="global.html#getScaleSet">getScaleSet</a></li><li><a href="global.html#getSql">getSql</a></li><li><a href="global.html#getSymbology">getSymbology</a></li><li><a href="global.html#getTooltipName">getTooltipName</a></li><li><a href="global.html#getUnboundGraphics">getUnboundGraphics</a></li><li><a href="global.html#getVisibility">getVisibility</a></li><li><a href="global.html#getVisibleScales">getVisibleScales</a></li><li><a href="global.html#getWMSLayerTitle">getWMSLayerTitle</a></li><li><a href="global.html#guessCSVfields">guessCSVfields</a></li><li><a href="global.html#hideLayers">hideLayers</a></li><li><a href="global.html#identify">identify</a></li><li><a href="global.html#initBasemaps">initBasemaps</a></li><li><a href="global.html#isActive">isActive</a></li><li><a href="global.html#isOffScale">isOffScale</a></li><li><a href="global.html#isQueryable">isQueryable</a></li><li><a href="global.html">isSpatialRefEqual</a></li><li><a href="global.html#layerLoaded">layerLoaded</a></li><li><a href="global.html#loadDataBatch">loadDataBatch</a></li><li><a href="global.html#loadSymbology">loadSymbology</a></li><li><a href="global.html#localProjectExtent">localProjectExtent</a></li><li><a href="global.html#localProjectGeometry">localProjectGeometry</a></li><li><a href="global.html#localProjectPoint">localProjectPoint</a></li><li><a href="global.html#makeBoundingBox">makeBoundingBox</a></li><li><a href="global.html#makeClickBuffer">makeClickBuffer</a></li><li><a href="global.html#makeGeoJsonLayer">makeGeoJsonLayer</a></li><li><a href="global.html#makeHilightLayer">makeHilightLayer</a></li><li><a href="global.html#makeLayerConfig">makeLayerConfig</a></li><li><a href="global.html#makeLayerInfo">makeLayerInfo</a></li><li><a href="global.html#makeLegend">makeLegend</a></li><li><a href="global.html#makeSafeExtent">makeSafeExtent</a></li><li><a href="global.html#makeSymbologyArray">makeSymbologyArray</a></li><li><a href="global.html#mapDefault">mapDefault</a></li><li><a href="global.html#mapServerLegendToRenderer">mapServerLegendToRenderer</a></li><li><a href="global.html#mapServerLegendToRendererAll">mapServerLegendToRendererAll</a></li><li><a href="global.html#mapServerToLocalLegend">mapServerToLocalLegend</a></li><li><a href="global.html#moveToOffsetExtent">moveToOffsetExtent</a></li><li><a href="global.html#newLayerPackage">newLayerPackage</a></li><li><a href="global.html#newProp">newProp</a></li><li><a href="global.html#normalizeProj">normalizeProj</a></li><li><a href="global.html#onError">onError</a></li><li><a href="global.html#onLoad">onLoad</a></li><li><a href="global.html#onMouseOut">onMouseOut</a></li><li><a href="global.html#onMouseOver">onMouseOver</a></li><li><a href="global.html#onUpdateEnd">onUpdateEnd</a></li><li><a href="global.html#onUpdateStart">onUpdateStart</a></li><li><a href="global.html#packLayersIntoExactSections">packLayersIntoExactSections</a></li><li><a href="global.html#packLayersIntoOptimalSections">packLayersIntoOptimalSections</a></li><li><a href="global.html#parseUrlIndex">parseUrlIndex</a></li><li><a href="global.html#predictFileUrlBuilder">predictFileUrlBuilder</a></li><li><a href="global.html#predictLayerUrl">predictLayerUrl</a></li><li><a href="global.html#projectGeojson">projectGeojson</a></li><li><a href="global.html#queryGeometryHelper">queryGeometryHelper</a></li><li><a href="global.html#raiseFilterEvent">raiseFilterEvent</a></li><li><a href="global.html#removeAttribListener">removeAttribListener</a></li><li><a href="global.html#removeFilterListener">removeFilterListener</a></li><li><a href="global.html#removeGeometry">removeGeometry</a></li><li><a href="global.html#removeHoverListener">removeHoverListener</a></li><li><a href="global.html#removeListener">removeListener</a></li><li><a href="global.html#removeStateListener">removeStateListener</a></li><li><a href="global.html#renderSymbologyIcon">renderSymbologyIcon</a></li><li><a href="global.html#renderSymbologyImage">renderSymbologyImage</a></li><li><a href="global.html#repokeEsriService">repokeEsriService</a></li><li><a href="global.html#resizeSVGElement">resizeSVGElement</a></li><li><a href="global.html#scrapeListRenderer">scrapeListRenderer</a></li><li><a href="global.html#searchRenderer">searchRenderer</a></li><li><a href="global.html#serverLayerIdentify">serverLayerIdentify</a></li><li><a href="global.html#serviceType">serviceType</a></li><li><a href="global.html#setCache">setCache</a></li><li><a href="global.html#setCustomParameter">setCustomParameter</a></li><li><a href="global.html#setDefinitionQuery">setDefinitionQuery</a></li><li><a href="global.html#setExtent">setExtent</a></li><li><a href="global.html#setMapScale">setMapScale</a></li><li><a href="global.html#setQueryable">setQueryable</a></li><li><a href="global.html#setSql">setSql</a></li><li><a href="global.html#setVisibility">setVisibility</a></li><li><a href="global.html#shiftZoom">shiftZoom</a></li><li><a href="global.html#showLayers">showLayers</a></li><li><a href="global.html#splitLayer">splitLayer</a></li><li><a href="global.html#sqlActiveFilters">sqlActiveFilters</a></li><li><a href="global.html#sqlAttributeFilter">sqlAttributeFilter</a></li><li><a href="global.html#stringToArrayBuffer">stringToArrayBuffer</a></li><li><a href="global.html#svgDrawImage">svgDrawImage</a></li><li><a href="global.html#symbolToLegend">symbolToLegend</a></li><li><a href="global.html#synchOpacity">synchOpacity</a></li><li><a href="global.html#updateWfsSource">updateWfsSource</a></li><li><a href="global.html#validateCSV">validateCSV</a></li><li><a href="global.html#validateFile">validateFile</a></li><li><a href="global.html#validateGeoJson">validateGeoJson</a></li><li><a href="global.html#validateLatLong">validateLatLong</a></li><li><a href="global.html#wrapEvents">wrapEvents</a></li><li><a href="global.html#zoomToBoundary">zoomToBoundary</a></li><li><a href="global.html#zoomToExtent">zoomToExtent</a></li><li><a href="global.html#zoomToGraphic">zoomToGraphic</a></li><li><a href="global.html#zoomToLatLong">zoomToLatLong</a></li><li><a href="global.html#zoomToScale">zoomToScale</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">layer/layerRec/attribFC.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+const shared = require('./shared.js')();
+const basicFC = require('./basicFC.js')();
+const filter = require('./filter.js')();
+
+/**
+ * @class AttribFC
+ */
+class AttribFC extends basicFC.BasicFC {
+    // attribute-specific variant for feature class object.
+    // deals with stuff specific to a feature class that has attributes
+
+    /**
+     * Create an attribute specific feature class object
+     * @param {Object} parent        the Record object that this Feature Class belongs to
+     * @param {String} idx           the service index of this Feature Class. an integer in string format. use '0' for non-indexed sources.
+     * @param {Object} layerPackage  a layer package object from the attribute module for this feature class
+     * @param {Object} config        the config object for this sublayer
+     */
+    constructor (parent, idx, layerPackage, config) {
+        super(parent, idx, config);
+
+        this._layerPackage = layerPackage;
+        this._geometryType = undefined; // this indicates unknown to the ui.
+        this._oidField = undefined;
+        this._fcount = undefined;
+        this._quickCache = {
+            attribs: {},
+            geoms: {}
+        };
+        this.filter = new filter.Filter(this);
+    }
+
+    get geomType () { return this._geometryType; }
+    set geomType (value) { this._geometryType = value; }
+
+    get oidField () { return this._oidField; }
+    set oidField (value) { this._oidField = value; }
+
+    get queryUrl () { return `${this._parent.rootUrl}/${this._idx}`; }
+
+    // basically an identifier object for this FC. 
+    // TODO maybe consider using the id on the esri layer? to handle cases where no id provided / collision of ids?
+    get fcID () {
+        return {
+            layerId: this._parent.initialConfig.id,
+            layerIdx: this._idx
+        };
+    }
+
+    get loadedFeatureCount () { return this._layerPackage ? this._layerPackage.loadedFeatureCount : 0; }
+
+    /**
+     * Returns attribute data for this FC.
+     *
+     * @function getAttribs
+     * @returns {Promise}         resolves with a layer attribute data object
+     */
+    getAttribs () {
+        const attribsDownloaded = this.attribsLoaded();
+
+        const attribPromise = this._layerPackage.getAttribs();
+
+        attribPromise.then(attrib => {
+            // only trigger the event the first time when the download was in progress.
+            // after the attribs have been downloaded, if triggered again through API, since the attributes have
+            // previously been downloaded, this event will not trigger in the viewer
+            if (!attribsDownloaded) {
+                this._parent._attribsAdded(this._idx, attrib.features);
+
+                // for file layers, since attributes are local and we have promise initially,
+                // must set loadIsDone to true after promise resolved to ensure we trigger event once and only once
+                if (this._parent.dataSource() !== shared.dataSources.ESRI) {
+                    this._layerPackage.loadIsDone = true;
+                }
+            }
+        });
+
+        return attribPromise;
+    }
+
+    /**
+     * Indicates if attributes have been downloaded for this FC.
+     *
+     * @function attribsLoaded
+     * @returns {Boolean}         true if attributes are downloaded.
+     */
+    attribsLoaded () {
+        return this._layerPackage.loadIsDone;
+    }
+
+    /**
+     * Returns layer-specific data for this FC.
+     *
+     * @function getLayerData
+     * @returns {Promise}         resolves with a layer data object
+     */
+    getLayerData () {
+        return this._layerPackage.layerData;
+    }
+
+    /**
+     * Attempts to abort an attribute load in progress.
+     * Harmless to call before or after an attribute load.
+     *
+     * @function abortAttribLoad
+     */
+    abortAttribLoad () {
+        this._layerPackage.abortAttribLoad();
+    }
+
+    /**
+     * Download or refresh the internal symbology for the FC.
+     *
+     * @function loadSymbology
+     * @returns {Promise}         resolves when symbology has been downloaded
+     */
+    loadSymbology () {
+        return this.getLayerData().then(lData => {
+            if (lData.layerType === 'Feature Layer') {
+                // feature always has a single item, so index 0
+                this.symbology = shared.makeSymbologyArray(lData.legend.layers[0].legend);
+            } else {
+                // non-feature source. use legend server
+                return super.loadSymbology();
+            }
+        });
+    }
+
+    /**
+     * Extract the feature name from a feature as best we can.
+     *
+     * @function getFeatureName
+     * @param {String} objId      the object id of the attribute
+     * @param {Object} attribs    the dictionary of attributes for the feature.
+     * @returns {String}          the name of the feature
+     */
+    getFeatureName (objId, attribs) {
+        // TODO revisit the objId parameter.  Do we actually need this fallback anymore?
+        // NOTE: we used to have fallback logic here that would use layer settings
+        //       if this.nameField had no value. Logic has changed to now push
+        //       layer settings to this.nameField during the load event of the
+        //       Record.
+
+        if (this.nameField &amp;&amp; attribs) {
+            // extract name
+            return attribs[this.nameField];
+        } else {
+            // FIXME wire in "feature" to translation service
+            return 'Feature ' + objId;
+        }
+    }
+
+    /**
+     * Extract the tooltip field from a feature as best we can.
+     *
+     * @function getTooltipName
+     * @param {String} objId      the object id of the attribute
+     * @param {Object} attribs    the dictionary of attributes for the feature.
+     * @returns {String}          the name of the feature
+     */
+    getTooltipName (objId, attribs) {
+        // TODO revisit the objId parameter.  Do we actually need this fallback anymore?
+        // NOTE: we used to have fallback logic here that would use layer settings
+        //       if this.nameField had no value. Logic has changed to now push
+        //       layer settings to this.nameField during the load event of the
+        //       Record.
+
+        if (this.tooltipField &amp;&amp; attribs) {
+            // extract name
+            return attribs[this.tooltipField];
+        } else {
+            // FIXME wire in "feature" to translation service
+            return 'Feature ' + objId;
+        }
+    }
+
+    /**
+     * Retrieves attributes from a layer for a specified feature index
+     * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
+     */
+    getFormattedAttributes () {
+        if (this._formattedAttributes) {
+            return this._formattedAttributes;
+        }
+
+        // TODO after refactor, consider changing this to a warning and just return some dummy value
+        if (this.layerType === shared.clientLayerType.ESRI_RASTER) {
+            throw new Error('Attempting to get attributes on a raster layer.');
+        }
+
+        this._formattedAttributes = Promise.all([this.getAttribs(), this.getLayerData()])
+            .then(([aData, lData]) => {
+                // create columns array consumable by datables
+                const columns = lData.fields
+                    .filter(field =>
+
+                        // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
+                        // filter out fields where there is no corresponding attribute data
+                        aData.features[0].attributes.hasOwnProperty(field.name))
+                    .map(field => ({
+                        data: field.name,
+                        title: field.alias || field.name
+                    }));
+
+                // derive the icon for the row
+                const rows = aData.features.map(feature => {
+                    const att = feature.attributes;
+                    att.rvInteractive = '';
+                    att.rvSymbol = this._parent._apiRef.symbology.getGraphicIcon(att, lData.renderer);
+                    return att;
+                });
+
+                // if a field name resembles a function, the data table will treat it as one.
+                // to get around this, we add a function with the same name that returns the value,
+                // tricking that silly datagrid.
+                columns.forEach(c => {
+                    if (c.data.substr(-2) === '()') {
+                        // have to use function() to get .this to reference the row.
+                        // arrow notation will reference the attribFC class.
+                        const secretFunc = function() {
+                            return this[c.data];
+                        };
+
+                        const stub = c.data.substr(0, c.data.length - 2); // function without brackets
+                        rows.forEach(r => {
+                            r[stub] = secretFunc;
+                        });
+                    }
+                });
+
+                return {
+                    columns,
+                    rows,
+                    fields: lData.fields, // keep fields for reference ...
+                    oidField: lData.oidField, // ... keep a reference to id field ...
+                    oidIndex: aData.oidIndex, // ... and keep id mapping array
+                    renderer: lData.renderer
+                };
+            })
+            .catch(e => {
+                delete this._formattedAttributes; // delete cached promise when the geoApi `getAttribs` call fails, so it will be requested again next time `getAttributes` is called;
+                if (e === 'ABORTED') {
+                    throw new Error('ABORTED');
+                } else {
+                    throw new Error('Attrib loading failed');
+                }
+            });
+
+        return this._formattedAttributes;
+    }
+
+    /**
+     * Check to see if the attribute in question is an esriFieldTypeDate type.
+     *
+     * @param {String} attribName     the attribute name we want to check if it's a date or not
+     * @return {Promise}              resolves to true or false based on the attribName type being esriFieldTypeDate
+     */
+    checkDateType (attribName) {
+        // TEST STATUS none
+        // grab attribute info (waiting for it it finish loading)
+        return this.getLayerData().then(lData => {
+            // inspect attribute fields
+            if (lData.fields) {
+                const attribField = lData.fields.find(field => {
+                    return field.name === attribName;
+                });
+                if (attribField &amp;&amp; attribField.type) {
+                    return attribField.type === 'esriFieldTypeDate';
+                }
+            }
+            return false;
+        });
+    }
+
+    /**
+     * Get the best user-friendly name of a field. Uses alias if alias is defined, else uses the system attribute name.
+     *
+     * @param {String} attribName     the attribute name we want a nice name for
+     * @return {Promise}              resolves to the best available user friendly attribute name
+     */
+    aliasedFieldName (attribName) {
+        // grab attribute info (waiting for it it finish loading)
+        return this.getLayerData().then(lData => {
+            return AttribFC.aliasedFieldNameDirect(attribName, lData.fields);
+        });
+
+    }
+
+    /**
+     * Get the best user-friendly name of a field. Uses alias if alias is defined, else uses the system attribute name.
+     *
+     * @param {String} attribName     the attribute name we want a nice name for
+     * @param {Array} fields          list of field definition objects (esri format) for the layer.
+     * @return {String}               the best available user friendly attribute name
+     */
+    static aliasedFieldNameDirect (attribName, fields) {
+        let fName = attribName;
+
+        // search for aliases
+        if (fields) {
+            const attribField = fields.find(field => {
+                return field.name === attribName;
+            });
+            if (attribField &amp;&amp; attribField.alias &amp;&amp; attribField.alias.length > 0) {
+                fName = attribField.alias;
+            }
+        }
+        return fName;
+    }
+
+    /**
+     * Convert an attribute set so that any keys using aliases are converted to proper fields
+     *
+     * @param  {Object} attribs      attribute key-value mapping, potentially with aliases as keys
+     * @param  {Array} fields       fields definition array for layer
+     * @return {Object}              attribute key-value mapping with fields as keys
+     */
+    static unAliasAttribs (attribs, fields) {
+        const newA = {};
+        fields.forEach(field => {
+            // attempt to extract on name. if not found, attempt to extract on alias
+            // dump value into the result
+            newA[field.name] = attribs.hasOwnProperty(field.name) ? attribs[field.name] : attribs[field.alias];
+        });
+        return newA;
+    }
+
+    /**
+     * Fetches a graphic from the given layer.
+     * Will attempt local copy (unless overridden), will hit the server if not available.
+     *
+     * @function fetchGraphic
+     * @param  {Integer} objectId      ID of object being searched for
+     * @param {Object} opts            object containing option parametrs
+     *                 - map           map wrapper object of current map. only required if requesting geometry
+     *                 - geom          boolean. indicates if return value should have geometry included. default to false
+     *                 - attribs       boolean. indicates if return value should have attributes included. default to false
+     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
+     */
+    fetchGraphic (objectId, opts) {
+
+        // see https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2190 for reasons why
+        // things are done the way they are in this function.
+
+        // TODO this is currently a mess of IF statements, and a very dirty hack using a promise.
+        //      could certainly use a refactor LATER.
+        // this function should win a prize for good structure :trophy:
+
+        const layerObj = this._parent._layer;
+        const result = {
+            graphic: null,
+            layerFC: this
+        };
+        const resultFeat = {};
+
+        const nonPoint = this.geomType !== 'esriGeometryPoint';
+        let needWebAttr = false;
+        let needWebGeom = false;
+        let lod;
+        let gCache;
+        let aCache;
+        let localGraphic;
+
+        // basically this hack promise handles one odd case where we are getting attributes from
+        // an asynch source that is very inconvenient (code would be mint if it was synch source).
+        // so in all other cases, the promse just resolves. in the odd case, it waits, then updates
+        // the result variable, then resolves.
+        // so at both points in the code where the main return value promise resolves, we first
+        // wait on this (which usually resolves right away, and the odd case the thing it's waiting
+        // on is already resolved, but need to treat it like a promise because of rules!)
+        let attribHackPromise = Promise.resolve();
+
+        // subfunction to extract a graphic from a feature layerk
+        const huntLocalGraphic = objId => {
+            return layerObj.graphics.find(g =>
+                g.attributes[layerObj.objectIdField] === objId);
+        };
+
+        if (opts.attribs) {
+            // attempt to get attributes from fastest source.
+            aCache = this._quickCache.attribs;
+            if (aCache[objectId]) {
+                // value is already cached. use it
+                resultFeat.attributes = aCache[objectId];
+            } else if (this._layerPackage.loadIsDone) {
+                // all attributes have been loaded. use that store.
+                // since our store is a promise, need to do some hack trickery here
+                attribHackPromise = new Promise(resolve => {
+                    this._layerPackage.getAttribs().then(ad => {
+                        resultFeat.attributes = ad.features[ad.oidIndex[objectId]].attributes;
+                        resolve();
+                    });
+                });
+
+            } else if (this._parent.dataSource() !== shared.dataSources.ESRI &amp;&amp; layerObj.graphics) {
+                // it is a feature layer that is file based. we can extract info from it.
+                localGraphic = huntLocalGraphic(objectId);
+                resultFeat.attributes = localGraphic.attributes;
+
+            } else {
+                // we will need to ask the service
+                needWebAttr = true;
+            }
+        }
+
+        if (opts.geom) {
+            // first locate the appropriate cache due to simplifications.
+            gCache = this._quickCache.geoms;
+
+            if (nonPoint) {
+                // lines and polys have a cache for each LOD
+
+                const mapLevel = opts.map.getLevel();
+                lod = opts.map.lods.find(l => l.level === mapLevel);
+
+                if (!gCache[lod.scale]) {
+                    gCache[lod.scale] = {};
+                }
+                gCache = gCache[lod.scale];
+            }
+
+            // attempt to get geometry from fastest source.
+            if (gCache[objectId]) {
+                resultFeat.geometry = gCache[objectId];
+            } else if (layerObj.graphics) {
+                // it is a feature layer. we can attempt to extract info from it.
+                // but remember the feature may not exist on the client currently
+                if (!localGraphic) {
+                    // wasn't fetched during attribute section. do it now
+                    localGraphic = huntLocalGraphic(objectId);
+                }
+
+                if (localGraphic) {
+                    // found one. cache it and use it
+                    gCache[objectId] = localGraphic.geometry;
+                    resultFeat.geometry = localGraphic.geometry;
+                } else {
+                    needWebGeom = true;
+                }
+
+            } else {
+                needWebGeom = true;
+            }
+        }
+
+        // hit the server if we dont have cached values
+        if (needWebAttr || needWebGeom) {
+            return new Promise(
+                (resolve, reject) => {
+                    const parent = this._parent;
+                    const reqParam = {
+                        url: `${parent.rootUrl}/${this._idx}/query`,
+                        content: {
+                            f: 'json',
+                            objectIds: objectId,
+                            outFields: '*',
+                            returnGeometry: needWebGeom
+                        },
+                        callbackParamName: 'callback',
+                        handleAs: 'json'
+                    };
+
+                    if (needWebGeom) {
+                        reqParam.content.outSR = map.spatialReference;
+                        if (nonPoint) {
+                            reqParam.content.maxAllowableOffset = lod.resolution;
+                        }
+                    }
+
+                    // TODO investigate adding `geometryPrecision` to the param.
+                    //      if we have bloated decimal places, this will drop them.
+                    //      need to be careful of the units of the map and the current scale.
+                    //      e.g. a basemap in lat long will certainly need decimal places.
+
+                    const defData = parent._esriRequest(reqParam);
+
+                    defData.then(
+                        queryResult => {
+                            const feat = queryResult.features[0];
+
+                            if (!feat) {
+                                throw new Error(`Could not find feature (oid ${objectId})`);
+                            }
+
+                            if (needWebGeom) {
+                                // server result omits spatial reference
+                                feat.geometry.spatialReference = queryResult.spatialReference;
+                                gCache[objectId] = feat.geometry;
+                                resultFeat.geometry = feat.geometry;
+                            }
+
+                            if (needWebAttr) {
+                                aCache[objectId] = feat.attributes;
+                                resultFeat.attributes = feat.attributes;
+                            }
+
+                            result.graphic = resultFeat;
+                            attribHackPromise.then(() => {
+                                resolve(result);
+                            });
+                        }, error => {
+                            console.warn(error);
+                            reject(error);
+                        }
+                    );
+                });
+        } else {
+            // no need for web requests. everything was available locally
+            return attribHackPromise.then(() => {
+                result.graphic = resultFeat;
+                return result;
+            });
+        }
+    }
+
+    /**
+     * Will attempt to zoom the map view so the a graphic is prominent.
+     *
+     * @function zoomToGraphic
+     * @param  {Integer} objId          Object ID of grahpic being searched for
+     * @param  {Object} map             wrapper object for the map we want to zoom
+     * @param {Object} offsetFraction   an object with decimal properties `x` and `y` indicating percentage of offsetting on each axis
+     * @return {Promise}                resolves after the map is done moving
+     */
+    zoomToGraphic (objId, map, offsetFraction) {
+
+        return this.fetchGraphic(objId, { map, geom: true })
+            .then(fetchedGraphic => {
+                const gapi = this._parent._apiRef;
+
+                // make new graphic (on the chance it came from server and is just raw json geometry)
+                const graphic = gapi.proj.Graphic(fetchedGraphic.graphic);
+
+                // reproject graphic to spatialReference of the map
+                let extent = gapi.proj.graphicsUtils.graphicsExtent([graphic]);
+                if (!gapi.proj.isSpatialRefEqual(graphic.geometry.spatialReference, map.spatialReference)) {
+                    const intermExtent = gapi.proj.localProjectExtent(extent, map.spatialReference);
+                    extent = gapi.Map.Extent(intermExtent.x0, intermExtent.y0,
+                        intermExtent.x1, intermExtent.y1, intermExtent.sr);
+                }
+
+                // move map according to geometry
+                let geomZoomPromise;
+                if (this.geomType === 'esriGeometryPoint') {
+                    // zoom to point at a decent scale for hilighting a point
+                    const sweetLod = gapi.Map.findClosestLOD(map.lods, 50000);
+                    geomZoomPromise = map.centerAndZoom(extent.getCenter(), Math.max(sweetLod.level, 0));
+                } else {
+                    // zoom to the extent of the geometery
+                    geomZoomPromise = map.setExtent(extent, true);
+                }
+
+                // make next step wait for map to zoom, and pass it our projected target extent.
+                return geomZoomPromise.then(() => extent);
+            }).then(extent => {
+
+                // determine if our optimal zoom is offscale
+                const scale = this.isOffScale(map.getScale());
+
+                // adjust the scale if the layer is offscale
+                const scaleZoomPromise = scale.offScale ?
+                    this.zoomToScale(map, map.lods, scale.zoomIn, false) : Promise.resolve();
+
+                return scaleZoomPromise.then(() => extent);
+
+            }).then(extent => {
+                // map is at best position we can manage. do any offsetting for UI elements
+                return map.moveToOffsetExtent(extent, offsetFraction);
+            });
+    }
+
+    /**
+     * Applies the current filter settings to the physical map layer.
+     *
+     * @function applyFilterToLayer
+     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
+     */
+    applyFilterToLayer (exclusions = []) {
+        // note DynamicFC will override this function to handle the dynamic layer case
+        const p = this._parent;
+        const sql = this.filter.getCombinedSql(exclusions);
+
+        if (p.dataSource() === shared.dataSources.ESRI) {
+            // feature layer on a server
+            p.setDefinitionQuery(sql);
+        } else {
+            // file or wfs
+            p._apiRef.query.sqlGraphicsVisibility(p._layer.graphics, sql);
+        }
+    }
+
+    /**
+     * Gets array of object ids that currently pass any filters
+     *
+     * @function getFilterOIDs
+     *
+     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all filters
+     * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
+     * @returns {Promise} resolves with array of object ids that pass the filter. if no filters are active, resolves with undefined.
+     */
+    getFilterOIDs (exclusions = [], extent) {
+        const sql = this.filter.getCombinedSql(exclusions);
+
+        const p = this._parent;
+        const api = p._apiRef;
+        const opts = {
+            geometry: extent,
+            where: sql,
+            mapScale: p._layer._map &amp;&amp; p._layer._map.__LOD ? p._layer._map.__LOD.scale  : undefined,
+            sourceWkid: p._layer.spatialReference ? p._layer.spatialReference.wkid : undefined
+        };
+
+        if (!(sql || extent)) {
+            // no filters active. return undefined so caller can not worry about applying filters
+            return Promise.resolve(undefined);
+        }
+
+        if (extent) {
+            // essentially this determines if our extent was already cached,
+            // bonks the cache if it is stale
+            this.filter.setExtent(extent);
+        }
+
+        // this must be done after the setExtent() call, as that call can potentially invalidate caches
+        const impactedFilters = this.filter.sqlActiveFilters(exclusions);
+        let cache = this.filter.getCache(impactedFilters, extent);
+
+        // TODO once things are working, attempt to make all the promise caching into worker functions.
+
+        // if not cached, execute a query and store the result as the cache
+        if (!cache) {
+            if (p.dataSource() === shared.dataSources.ESRI) {
+                // feature layer on a server. just use query task
+                opts.mapScale = p._layer._map &amp;&amp; p._layer._map.__LOD ? p._layer._map.__LOD.scale  : undefined;
+                opts.sourceWkid = p._layer.spatialReference ? p._layer.spatialReference.wkid : undefined;
+                opts.url = this.queryUrl;
+                cache = api.query.queryIds(opts);
+            } else {
+                // file or wfs
+                let eProm, sArray;
+
+                if (extent) {
+                    // execute a query against the map extent
+                    // cannot do the where in the esri query for files
+                    opts.where = '';
+                    opts.featureLayer = p._layer;
+                    eProm = api.query.queryIds(opts);
+                    if (!sql) {
+                        // nothing else to filter, set the cache
+                        cache = eProm;
+                    }
+                } 
+                if (sql) {
+                    // use our custom filter to find graphics that satisfy our sql
+                    const oid = this.oidField;
+                    sArray = api.query.sqlAttributeFilter(p._layer.graphics, sql, true)
+                                .map(a => a.attributes[oid]);
+                    if (!extent) {
+                        // nothing else to filter, set the cache
+                        cache = Promise.resolve(sArray);
+                    }
+                }
+                if (sql &amp;&amp; extent) {
+                    // combine the two results, cache it
+                    cache = eProm.then(qArray => {
+                        return shared.arrayIntersect(qArray, sArray);
+                    });
+                }
+            }
+            this.filter.setCache(cache, impactedFilters, extent);
+        }
+        return cache;
+    }
+
+}
+
+module.exports = () => ({
+    AttribFC
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Feb 11 2019 18:31:30 GMT+0000 (UTC) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
