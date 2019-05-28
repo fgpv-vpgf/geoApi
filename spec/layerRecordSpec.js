@@ -217,12 +217,12 @@ describe('layerRecord', () => {
         let listenerCallback = layerRecordObject.addStateListener('listenerCallback');
 
         expect(listenerCallback).toEqual('listenerCallback');
-        expect(layerRecordObject._stateListeners.includes('listenerCallback')).toBe(true);
+        expect(layerRecordObject._stateEvent._listeners.includes('listenerCallback')).toBe(true);
 
         // remove the state listener
         layerRecordObject.removeStateListener('listenerCallback');
 
-        expect(layerRecordObject._stateListeners.includes('listenerCallback')).toBe(false);
+        expect(layerRecordObject._stateEvent._listeners.includes('listenerCallback')).toBe(false);
     });
 
     it('should add hover listener then remove it', () => {
@@ -232,12 +232,12 @@ describe('layerRecord', () => {
         let listenerCallback = layerRecordObject.addHoverListener('listenerCallback');
 
         expect(listenerCallback).toEqual('listenerCallback');
-        expect(layerRecordObject._hoverListeners.includes('listenerCallback')).toBe(true);
+        expect(layerRecordObject._hoverEvent._listeners.includes('listenerCallback')).toBe(true);
 
         // remove the state listener
         layerRecordObject.removeHoverListener('listenerCallback');
 
-        expect(layerRecordObject._hoverListeners.includes('listenerCallback')).toBe(false);
+        expect(layerRecordObject._hoverEvent._listeners.includes('listenerCallback')).toBe(false);
     });
 
     it('should create an option object for the physical layer', () => {
