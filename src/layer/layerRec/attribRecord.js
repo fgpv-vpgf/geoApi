@@ -208,9 +208,10 @@ class AttribRecord extends layerRecord.LayerRecord {
      *
      * @param  {Object} attribs      attribute key-value mapping, potentially with aliases as keys
      * @param  {Array} fields        optional. fields definition array for layer. no aliasing done if not provided
+     * @param  {Integer} layerid     optional. specifies which sublayer is being transformed
      * @return {Array}               attribute data transformed into a list, with potential field aliasing applied
      */
-    attributesToDetails (attribs, fields) {
+    attributesToDetails (attribs, fields, layerid) {
         // TODO make this extensible / modifiable / configurable to allow different details looks for different data
         // simple array of text mapping for demonstration purposes. fancy grid formatting later?
         // ignore any functions hanging around on the attribute.
@@ -221,8 +222,28 @@ class AttribRecord extends layerRecord.LayerRecord {
             .filter(key => typeof attribs[key] !== 'function')
             .map(key => {
                 const fieldType = fields ? fields.find(f => f.name === key) : null;
+
+                // If this is a dynamic layer entry node, check to see if the sub-layer has a metadata field in the config
+                let sublayer;
+                if(layerid) {
+                    sublayer = this.config.source.layerEntries.find(entry => {
+                        return entry.index == layerid;
+                    });
+                }
+
+                let fieldName;
+                let metadata = sublayer ? sublayer.fieldMetadata : this.config.source.fieldMetadata;
+
+                // Find field alias if it exists in the config
+                if(metadata) {
+                    fieldName = metadata.find(field => {
+                        return field.data === key;
+                    });
+                }
+                fieldName = fieldName ? fieldName.alias : attribFC.AttribFC.aliasedFieldNameDirect(key, fields);
+
                 return {
-                    key: attribFC.AttribFC.aliasedFieldNameDirect(key, fields), // need synchronous variant of alias lookup
+                    key: fieldName, // need synchronous variant of alias lookup
                     value: attribs[key],
                     field: key,
                     type: fieldType ? fieldType.type : fieldType

@@ -735,7 +735,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
                             identifyResult.data.push({
                                 name: this.getFeatureName(ele.layerId, objIdStr, unAliasAtt),
-                                data: this.attributesToDetails(ele.feature.attributes, lData.fields),
+                                data: this.attributesToDetails(ele.feature.attributes, lData.fields, ele.layerId),
                                 oid: unAliasAtt[lData.oidField],
                                 symbology: [{
                                     svgcode: svg
