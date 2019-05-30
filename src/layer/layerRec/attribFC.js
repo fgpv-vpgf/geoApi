@@ -297,13 +297,17 @@ class AttribFC extends basicFC.BasicFC {
      */
     static aliasedFieldNameDirect (attribName, fields) {
         let fName = attribName;
-
+        
         // search for aliases
         if (fields) {
             const attribField = fields.find(field => {
                 return field.name === attribName;
             });
-            if (attribField && attribField.alias && attribField.alias.length > 0) {
+            
+            // prioritize clientAlias over alias, or default to the attribute name
+            if(attribField && attribField.clientAlias && attribField.clientAlias.length > 0) {
+                fName = attribField.clientAlias;
+            } else if (attribField && attribField.alias && attribField.alias.length > 0) {
                 fName = attribField.alias;
             }
         }
@@ -320,9 +324,9 @@ class AttribFC extends basicFC.BasicFC {
     static unAliasAttribs (attribs, fields) {
         const newA = {};
         fields.forEach(field => {
-            // attempt to extract on name. if not found, attempt to extract on alias
+            // attempt to extract on name. if not found, attempt to extract on alias, and then on clientAlias
             // dump value into the result
-            newA[field.name] = attribs.hasOwnProperty(field.name) ? attribs[field.name] : attribs[field.alias];
+            newA[field.name] = attribs.hasOwnProperty(field.name) ? attribs[field.name] : attribs.hasOwnProperty(field.alias) ? attribs[field.alias] : attribs[field.clientAlias];
         });
         return newA;
     }
