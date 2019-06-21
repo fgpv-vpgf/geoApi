@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>DynamicRecord - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AttribFC.html">AttribFC</a><ul class='methods'><li data-type='method'><a href="AttribFC.html#.aliasedFieldNameDirect">aliasedFieldNameDirect</a></li><li data-type='method'><a href="AttribFC.html#.unAliasAttribs">unAliasAttribs</a></li><li data-type='method'><a href="AttribFC.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="AttribFC.html#checkDateType">checkDateType</a></li><li data-type='method'><a href="AttribFC.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="AttribRecord.html">AttribRecord</a><ul class='methods'><li data-type='method'><a href="AttribRecord.html#aliasedFieldName">aliasedFieldName</a></li><li data-type='method'><a href="AttribRecord.html#attributesToDetails">attributesToDetails</a></li><li data-type='method'><a href="AttribRecord.html#checkDateType">checkDateType</a></li><li data-type='method'><a href="AttribRecord.html#getFormattedAttributes">getFormattedAttributes</a></li></ul></li><li><a href="BasicFC.html">BasicFC</a><ul class='methods'><li data-type='method'><a href="BasicFC.html#zoomToBoundary">zoomToBoundary</a></li></ul></li><li><a href="DynamicFC.html">DynamicFC</a></li><li><a href="DynamicRecord.html">DynamicRecord</a><ul class='methods'><li data-type='method'><a href="DynamicRecord.html#getChildProxy">getChildProxy</a></li></ul></li><li><a href="FakeEvent.html">FakeEvent</a></li><li><a href="FeatureRecord.html">FeatureRecord</a></li><li><a href="Filter.html">Filter</a></li><li><a href="GraphicsRecord.html">GraphicsRecord</a></li><li><a href="IdentifyResult.html">IdentifyResult</a></li><li><a href="ImageRecord.html">ImageRecord</a></li><li><a href="LayerInterface.html">LayerInterface</a></li><li><a href="LayerRecord.html">LayerRecord</a><ul class='methods'><li data-type='method'><a href="LayerRecord.html#onMouseOut">onMouseOut</a></li><li data-type='method'><a href="LayerRecord.html#onMouseOver">onMouseOver</a></li><li data-type='method'><a href="LayerRecord.html#validateProjection">validateProjection</a></li></ul></li><li><a href="PlaceholderFC.html">PlaceholderFC</a></li><li><a href="Root.html">Root</a></li><li><a href="TileRecord.html">TileRecord</a></li><li><a href="WmsFC.html">WmsFC</a></li><li><a href="WmsRecord.html">WmsRecord</a><ul class='methods'><li data-type='method'><a href="WmsRecord.html#identify">identify</a></li></ul></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-developer-guide.html">developer-guide</a></li><li><a href="tutorial-getting_started.html">getting_started</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_addLine">_addLine</a></li><li><a href="global.html#_addMultiLine">_addMultiLine</a></li><li><a href="global.html#_addMultiPoint">_addMultiPoint</a></li><li><a href="global.html#_addPoint">_addPoint</a></li><li><a href="global.html#_addPolygon">_addPolygon</a></li><li><a href="global.html#_attribsAdded">_attribsAdded</a></li><li><a href="global.html#_isUrl">_isUrl</a></li><li><a href="global.html#_listToSymbology">_listToSymbology</a></li><li><a href="global.html#_stateChange">_stateChange</a></li><li><a href="global.html#_zoomToScaleSet">_zoomToScaleSet</a></li><li><a href="global.html#abortAttribLoad">abortAttribLoad</a></li><li><a href="global.html#addAttribListener">addAttribListener</a></li><li><a href="global.html#addFilterListener">addFilterListener</a></li><li><a href="global.html#addGeometry">addGeometry</a></li><li><a href="global.html#addHilight">addHilight</a></li><li><a href="global.html#addHoverListener">addHoverListener</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#addPin">addPin</a></li><li><a href="global.html#addStateListener">addStateListener</a></li><li><a href="global.html#aliasedFieldName">aliasedFieldName</a></li><li><a href="global.html#allComb">allComb</a></li><li><a href="global.html#allocateLayersToSections">allocateLayersToSections</a></li><li><a href="global.html#applyFilterToLayer">applyFilterToLayer</a></li><li><a href="global.html#areExtentsSame">areExtentsSame</a></li><li><a href="global.html#arrayBufferToString">arrayBufferToString</a></li><li><a href="global.html#arrayIntersect">arrayIntersect</a></li><li><a href="global.html#arrayToIn">arrayToIn</a></li><li><a href="global.html#assignIds">assignIds</a></li><li><a href="global.html#assignLayerSplits">assignLayerSplits</a></li><li><a href="global.html#attribsLoaded">attribsLoaded</a></li><li><a href="global.html#bindEvents">bindEvents</a></li><li><a href="global.html#cacheActiveKeys">cacheActiveKeys</a></li><li><a href="global.html#checkDateType">checkDateType</a></li><li><a href="global.html#checkProj">checkProj</a></li><li><a href="global.html#cleanRenderer">cleanRenderer</a></li><li><a href="global.html#cleanUpAttribs">cleanUpAttribs</a></li><li><a href="global.html#cleanUpFields">cleanUpFields</a></li><li><a href="global.html#clearAll">clearAll</a></li><li><a href="global.html#clearAllCaches">clearAllCaches</a></li><li><a href="global.html#clearCacheSet">clearCacheSet</a></li><li><a href="global.html#clearHilight">clearHilight</a></li><li><a href="global.html#clipExtentCoords">clipExtentCoords</a></li><li><a href="global.html#constructLayer">constructLayer</a></li><li><a href="global.html#convertImageToCanvas">convertImageToCanvas</a></li><li><a href="global.html#convertImagetoDataURL">convertImagetoDataURL</a></li><li><a href="global.html#crawlLayerInfos">crawlLayerInfos</a></li><li><a href="global.html#createAttribSet">createAttribSet</a></li><li><a href="global.html#createBasemap">createBasemap</a></li><li><a href="global.html#csvPeek">csvPeek</a></li><li><a href="global.html#dataSource">dataSource</a></li><li><a href="global.html#enforceBoundary">enforceBoundary</a></li><li><a href="global.html#enhanceRenderer">enhanceRenderer</a></li><li><a href="global.html#eventRaiser">eventRaiser</a></li><li><a href="global.html#extractFields">extractFields</a></li><li><a href="global.html#featureTypeToRenderer">featureTypeToRenderer</a></li><li><a href="global.html#fetchGraphic">fetchGraphic</a></li><li><a href="global.html#filterifyRenderer">filterifyRenderer</a></li><li><a href="global.html#findCandidates">findCandidates</a></li><li><a href="global.html#findClosestLOD">findClosestLOD</a></li><li><a href="global.html#findOptimalSplit">findOptimalSplit</a></li><li><a href="global.html#findZoomScale">findZoomScale</a></li><li><a href="global.html#fireEvent">fireEvent</a></li><li><a href="global.html#fitInto">fitInto</a></li><li><a href="global.html#generateLocalCanvas">generateLocalCanvas</a></li><li><a href="global.html#generatePlaceholderSymbology">generatePlaceholderSymbology</a></li><li><a href="global.html#generateServerImage">generateServerImage</a></li><li><a href="global.html#generateUUID">generateUUID</a></li><li><a href="global.html#generateWMSSymbology">generateWMSSymbology</a></li><li><a href="global.html#geomToGraphic">geomToGraphic</a></li><li><a href="global.html#getAttribs">getAttribs</a></li><li><a href="global.html#getCache">getCache</a></li><li><a href="global.html#getCacheKey">getCacheKey</a></li><li><a href="global.html#getChildName">getChildName</a></li><li><a href="global.html#getChildTree">getChildTree</a></li><li><a href="global.html#getCombinedSql">getCombinedSql</a></li><li><a href="global.html#getExtentFromJson">getExtentFromJson</a></li><li><a href="global.html#getFeatureCount">getFeatureCount</a></li><li><a href="global.html#getFeatureName">getFeatureName</a></li><li><a href="global.html#getFilterOIDs">getFilterOIDs</a></li><li><a href="global.html#getFormattedAttributes">getFormattedAttributes</a></li><li><a href="global.html#getGeomType">getGeomType</a></li><li><a href="global.html#getGraphicIcon">getGraphicIcon</a></li><li><a href="global.html#getGraphicsBoundingBox">getGraphicsBoundingBox</a></li><li><a href="global.html#getGraphicSymbol">getGraphicSymbol</a></li><li><a href="global.html#getLayerData">getLayerData</a></li><li><a href="global.html#getLayerType">getLayerType</a></li><li><a href="global.html#getLegendUrls">getLegendUrls</a></li><li><a href="global.html#getMapServerLegend">getMapServerLegend</a></li><li><a href="global.html#getNorthArrowAngle">getNorthArrowAngle</a></li><li><a href="global.html#getOidField">getOidField</a></li><li><a href="global.html#getProxy">getProxy</a></li><li><a href="global.html#getScaleRatio">getScaleRatio</a></li><li><a href="global.html#getScaleSet">getScaleSet</a></li><li><a href="global.html#getSql">getSql</a></li><li><a href="global.html#getSymbology">getSymbology</a></li><li><a href="global.html#getTooltipName">getTooltipName</a></li><li><a href="global.html#getUnboundGraphics">getUnboundGraphics</a></li><li><a href="global.html#getVisibility">getVisibility</a></li><li><a href="global.html#getVisibleScales">getVisibleScales</a></li><li><a href="global.html#getWMSLayerTitle">getWMSLayerTitle</a></li><li><a href="global.html#guessCSVfields">guessCSVfields</a></li><li><a href="global.html#hideLayers">hideLayers</a></li><li><a href="global.html#identify">identify</a></li><li><a href="global.html#initBasemaps">initBasemaps</a></li><li><a href="global.html#isActive">isActive</a></li><li><a href="global.html#isOffScale">isOffScale</a></li><li><a href="global.html#isQueryable">isQueryable</a></li><li><a href="global.html">isSpatialRefEqual</a></li><li><a href="global.html#layerLoaded">layerLoaded</a></li><li><a href="global.html#loadDataBatch">loadDataBatch</a></li><li><a href="global.html#loadSymbology">loadSymbology</a></li><li><a href="global.html#localProjectExtent">localProjectExtent</a></li><li><a href="global.html#localProjectGeometry">localProjectGeometry</a></li><li><a href="global.html#localProjectPoint">localProjectPoint</a></li><li><a href="global.html#makeBoundingBox">makeBoundingBox</a></li><li><a href="global.html#makeClickBuffer">makeClickBuffer</a></li><li><a href="global.html#makeGeoJsonLayer">makeGeoJsonLayer</a></li><li><a href="global.html#makeHilightLayer">makeHilightLayer</a></li><li><a href="global.html#makeLayerConfig">makeLayerConfig</a></li><li><a href="global.html#makeLayerInfo">makeLayerInfo</a></li><li><a href="global.html#makeLegend">makeLegend</a></li><li><a href="global.html#makeSafeExtent">makeSafeExtent</a></li><li><a href="global.html#makeSymbologyArray">makeSymbologyArray</a></li><li><a href="global.html#mapDefault">mapDefault</a></li><li><a href="global.html#mapServerLegendToRenderer">mapServerLegendToRenderer</a></li><li><a href="global.html#mapServerLegendToRendererAll">mapServerLegendToRendererAll</a></li><li><a href="global.html#mapServerToLocalLegend">mapServerToLocalLegend</a></li><li><a href="global.html#moveToOffsetExtent">moveToOffsetExtent</a></li><li><a href="global.html#newLayerPackage">newLayerPackage</a></li><li><a href="global.html#newProp">newProp</a></li><li><a href="global.html#normalizeProj">normalizeProj</a></li><li><a href="global.html#onError">onError</a></li><li><a href="global.html#onLoad">onLoad</a></li><li><a href="global.html#onMouseOut">onMouseOut</a></li><li><a href="global.html#onMouseOver">onMouseOver</a></li><li><a href="global.html#onUpdateEnd">onUpdateEnd</a></li><li><a href="global.html#onUpdateStart">onUpdateStart</a></li><li><a href="global.html#packLayersIntoExactSections">packLayersIntoExactSections</a></li><li><a href="global.html#packLayersIntoOptimalSections">packLayersIntoOptimalSections</a></li><li><a href="global.html#parseUrlIndex">parseUrlIndex</a></li><li><a href="global.html#predictFileUrlBuilder">predictFileUrlBuilder</a></li><li><a href="global.html#predictLayerUrl">predictLayerUrl</a></li><li><a href="global.html#projectGeojson">projectGeojson</a></li><li><a href="global.html#queryGeometryHelper">queryGeometryHelper</a></li><li><a href="global.html#raiseFilterEvent">raiseFilterEvent</a></li><li><a href="global.html#removeAttribListener">removeAttribListener</a></li><li><a href="global.html#removeFilterListener">removeFilterListener</a></li><li><a href="global.html#removeGeometry">removeGeometry</a></li><li><a href="global.html#removeHoverListener">removeHoverListener</a></li><li><a href="global.html#removeListener">removeListener</a></li><li><a href="global.html#removeStateListener">removeStateListener</a></li><li><a href="global.html#renderSymbologyIcon">renderSymbologyIcon</a></li><li><a href="global.html#renderSymbologyImage">renderSymbologyImage</a></li><li><a href="global.html#repokeEsriService">repokeEsriService</a></li><li><a href="global.html#resizeSVGElement">resizeSVGElement</a></li><li><a href="global.html#scrapeListRenderer">scrapeListRenderer</a></li><li><a href="global.html#searchRenderer">searchRenderer</a></li><li><a href="global.html#serverLayerIdentify">serverLayerIdentify</a></li><li><a href="global.html#serviceType">serviceType</a></li><li><a href="global.html#setCache">setCache</a></li><li><a href="global.html#setCustomParameter">setCustomParameter</a></li><li><a href="global.html#setDefinitionQuery">setDefinitionQuery</a></li><li><a href="global.html#setExtent">setExtent</a></li><li><a href="global.html#setMapScale">setMapScale</a></li><li><a href="global.html#setQueryable">setQueryable</a></li><li><a href="global.html#setSql">setSql</a></li><li><a href="global.html#setVisibility">setVisibility</a></li><li><a href="global.html#shiftZoom">shiftZoom</a></li><li><a href="global.html#showLayers">showLayers</a></li><li><a href="global.html#splitLayer">splitLayer</a></li><li><a href="global.html#sqlActiveFilters">sqlActiveFilters</a></li><li><a href="global.html#sqlAttributeFilter">sqlAttributeFilter</a></li><li><a href="global.html#stringToArrayBuffer">stringToArrayBuffer</a></li><li><a href="global.html#svgDrawImage">svgDrawImage</a></li><li><a href="global.html#symbolToLegend">symbolToLegend</a></li><li><a href="global.html#synchOpacity">synchOpacity</a></li><li><a href="global.html#updateWfsSource">updateWfsSource</a></li><li><a href="global.html#validateCSV">validateCSV</a></li><li><a href="global.html#validateFile">validateFile</a></li><li><a href="global.html#validateGeoJson">validateGeoJson</a></li><li><a href="global.html#validateLatLong">validateLatLong</a></li><li><a href="global.html#wrapEvents">wrapEvents</a></li><li><a href="global.html#zoomToBoundary">zoomToBoundary</a></li><li><a href="global.html#zoomToExtent">zoomToExtent</a></li><li><a href="global.html#zoomToGraphic">zoomToGraphic</a></li><li><a href="global.html#zoomToLatLong">zoomToLatLong</a></li><li><a href="global.html#zoomToScale">zoomToScale</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">DynamicRecord</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        DynamicRecord
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="DynamicRecord"><span class="type-signature"></span>new DynamicRecord<span class="signature">(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup, configIsComplete)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="layer_layerRec_dynamicRecord.js.html">layer/layerRec/dynamicRecord.js</a>, <a href="layer_layerRec_dynamicRecord.js.html#line44">line 44</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Create a layer record with the appropriate geoApi layer type.
+Regarding configuration -- in the standard case, the incoming config object
+will be incomplete with regards to child state. It may not even have entries for all possible
+child sub-layers.  Given our config defaulting for children happens AFTER the layer loads,
+it means what is passed in at the constructor is generally unreliable except for any child names,
+and the class will treat that information as unreliable (the UI will set values after config defaulting
+happens). In the rare case where the config is fully formed and we want to take advantage of that,
+set the configIsComplete param to true.  Be aware that if the config is not actually complete you may
+get a layer in an undesired initial state.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>layerClass</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the ESRI api object for dynamic layers</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>esriRequest</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the ESRI api object for making web requests with proxy support</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>apiRef</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>object pointing to the geoApi. allows us to call other geoApi functions</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>config</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>layer config values</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>esriLayer</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>an optional pre-constructed layer</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>epsgLookup</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>an optional lookup function for EPSG codes (see geoService for signature)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>configIsComplete</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>false</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>an optional flag to indicate if the config is fully flushed out (i.e. things defined for all children). Defaults to false.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="getChildProxy"><span class="type-signature"></span>getChildProxy<span class="signature">(featureIdx)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="layer_layerRec_dynamicRecord.js.html">layer/layerRec/dynamicRecord.js</a>, <a href="layer_layerRec_dynamicRecord.js.html#line98">line 98</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Return a proxy interface for a child layer</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>featureIdx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Integer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>index of child entry (leaf or group)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>proxy interface for given child</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        DynamicRecord
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="DynamicRecord"><span class="type-signature"></span>new DynamicRecord<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="layer_layerRec_dynamicRecord.js.html">layer/layerRec/dynamicRecord.js</a>, <a href="layer_layerRec_dynamicRecord.js.html#line10">line 10</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="getChildProxy"><span class="type-signature"></span>getChildProxy<span class="signature">(featureIdx)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="layer_layerRec_dynamicRecord.js.html">layer/layerRec/dynamicRecord.js</a>, <a href="layer_layerRec_dynamicRecord.js.html#line98">line 98</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Return a proxy interface for a child layer</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>featureIdx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Integer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>index of child entry (leaf or group)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>proxy interface for given child</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jun 21 2019 15:43:01 GMT+0000 (UTC) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
