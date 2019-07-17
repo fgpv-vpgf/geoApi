@@ -324,25 +324,28 @@ class AqlLike extends AqlDiatomic {
         const attVal = this.left.evaluate(attribute);
         let pattern = this.right.evaluate(attribute);
 
-        // TODO basic wildcard search for now. may need to handle escaping special characters
-        //      can steal codes from https://stackoverflow.com/questions/1314045/emulating-sql-like-in-javascript
-
         // (╯°□°)╯ (╯°□°)╯ (╯°□°)╯ (╯°□°)╯ (╯°□°)╯
         // special characters to be checked (different cases for pattern, exclude % and *)
-        const valEscRegex = /[(!"#$%&\'*+,.\\\/:;<=>?@[\]^`{|}~)]/g;
-        const patternEscRegex = /[(!"#$\'+,.\\\/:;<=>?@[\]^`{|}~)]/g;
+        const valEscRegex = /[(!"#$%&'*+,.\\/:;<=>?@[\]^`{|}~)]/g;
+        const patternEscRegex = /[(!"#$'+,.\\/:;<=>?@[\]^`{|}~)]/g;
+
+        // REGEX FORMAT FOR %: LIKE '%/ௌ%%' ESCAPE '/ௌ', convert /ௌ% to a hidden string to avoid being converted to JS regex form (.*)
+        // TODO: future-proof in case escape character gets changed in plugins (here we are assuming it is ௌ) - it would look something like the following commented block of code
+        // const escChar = pattern.match(/ESCAPE '(.*)'/)[1];
+        // if (escChar) {
+        //     // replace all user-searched % that was escaped with a special escape character with "hiddenpercent"
+        //     pattern = pattern.replace(new RegExp(`${escChar}%`), "hiddenpercent");
+        // }
+        pattern = pattern.replace(/ௌ%/g, "hiddenpercent");
 
         // escape all special characters to be able to test properly with pattern
         const newAttVal = attVal.replace(valEscRegex, '\\$&');
         pattern = pattern.replace(patternEscRegex, '\\\\\\$&');
 
-        // TODO: likely for fgpv-vpgf/fgpv-vpgf#3647 - find a way to handle % and * characters from the plugins repo
-        // (since % gets added to SQL clause between spaces if lazyFilter is true and need a way to distinguish between those and user-searched % characters)
-        // pattern = pattern.slice(-1) === "%" ? pattern.substr(0, pattern.length - 1) + '.*' : pattern;
-        // pattern = `^${pattern.replace(/%/g, '\\\\\\$&')}$`.replace(/_/g, '.');
-
         // convert % to *, and make pattern respect start and end of the string, also convert _ to match single character
         pattern = `^${pattern.replace(/%/g, '.*')}$`.replace(/_/g, '.');
+        // return the hidden string to % and escape it
+        pattern = pattern.replace(/hiddenpercent/g, "\\\\\\%");
 
         const result = RegExp(pattern).test(newAttVal);
         return this.hasNot ? !result : result;
