@@ -591,17 +591,17 @@ function validateCSV(data, dataIsEncoded = true) {
                     // candidate fields for latitude and longitude wrapped in an object with an esri type
                     latFields: latCandidates.map(field => ({
                         name: field,
-                        type: 'esriFieldTypeString'
+                        type: 'esriFieldTypeDouble'
                     })),
                     longFields: longCandidates.map(field => ({
                             name: field,
-                            type: 'esriFieldTypeString'
+                            type: 'esriFieldTypeDouble'
                     })),
 
                     // make field list esri-ish for consistancy
                     fields: rows[0].map(field => ({
                         name: field,
-                        type: 'esriFieldTypeString'
+                        type: latCandidates.includes(field) || longCandidates.includes(field) ? 'esriFieldTypeDouble' : 'esriFieldTypeString'
                     })),
                     geometryType: 'esriGeometryPoint' // always point for CSV
                 };
@@ -963,8 +963,8 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
                 {
                     name: 'OBJECTID',
                     type: 'esriFieldTypeOID',
-                },
-            ],
+                }
+            ]
         };
 
         // ensure our features have ids
@@ -1015,6 +1015,22 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
         // look up projection definitions if they don't already exist and we have enough info
         const srcLookup = geoApi.proj.checkProj(srcProj, opts.epsgLookup);
         const destLookup =  geoApi.proj.checkProj(destProj, opts.epsgLookup);
+
+        // change latitude and longitude fields from esriFieldTypeString -> esriFieldTypeDouble if they exist
+        if (opts) {
+            if (opts.latfield) {
+                const latField = layerDefinition.fields.find(field => field.name === opts.latfield);
+                if (latField) {
+                    latField.type = 'esriFieldTypeDouble';
+                }
+            }
+            if (opts.lonfield) {
+                const longField = layerDefinition.fields.find(field => field.name === opts.lonfield);
+                if (longField) {
+                    longField.type = 'esriFieldTypeDouble';
+                }
+            }
+        }
 
         // make the layer
         const buildLayer = () => {
