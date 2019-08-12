@@ -458,9 +458,30 @@ function sqlNodeToAqlNode (node) {
         Identifier: n => {
             return new AqlIdentifier(n.value);
         },
+        Prefix: n => {
+            // add support for additional prefixes here
+            let num = n.value;
+            if (n.prefix === '-' && num) {
+                if (num.type !== 'Number') {
+                    throw new Error(`Unexpected no number value following ${n.prefix} prefix`);
+                } else {
+                    // set an attribute to recognize negative number
+                    num.negative = true;
+                    return sqlNodeToAqlNode(num);
+                }
+            } else if (n.prefix === '+' && num) {
+                if (num.type !== 'Number') {
+                    throw new Error(`Unexpected no number value following ${n.prefix} prefix`);
+                } else {
+                    return sqlNodeToAqlNode(num);
+                }
+            } else {
+                throw new Error('Unexpected prefix not recognized : ' + n.prefix);
+            }
+        },
         Number: n => {
-            // number in string form
-            return new AqlLiteral(Number(n.value));
+            // number in string form, handle negative numbers
+            return n.negative ? new AqlLiteral(Number('-' + n.value)) : new AqlLiteral(Number(n.value));
         },
         String: n => {
             // remove embedded quotes from string
